@@ -11,9 +11,9 @@
  */
 export const energyData = {
   /** ISO date the data was last fetched, or null for the seeded values */
-  updatedAt: null as string | null,
+  updatedAt: "2026-07-06" as string | null,
   /** True when generated against the live SSB/NVE APIs */
-  verified: false,
+  verified: true,
   /** Last 12 months with complete statistics */
   referenceYear: "siste 12 md. til 2026M05",
   electricity: {
@@ -34,8 +34,8 @@ export const energyData = {
     /** Calendar year the trade values cover */
     year: "2024",
     /** Export value of electricity @unit billion NOK/year (SSB utenrikshandel) */
-    exportValueBnNok: 15,
+    exportValueBnNok: 20.3,
     /** Import value of electricity @unit billion NOK/year */
-    importValueBnNok: 6,
+    importValueBnNok: 4.8,
   },
 };
