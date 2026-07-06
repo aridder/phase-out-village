@@ -14,7 +14,7 @@ import {
   RESERVOIR_CAPACITY_TWH,
 } from "../../data/norwayFacts";
 import "../transition/transition.css";
-import "./frontPage.css";
+import "./costPage.css";
 
 /** Oil price assumption, scaling all kroner figures */
 const PRICE_LEVELS = [
@@ -29,14 +29,14 @@ const PRESETS = [
 ] as const;
 
 /**
- * The answer-first front page.
+ * The cost calculator page.
  *
- * Instead of dropping the visitor into a map of oil fields, it answers the
- * question people actually have — "what would phasing out the oil cost, and
- * what do we get?" — from two simple controls, with MDG's plan as the
- * default. The game and the full calculations are one click deeper.
+ * Answers the question people actually have — "what would phasing out the
+ * oil cost, and what do we get?" — from two simple controls, with MDG's
+ * plan as the default. The game and the full calculations are one click
+ * deeper. The gains and the reassurance are written as prose, not tiles.
  */
-export function FrontPage() {
+export function CostPage() {
   const navigate = useNavigate();
   const [endYear, setEndYear] = useState(2040);
   const [price, setPrice] = useState<(typeof PRICE_LEVELS)[number]>(
@@ -158,95 +158,56 @@ export function FrontPage() {
       </div>
 
       <h3>Dette får vi igjen</h3>
-      <div className="transition-stats">
-        <div className="transition-stat highlight">
-          <div className="emoji">🌍</div>
-          <div className="value">{avoidedMt.toLocaleString("nb-NO")} Mt</div>
-          <div>
-            CO₂ unngås frem mot 2040 – som å ta{" "}
-            {Math.round(avoidedMt / 2).toLocaleString("nb-NO")} millioner
-            bensinbiler av veien i ett år
-          </div>
-        </div>
-        <div className="transition-stat">
-          <div className="emoji">⚡</div>
-          <div className="value">
-            {energyData.electricity.oilGasConsumptionTwh} TWh
-          </div>
-          <div>
-            strøm frigjøres når plattformene stenges – de bruker i dag nesten
-            like mye strøm som all norsk vindkraft produserer
-          </div>
-        </div>
-        <div className="transition-stat">
-          <div className="emoji">🌬️</div>
-          <div className="value">
-            {energy.replacementTwh.toLocaleString("nb-NO")} TWh
-          </div>
-          <div>
-            ren strøm er alt som trengs for å erstatte nytten av energien
-            sokkelen ellers ville levert i 2040. Høres lite ut? To tredjedeler
-            av fossil energi blir aldri til nytte – den går tapt som varme i
-            eksos og kraftverk. Strøm har nesten ikke slike tap.
-          </div>
-        </div>
-        <div className="transition-stat">
-          <div className="emoji">🏭</div>
-          <div className="value">Ny eksport</div>
-          <div>
-            kraften og kompetansen fra sokkelen gjenbrukes i havvind, hydrogen
-            og grønn industri
-          </div>
-        </div>
+      <div className="front-prose">
+        <p>
+          Det viktigste først: klimaet. Planen unngår{" "}
+          <strong>{avoidedMt.toLocaleString("nb-NO")} millioner tonn CO₂</strong>{" "}
+          frem mot 2040 – som å ta{" "}
+          {Math.round(avoidedMt / 2).toLocaleString("nb-NO")} millioner
+          bensinbiler av veien i et helt år.
+        </p>
+        <p>
+          Så energien. Plattformene bruker i dag{" "}
+          <strong>
+            {energyData.electricity.oilGasConsumptionTwh} TWh strøm
+          </strong>{" "}
+          – nesten like mye som all norsk vindkraft produserer – og den
+          frigjøres når feltene stenges. Og å erstatte selve oljen krever
+          mindre enn man skulle tro:{" "}
+          <strong>
+            {energy.replacementTwh.toLocaleString("nb-NO")} TWh ren strøm
+          </strong>{" "}
+          gir samme nytte som all energien sokkelen ellers ville levert i
+          2040, fordi to tredjedeler av fossil energi uansett går tapt som
+          varme i eksos og kraftverk. Kraften og kompetansen fra sokkelen kan
+          i stedet bygge ny eksport: havvind, hydrogen og grønn industri.
+        </p>
       </div>
 
       <h3>Og Norge står støtt uansett</h3>
-      <div className="transition-steps">
-        <div className="transition-step">
-          <div className="step-emoji">🏦</div>
-          <h4>Verdens største buffer</h4>
-          <div>
-            Oljefondet er verdt rundt{" "}
-            <strong>
-              {OIL_FUND_BN_NOK.toLocaleString("nb-NO")} milliarder
-            </strong>{" "}
-            – omtrent 30 år med dagens oljeinntekter er allerede i banken. Det
-            er dette fondet er til.
-          </div>
-        </div>
-        <div className="transition-step">
-          <div className="step-emoji">🔋</div>
-          <h4>Europas batteribank</h4>
-          <div>
-            Vannmagasinene våre kan lagre{" "}
-            <strong>{RESERVOIR_CAPACITY_TWH} TWh</strong> – omtrent halvparten
-            av all magasinkapasitet i Europa. Vi kan kjøpe billig vindkraft når
-            det blåser, og selge vannkraft dyrt når det er stille.
-          </div>
-        </div>
-        <div className="transition-step">
-          <div className="step-emoji">💧</div>
-          <h4>Ren kraft og overskudd</h4>
-          <div>
-            <strong>98 %</strong> av strømmen vår er allerede fornybar, og vi
-            produserer mer enn vi bruker (
-            {energyData.electricity.productionTwh.toLocaleString("nb-NO")} mot{" "}
-            {energyData.electricity.consumptionTwh.toLocaleString("nb-NO")}{" "}
-            TWh). Få land er bedre rustet for et elektrisk århundre.
-          </div>
-        </div>
-        <div className="transition-step">
-          <div className="step-emoji">🐟</div>
-          <h4>Mer enn olje</h4>
-          <div>
-            Fastlandet eksporterer allerede for rundt{" "}
-            <strong>
-              {MAINLAND_EXPORT_BN_NOK.toLocaleString("nb-NO")} milliarder
-            </strong>{" "}
-            i året – sjømat, industri, kraft og teknologi. Omstillingen bygger
-            videre på noe som finnes.
-          </div>
-        </div>
+      <div className="front-prose">
+        <p>
+          Oljefondet er verdt rundt{" "}
+          <strong>{OIL_FUND_BN_NOK.toLocaleString("nb-NO")} milliarder</strong>{" "}
+          – omtrent 30 år med dagens oljeinntekter står allerede i banken, og
+          det er akkurat denne overgangen fondet er til for. Vannmagasinene
+          våre kan lagre <strong>{RESERVOIR_CAPACITY_TWH} TWh</strong>,
+          omtrent halvparten av all magasinkapasitet i Europa – vi kan kjøpe
+          billig vindkraft når det blåser og selge vannkraft dyrt når det er
+          stille.
+        </p>
+        <p>
+          <strong>98 %</strong> av strømmen vår er allerede fornybar, og vi
+          produserer mer enn vi bruker (
+          {energyData.electricity.productionTwh.toLocaleString("nb-NO")} mot{" "}
+          {energyData.electricity.consumptionTwh.toLocaleString("nb-NO")} TWh).
+          Og fastlandet eksporterer allerede for rundt{" "}
+          <strong>
+            {MAINLAND_EXPORT_BN_NOK.toLocaleString("nb-NO")} milliarder
+          </strong>{" "}
+          i året – sjømat, industri, kraft og teknologi. Omstillingen bygger
+          videre på noe som finnes. Få land er bedre rustet.
+        </p>
       </div>
 
       <div className="front-cta">

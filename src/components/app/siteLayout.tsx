@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { FaLightbulb, FaPlay, FaWind } from "react-icons/fa";
+import { FaCoins, FaLightbulb, FaPlay, FaWind } from "react-icons/fa";
 import { MainButton } from "../ui/mainButton";
 import { Brand } from "./brand";
 
@@ -39,6 +39,15 @@ export function SiteLayout() {
               rowGap: "0.25rem",
             }}
           >
+            <MainButton
+              icon={<FaCoins />}
+              label={"Hva koster det?"}
+              labelSmall={"Kostnad"}
+              title="Se hva utfasing koster – og hva vi får igjen"
+              to="/kostnad"
+              hideLabelOnSmall={false}
+              hideIconOnSmall={false}
+            />
             <MainButton
               icon={<FaWind />}
               label={"Omstilling"}

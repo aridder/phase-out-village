@@ -3,7 +3,8 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { MapRoute } from "../map/mapRoute";
 import { ApplicationContext, PeriodDecision } from "../../applicationContext";
 import { PeriodReportRoute } from "../report/periodReportRoute";
-import { FrontPage } from "./frontPage";
+import { LandingPage } from "./landingPage";
+import { CostPage } from "../cost/costPage";
 import { PhaseOutRoute } from "../phaseout/phaseOutRoute";
 import { ProductionRoute } from "../production/productionRoute";
 import { useSessionState } from "../../hooks/useSessionState";
@@ -34,7 +35,8 @@ function ApplicationRoutes() {
   return (
     <Routes>
       <Route element={<SiteLayout />}>
-        <Route path={"/"} element={<FrontPage />} />
+        <Route path={"/"} element={<LandingPage />} />
+        <Route path={"/kostnad"} element={<CostPage />} />
         <Route path={"/transition"} element={<TransitionRoute />} />
         <Route path={"/advisor"} element={<AdvisorRoute />} />
         <Route path={"/tutorial"} element={<TutorialRoute />} />
