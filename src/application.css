@@ -145,23 +145,12 @@ td {
 }
 
 #app header {
-  display: grid;
+  /* Plain block flow: with a grid here, the track height was computed from
+     the button row's single-line intrinsic size, so when the row wrapped on
+     narrow screens the second line overflowed into the page content */
+  display: block;
   padding-bottom: 0px;
   border-bottom: 1px solid var(--lime);
-  /* grid-template-columns: 1fr 1fr; */
-
-  grid-template-columns: unset;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-
-  /* @media (width > 550px) {
-    grid-template-columns: unset;
-    grid-auto-flow: column;
-    grid-auto-columns: 1fr;
-  } */
-
-  @media (width > 800px) {
-  }
 
   > * {
     border-bottom: 1px solid var(--lime);
