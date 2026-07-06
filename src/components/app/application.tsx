@@ -7,9 +7,9 @@ import { PhaseOutRoute } from "../phaseout/phaseOutRoute";
 import { ProductionRoute } from "../production/productionRoute";
 import { useSessionState } from "../../hooks/useSessionState";
 import { EmissionRoute } from "../emissions/emissionRoute";
-import { ApplicationHeader } from "./applicationHeader";
-import { ApplicationFooter } from "./applicationFooter";
 import { GameOverDialog } from "./gameOverDialog";
+import { SiteLayout } from "./siteLayout";
+import { GameLayout } from "./gameLayout";
 import { PlanRoute } from "../plan/planRoute";
 import { Year } from "../../data/types";
 import { DataViewRoute } from "../dataView/dataViewRoute";
@@ -18,28 +18,43 @@ import { TutorialRoute } from "./tutorialRoute";
 import { AdvisorRoute } from "../advisor/advisorRoute";
 import { TransitionRoute } from "../transition/transitionRoute";
 
+/**
+ * All routes, organized as two layout routes that each own their chrome:
+ *
+ * - SiteLayout: the answer-first pages (front page, transition, advisor,
+ *   tutorial) with a slim brand header and no game UI
+ * - GameLayout: the game itself, with the full cockpit (game navigation,
+ *   journey StatusBar and the guided next-step footer)
+ *
+ * Moving a page between the worlds — or giving one page its own frame —
+ * is a one-line change here, with no hidden route lists anywhere else.
+ */
 function ApplicationRoutes() {
   return (
     <Routes>
-      <Route path={"/"} element={<FrontPage />} />
-      <Route path={"/phaseout"} element={<PhaseOutRoute />} />
-      <Route path={"/map/*"} element={<MapRoute />} />
-      <Route path={"/plan/*"} element={<PlanRoute />} />
-      <Route path={"/emissions/*"} element={<EmissionRoute />} />
-      <Route path={"/production/*"} element={<ProductionRoute />} />
-      <Route path={"/tutorial"} element={<TutorialRoute />} />
-      <Route path={"/advisor"} element={<AdvisorRoute />} />
-      <Route path={"/transition"} element={<TransitionRoute />} />
-      <Route path={"/summary"} element={<GameOverDialog />} />
-      <Route path={"/data/*"} element={<DataViewRoute />} />
-      <Route path={"*"} element={<h2>Not Found</h2>} />
+      <Route element={<SiteLayout />}>
+        <Route path={"/"} element={<FrontPage />} />
+        <Route path={"/transition"} element={<TransitionRoute />} />
+        <Route path={"/advisor"} element={<AdvisorRoute />} />
+        <Route path={"/tutorial"} element={<TutorialRoute />} />
+        <Route path={"*"} element={<h2>Not Found</h2>} />
+      </Route>
+      <Route element={<GameLayout />}>
+        <Route path={"/map/*"} element={<MapRoute />} />
+        <Route path={"/phaseout"} element={<PhaseOutRoute />} />
+        <Route path={"/plan/*"} element={<PlanRoute />} />
+        <Route path={"/emissions/*"} element={<EmissionRoute />} />
+        <Route path={"/production/*"} element={<ProductionRoute />} />
+        <Route path={"/data/*"} element={<DataViewRoute />} />
+        <Route path={"/summary"} element={<GameOverDialog />} />
+      </Route>
     </Routes>
   );
 }
 
 /**
  * The root component for the entire application.
- * 
+ *
  * It manages global state such as the current year and phase-out schedule
  * using sessionStorage (via useSessionState), and provides these values
  * through ApplicationContext to all child components.
@@ -48,19 +63,20 @@ function ApplicationRoutes() {
  * and restarting the simulation entirely.
  *
  * Structure:
- * - <ApplicationHeader /> → top navigation/header
- * - <main> → contains routed pages via <ApplicationRoutes />
- * - <ApplicationFooter /> → bottom navigation/footer
+ * - <ApplicationRoutes /> → layout routes rendering their own
+ *   header/main/footer chrome (SiteLayout or GameLayout)
  */
 export function Application() {
-
   // Constants for start year and end year, and steps
   const startYear = 2025;
   const endYear = 2040;
   const yearStep = 4;
 
   // Persist the current year across sessions (initially "2025")
-  const [year, setYear] = useSessionState<Year>("year", startYear.toString() as Year);
+  const [year, setYear] = useSessionState<Year>(
+    "year",
+    startYear.toString() as Year,
+  );
   // Persist the current phase-out schedule (initially empty)
   const [phaseOut, setPhaseOut] = useSessionState<PhaseOutSchedule>(
     "phaseOutSchedule",
@@ -75,9 +91,9 @@ export function Application() {
 
   /**
    * Advances the simulation to the next 4-year period.
-   * 
+   *
    * Example: 2025 → 2028 → 2032 → ... → 2040.
-   * 
+   *
    * When 2040 is reached, the app navigates to the "/summary" route.
    */
   function proceed() {
@@ -91,7 +107,7 @@ export function Application() {
     });
   }
 
- /**
+  /**
    * Resets the entire simulation back to its starting state:
    * - Year is reset to 2025
    * - All phase-out data is cleared
@@ -115,49 +131,46 @@ export function Application() {
     return Math.round((endYear - startYear) / yearStep) + 1;
   }
 
-/**
- * Returns the final year of the current term.
- *
- * Each term normally lasts `yearStep` years (e.g., 4),
- * but if the current year does not align with a multiple of `yearStep`,
- * it adjusts so that the *end of term* lands on the next multiple of `yearStep`.
- *
- * Examples (yearStep = 4):
- * - 2025 → 2028  (since 2028 is the next multiple of 4 after 2025)
- * - 2028 → 2032
- * - 2032 → 2036
- * - 2036 → 2040
- */
-function getEndOfTermYear(): number {
-  const y = parseInt(year);
-  const remainder = y % yearStep;
-  const nextStep = remainder === 0 ? yearStep : yearStep - remainder;
-  return Math.min(y + nextStep, endYear);
-}
+  /**
+   * Returns the final year of the current term.
+   *
+   * Each term normally lasts `yearStep` years (e.g., 4),
+   * but if the current year does not align with a multiple of `yearStep`,
+   * it adjusts so that the *end of term* lands on the next multiple of `yearStep`.
+   *
+   * Examples (yearStep = 4):
+   * - 2025 → 2028  (since 2028 is the next multiple of 4 after 2025)
+   * - 2028 → 2032
+   * - 2032 → 2036
+   * - 2036 → 2040
+   */
+  function getEndOfTermYear(): number {
+    const y = parseInt(year);
+    const remainder = y % yearStep;
+    const nextStep = remainder === 0 ? yearStep : yearStep - remainder;
+    return Math.min(y + nextStep, endYear);
+  }
 
   return (
     // Context provider: makes the app state and control functions available to children
     <ApplicationContext
-      value={{ 
-        year, 
-        proceed, 
-        restart, 
-        phaseOut, 
-        setPhaseOut, 
-        phaseOutDraft, 
-        setPhaseOutDraft, 
-        getCurrentRound, 
+      value={{
+        year,
+        proceed,
+        restart,
+        phaseOut,
+        setPhaseOut,
+        phaseOutDraft,
+        setPhaseOutDraft,
+        getCurrentRound,
         getTotalRounds,
         startYear,
-        endYear, 
+        endYear,
         yearStep,
         getEndOfTermYear,
-      }}>
-      <ApplicationHeader />
-      <main>
-        <ApplicationRoutes />
-      </main>
-      <ApplicationFooter />
+      }}
+    >
+      <ApplicationRoutes />
     </ApplicationContext>
   );
 }
