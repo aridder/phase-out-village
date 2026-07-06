@@ -238,13 +238,18 @@ async function fetchElectricityBalance() {
 }
 
 /**
- * Commodity groups extracted from the foreign trade table. Labels are matched
- * by keywords ("unntatt"-labels are excluded to avoid remainder categories).
+ * Commodity groups extracted from the foreign trade table, matched by
+ * HS code prefix — the international Harmonized System chapters are stable
+ * and unambiguous, unlike Norwegian labels (label matching famously caught
+ * steel pipes and electric cars):
+ * - 2709: crude petroleum oils
+ * - 2711: petroleum gases (natural gas incl. LNG, and NGL like propane)
+ * - 2716: electrical energy
  */
 const TRADE_GROUPS = [
-  { key: "electricity", keywords: ["elektrisk", "energi"] },
-  { key: "crudeOil", keywords: ["r\u00e5olje"] },
-  { key: "naturalGas", keywords: ["naturgass"] },
+  { key: "electricity", codePrefix: "2716" },
+  { key: "crudeOil", codePrefix: "2709" },
+  { key: "gas", codePrefix: "2711" },
 ] as const;
 
 async function fetchTradeValues() {
@@ -261,25 +266,15 @@ async function fetchTradeValues() {
   for (const variable of meta.variables) {
     if (variable.time || variable.code === "Tid") continue;
     for (const group of TRADE_GROUPS) {
-      const matches = variable.valueTexts
-        .map((text, i) => ({
-          text: text.toLowerCase(),
-          value: variable.values[i],
-        }))
-        .filter(
-          ({ text }) =>
-            group.keywords.every((k) => text.includes(k)) &&
-            !text.includes("unntatt"),
-        );
+      const matches = variable.values.filter((value) =>
+        value.startsWith(group.codePrefix),
+      );
       if (matches.length > 0) {
         commodityCode = variable.code;
-        groupCodes.set(
-          group.key,
-          matches.map((m) => m.value),
-        );
+        groupCodes.set(group.key, matches);
         console.error(
           `Commodity group ${group.key} in ${variable.code}:`,
-          matches.map((m) => `${m.value}`).join(", "),
+          matches.join(", "),
         );
       }
     }
@@ -383,7 +378,7 @@ async function fetchTradeValues() {
   }
 
   const crude = groupValue("crudeOil", "eksport");
-  const gas = groupValue("naturalGas", "eksport");
+  const gas = groupValue("gas", "eksport");
   return {
     tradeYear,
     exportValueBnNok: groupValue("electricity", "eksport"),
@@ -436,7 +431,7 @@ async function main() {
     if (inRange(trade.importValueBnNok, 0.1, 100))
       result.importValueBnNok = trade.importValueBnNok!;
     else verified = false;
-    if (inRange(trade.petroleumExportValueBnNok, 300, 2500))
+    if (inRange(trade.petroleumExportValueBnNok, 600, 2500))
       result.petroleumExportValueBnNok = trade.petroleumExportValueBnNok!;
     else verified = false;
   } catch (error) {
