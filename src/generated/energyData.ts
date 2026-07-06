@@ -15,20 +15,24 @@ export const energyData = {
   /** True when generated against the live SSB/NVE APIs */
   verified: false,
   /** Last 12 months with complete statistics */
-  referenceYear: "2024",
+  referenceYear: "siste 12 md. til 2026M05",
   electricity: {
     /** Total electricity production @unit TWh/year (SSB elektrisitetsbalansen) */
-    productionTwh: 157,
+    productionTwh: 155,
     /** Gross domestic consumption @unit TWh/year */
-    consumptionTwh: 139,
+    consumptionTwh: 142,
     /** Physical export @unit TWh/year */
     exportTwh: 28,
     /** Physical import @unit TWh/year */
-    importTwh: 10,
+    importTwh: 16,
     /** Wind power production @unit TWh/year */
-    windProductionTwh: 17,
+    windProductionTwh: 15,
+    /** Electricity used by oil and gas extraction @unit TWh/year */
+    oilGasConsumptionTwh: 11,
   },
   trade: {
+    /** Calendar year the trade values cover */
+    year: "2024",
     /** Export value of electricity @unit billion NOK/year (SSB utenrikshandel) */
     exportValueBnNok: 15,
     /** Import value of electricity @unit billion NOK/year */

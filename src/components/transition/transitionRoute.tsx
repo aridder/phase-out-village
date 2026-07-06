@@ -180,11 +180,11 @@ export function TransitionRoute() {
           <div className="step-emoji">🔌</div>
           <h4>Strøm er allerede eksportvare</h4>
           <div>
-            I {energyData.referenceYear} eksporterte Norge{" "}
+            Det siste året eksporterte Norge{" "}
             <strong>
               {energyData.electricity.exportTwh.toLocaleString("nb-NO")} TWh
             </strong>{" "}
-            strøm til en verdi av{" "}
+            strøm – i {energyData.trade.year} var krafteksporten verdt{" "}
             <strong>
               {energyData.trade.exportValueBnNok.toLocaleString("nb-NO")}{" "}
               milliarder kroner
@@ -225,8 +225,15 @@ export function TransitionRoute() {
             {energyData.electricity.productionTwh.toLocaleString("nb-NO")} TWh
             strøm og bruker{" "}
             {energyData.electricity.consumptionTwh.toLocaleString("nb-NO")} TWh.
-            Kraftoverskuddet er allerede en del av erstatningen – resten må
-            bygges, og det er dét omstillingen handler om.
+            Og oljeutvinningen bruker selv{" "}
+            <strong>
+              {energyData.electricity.oilGasConsumptionTwh.toLocaleString(
+                "nb-NO",
+              )}{" "}
+              TWh strøm
+            </strong>{" "}
+            i året – nesten like mye som all norsk vindkraft produserer. Den
+            strømmen frigjøres når feltene stenges.
           </div>
         </div>
       </div>

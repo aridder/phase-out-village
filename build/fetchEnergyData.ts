@@ -30,6 +30,7 @@ const fallback = {
   exportTwh: 28,
   importTwh: 10,
   windProductionTwh: 17,
+  oilGasConsumptionTwh: 11,
   exportValueBnNok: 15,
   importValueBnNok: 6,
 };
@@ -229,6 +230,9 @@ async function fetchElectricityBalance() {
     exportTwh: twh(findAcrossDimensions(data, ["eksport"])),
     importTwh: twh(findAcrossDimensions(data, ["import"])),
     windProductionTwh: twh(findAcrossDimensions(data, ["vindkraft"])),
+    oilGasConsumptionTwh: twh(
+      findAcrossDimensions(data, ["utvinning", "råolje"]),
+    ),
   };
 }
 
@@ -241,38 +245,57 @@ async function fetchElectricityTradeValue() {
   );
 
   // Build the query from metadata: find the commodity code for electrical
-  // energy, the import/export variable and the value ContentsCode
-  const query = meta.variables.map((variable) => {
+  // energy, the import/export variable and the value ContentsCode. Large
+  // eliminable dimensions (e.g. partner country) are left out of the query so
+  // the API aggregates them — selecting all their values trips the API's
+  // "Too many values selected" limit.
+  const query = meta.variables.flatMap((variable) => {
     const isTime = variable.time || variable.code === "Tid";
     if (isTime)
-      return {
-        code: variable.code,
-        selection: { filter: "top", values: ["12"] },
-      };
+      // The table is yearly; fetch the two most recent years so we can pick
+      // the last complete one
+      return [
+        {
+          code: variable.code,
+          selection: { filter: "top", values: ["2"] },
+        },
+      ];
     const commodityIndex = variable.values.indexOf("27160000");
     if (commodityIndex >= 0)
-      return {
-        code: variable.code,
-        selection: { filter: "item", values: ["27160000"] },
-      };
+      return [
+        {
+          code: variable.code,
+          selection: { filter: "item", values: ["27160000"] },
+        },
+      ];
     if (variable.code === "ContentsCode") {
       const valueIndex = variable.valueTexts.findIndex((t) =>
         t.toLowerCase().includes("verdi"),
       );
-      return {
-        code: variable.code,
-        selection: {
-          filter: "item",
-          values: [variable.values[valueIndex >= 0 ? valueIndex : 0]],
+      return [
+        {
+          code: variable.code,
+          selection: {
+            filter: "item",
+            values: [variable.values[valueIndex >= 0 ? valueIndex : 0]],
+          },
         },
-      };
+      ];
     }
-    return {
-      code: variable.code,
-      selection: { filter: "item", values: variable.values },
-    };
+    if (variable.elimination) return [];
+    return [
+      {
+        code: variable.code,
+        selection: { filter: "item", values: variable.values },
+      },
+    ];
   });
   const data = await queryStatbank(table, query);
+
+  // Use the second most recent year: the newest one is usually incomplete
+  const years = Object.keys(data.dimension["Tid"].category.index).sort();
+  const tradeYear = years.length > 1 ? years[years.length - 2] : years[0];
+  const yearIndex = data.dimension["Tid"].category.index[tradeYear];
 
   for (const dimCode of data.id) {
     if (dimCode === "Tid") continue;
@@ -284,17 +307,34 @@ async function fetchElectricityTradeValue() {
     );
   }
 
+  // Zero out every value that is not from the chosen trade year, so the
+  // keyword search below only sums that year
+  const tidDim = data.id.indexOf("Tid");
+  const strides: number[] = new Array(data.size.length).fill(1);
+  for (let i = data.size.length - 2; i >= 0; i--)
+    strides[i] = strides[i + 1] * data.size[i + 1];
+  const yearOnly: JsonStat2 = {
+    ...data,
+    value: data.value.map((v, flat) =>
+      Math.floor(flat / strides[tidDim]) % data.size[tidDim] === yearIndex
+        ? v
+        : 0,
+    ),
+  };
+
   const bn = (v: number | undefined) =>
     v === undefined ? undefined : Math.round(v / 1e8) / 10;
   return {
-    exportValueBnNok: bn(findAcrossDimensions(data, ["eksport"])),
-    importValueBnNok: bn(findAcrossDimensions(data, ["import"])),
+    tradeYear,
+    exportValueBnNok: bn(findAcrossDimensions(yearOnly, ["eksport"])),
+    importValueBnNok: bn(findAcrossDimensions(yearOnly, ["import"])),
   };
 }
 
 async function main() {
   let verified = true;
   let periodLabel = "2024";
+  let tradeYear = "2024";
   const result = { ...fallback };
 
   try {
@@ -314,6 +354,9 @@ async function main() {
     if (inRange(balance.windProductionTwh, 5, 60))
       result.windProductionTwh = balance.windProductionTwh!;
     else verified = false;
+    if (inRange(balance.oilGasConsumptionTwh, 3, 30))
+      result.oilGasConsumptionTwh = balance.oilGasConsumptionTwh!;
+    else verified = false;
     periodLabel = balance.periodLabel;
   } catch (error) {
     console.error("Electricity balance fetch failed:", error);
@@ -322,6 +365,7 @@ async function main() {
 
   try {
     const trade = await fetchElectricityTradeValue();
+    tradeYear = trade.tradeYear;
     if (inRange(trade.exportValueBnNok, 1, 100))
       result.exportValueBnNok = trade.exportValueBnNok!;
     else verified = false;
@@ -362,8 +406,12 @@ export const energyData = {
     importTwh: ${result.importTwh},
     /** Wind power production @unit TWh/year */
     windProductionTwh: ${result.windProductionTwh},
+    /** Electricity used by oil and gas extraction @unit TWh/year */
+    oilGasConsumptionTwh: ${result.oilGasConsumptionTwh},
   },
   trade: {
+    /** Calendar year the trade values cover */
+    year: ${JSON.stringify(tradeYear)},
     /** Export value of electricity @unit billion NOK/year (SSB utenrikshandel) */
     exportValueBnNok: ${result.exportValueBnNok},
     /** Import value of electricity @unit billion NOK/year */
