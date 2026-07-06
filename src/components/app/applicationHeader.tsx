@@ -57,7 +57,7 @@ function ActionCard() {
 
   // Otherwise, show current period, buttons to select phase-out fields, tutorial, and restart
   return (
-    <div style={{ height: "100%", display: "flex", flex: 1, flexDirection: "column", padding: "0.5rem" }}>
+    <div style={{ display: "flex", flex: 1, flexDirection: "column", padding: "0.5rem" }}>
 
       <div
         style={{ display: "flex", alignItems: "center", flex: 1, gap: "0.5rem", margin: 0 }}
@@ -102,7 +102,9 @@ export function ApplicationHeader() {
     <header>
       <div style={{ width: "100%", display: "flex", flex: 1, flexDirection: "column", }}>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingLeft: "0.75rem", paddingRight: "0.75rem", paddingTop: "0.20rem", paddingBottom: "0.20rem" }}>
+        {/* flexWrap keeps the button row from forcing horizontal page scroll
+            on narrow screens — buttons flow to a second line instead */}
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", rowGap: "0.25rem", paddingLeft: "0.75rem", paddingRight: "0.75rem", paddingTop: "0.20rem", paddingBottom: "0.20rem" }}>
 
           {isSmall ? null : (
             <div style={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "center" }}>
@@ -132,9 +134,9 @@ export function ApplicationHeader() {
             <ActionCard />
           </div>
 
-          <div>
+          <div style={{ minWidth: 0 }}>
 
-            <div style={{ height: "100%", display: "flex", flex: 1, justifyContent: "end", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{ display: "flex", flex: 1, flexWrap: "wrap", justifyContent: "end", alignItems: "center", gap: "0.5rem", rowGap: "0.25rem" }}>
 
               <MainButton
                 icon={<FaMap />}
