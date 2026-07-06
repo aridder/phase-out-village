@@ -23,9 +23,11 @@ import {
 import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
 import { energyData } from "../../generated/energyData";
 import {
+  DEFENSE_BUDGET_BN_NOK,
   economySummary,
   FUND_WITHDRAWAL_BN_NOK,
   SEAFOOD_EXPORT_BN_NOK,
+  STATE_BUDGET_BN_NOK,
   STATE_NET_CASH_FLOW_BN_NOK,
 } from "../../data/petroleumEconomy";
 import "./transition.css";
@@ -258,9 +260,11 @@ export function TransitionRoute() {
         eksportverdi av råolje og naturgass fra SSB utenrikshandel; statens
         netto kontantstrøm ~{STATE_NET_CASH_FLOW_BN_NOK} mrd (2024, Norsk
         Petroleum); sjømateksport ~{SEAFOOD_EXPORT_BN_NOK} mrd (2024, Norges
-        sjømatråd); fondsuttak ~{FUND_WITHDRAWAL_BN_NOK} mrd (statsbudsjettet).
-        Tapte inntekter er regnet med dagens priser og verdi per produsert
-        enhet. Tallene er forenklede anslag for å vise størrelsesorden.
+        sjømatråd); fondsuttak ~{FUND_WITHDRAWAL_BN_NOK} mrd, statsbudsjettets
+        utgifter ~{STATE_BUDGET_BN_NOK} mrd og forsvarsbudsjett ~
+        {DEFENSE_BUDGET_BN_NOK} mrd (2025). Tapte inntekter er regnet med dagens
+        priser og verdi per produsert enhet. Tallene er forenklede anslag for å
+        vise størrelsesorden.
       </div>
     </div>
   );
@@ -361,6 +365,31 @@ function EconomySection({ schedule }: { schedule: PhaseOutSchedule }) {
               <div>
                 av dagens årlige uttak fra Oljefondet – fondet er bufferen som
                 gjør omstillingen mulig
+              </div>
+            </div>
+            <div className="transition-stat">
+              <div className="emoji">🧾</div>
+              <div className="value">
+                {economy.cumulativeLostStateRevenueBnNok.toLocaleString(
+                  "nb-NO",
+                )}{" "}
+                mrd
+              </div>
+              <div>
+                samlet for hele perioden 2025–2040 – det tilsvarer{" "}
+                {economy.stateBudgetMultiple.toLocaleString("nb-NO")}{" "}
+                statsbudsjett ({STATE_BUDGET_BN_NOK.toLocaleString("nb-NO")}{" "}
+                mrd)
+              </div>
+            </div>
+            <div className="transition-stat">
+              <div className="emoji">🎖️</div>
+              <div className="value">
+                {economy.defenseBudgetMultiple.toLocaleString("nb-NO")} ×
+              </div>
+              <div>
+                forsvarsbudsjettet ({DEFENSE_BUDGET_BN_NOK} mrd) – årstapet i
+                2040 målt i noe staten faktisk bruker penger på
               </div>
             </div>
           </div>

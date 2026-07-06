@@ -30,7 +30,7 @@ export function Dialog({
 }) {
   // Reference to the <dialog> element for direct DOM control.
   const dialogRef = useRef<HTMLDialogElement | null>(null);
-  
+
   useLayoutEffect(() => {
     /**
      * Handles clicks anywhere in the window. If the click occurs outside
@@ -38,8 +38,12 @@ export function Dialog({
      */
     function handleClick(e: MouseEvent) {
       const dialog = dialogRef.current;
-      if (dialog && dialog.open && dialog.contains(e.target as Node)) {
-        // Determine if click is inside the dialog bounds.
+      // Only treat clicks whose target is the <dialog> element itself as
+      // potential backdrop clicks. Clicks on content inside the dialog have a
+      // child as target and must never close it — the previous coordinate
+      // check misfired when the page behind was scrolled, closing the dialog
+      // (and navigating away) on taps inside it on mobile.
+      if (dialog && dialog.open && e.target === dialog) {
         const rect = dialog.getBoundingClientRect();
         const clickedInDialog =
           e.clientX >= rect.left &&
@@ -48,15 +52,10 @@ export function Dialog({
           e.clientY <= rect.bottom;
         if (!clickedInDialog) dialog.close(); // Close if the click was outside.
       }
-      // Erlend: Possible alternative way?
-      // Close only if the click target is *outside* the dialog element
-      // if (!dialog.contains(e.target as Node)) {
-      //   dialog.close();
-      // }
     }
 
     window.addEventListener("click", handleClick); // Attach listeners for close and click events.
-    dialogRef.current?.showModal();  // Show the dialog when mounted.
+    dialogRef.current?.showModal(); // Show the dialog when mounted.
     if (onClose) dialogRef.current?.addEventListener("close", onClose);
 
     // Cleanup: remove all listeners on unmount.

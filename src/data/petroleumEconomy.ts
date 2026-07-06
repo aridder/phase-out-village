@@ -19,6 +19,10 @@ export const STATE_NET_CASH_FLOW_BN_NOK = 661;
 export const SEAFOOD_EXPORT_BN_NOK = 175;
 export const FUND_WITHDRAWAL_BN_NOK = 460;
 export const POPULATION_MILLIONS = 5.6;
+/** Total expenses in the national budget, ~2 900 bn NOK (2025) */
+export const STATE_BUDGET_BN_NOK = 2900;
+/** The defence budget, ~110 bn NOK (2025) */
+export const DEFENSE_BUDGET_BN_NOK = 110;
 
 export type EconomySummary = {
   /** Today's petroleum export value @unit bn NOK/year */
@@ -45,6 +49,15 @@ export type EconomySummary = {
   seafoodMultiple: number;
   /** Lost state revenue as share of the annual fund withdrawal, in percent */
   fundWithdrawalPercent: number;
+  /**
+   * Total state revenue forgone by the plan over the whole game period
+   * 2025–2040, at today's prices @unit bn NOK
+   */
+  cumulativeLostStateRevenueBnNok: number;
+  /** The cumulative loss measured in national budgets (~2 900 bn) */
+  stateBudgetMultiple: number;
+  /** The 2040 annual loss measured in defence budgets (~110 bn/year) */
+  defenseBudgetMultiple: number;
 };
 
 /**
@@ -71,6 +84,14 @@ export function economySummary(phaseOut: PhaseOutSchedule): EconomySummary {
     STATE_NET_CASH_FLOW_BN_NOK * planShare,
   );
 
+  // Sum the plan's yearly production share loss over the whole period —
+  // the plan removes little early on and more toward 2040
+  const cumulativeLostStateRevenueBnNok = Math.round(
+    series
+      .map((s) => Math.max(0, (s.baselineTwh - s.planTwh) / today))
+      .reduce((sum, share) => sum + share * STATE_NET_CASH_FLOW_BN_NOK, 0),
+  );
+
   return {
     petroleumExportValueBnNok: exportValue,
     stateRevenueBnNok: STATE_NET_CASH_FLOW_BN_NOK,
@@ -86,5 +107,11 @@ export function economySummary(phaseOut: PhaseOutSchedule): EconomySummary {
     fundWithdrawalPercent: Math.round(
       (lostStateRevenueBnNok / FUND_WITHDRAWAL_BN_NOK) * 100,
     ),
+    cumulativeLostStateRevenueBnNok,
+    stateBudgetMultiple:
+      Math.round((cumulativeLostStateRevenueBnNok / STATE_BUDGET_BN_NOK) * 10) /
+      10,
+    defenseBudgetMultiple:
+      Math.round((lostStateRevenueBnNok / DEFENSE_BUDGET_BN_NOK) * 10) / 10,
   };
 }
