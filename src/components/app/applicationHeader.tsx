@@ -19,6 +19,7 @@ import { StatusBar } from "../ui/statusBar";
 import { FcViewDetails } from "react-icons/fc";
 import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
 import { MainButton } from "../ui/mainButton";
+import { isGameRoute } from "../../data/gameRoutes";
 
 /**
  * ApplicationHeader component renders the top section of the app.
@@ -36,6 +37,9 @@ export function ApplicationHeader() {
   const gameEnded = year === "2040";
   const navigate = useNavigate();
   const isSmall = useIsSmallScreen();
+  // Outside the game routes only a slim brand header is shown — the status
+  // timeline and game navigation would be meaningless before the game starts
+  const inGame = isGameRoute(location.pathname);
 
   return (
     <header>
@@ -90,9 +94,7 @@ export function ApplicationHeader() {
                 }}
               ></div>
               <div>
-                <a href="https://mdg.no/politikk/utfasing" target="_blank">
-                  Oljespillet
-                </a>
+                <Link to="/">Oljespillet</Link>
               </div>
             </div>
           )}
@@ -109,81 +111,118 @@ export function ApplicationHeader() {
                 rowGap: "0.25rem",
               }}
             >
-              <MainButton
-                icon={<FaMap />}
-                label={"Kart"}
-                labelSmall={"Kart"}
-                to="/map"
-                hideLabelOnSmall={false}
-                hideIconOnSmall={false}
-              />
-
-              <MainButton
-                icon={<BiSolidBarChartAlt2 />}
-                label={"Plan"}
-                labelSmall={"Plan"}
-                to="/plan"
-                hideLabelOnSmall={false}
-                hideIconOnSmall={false}
-              />
-
-              <MainButton
-                icon={<FaLightbulb />}
-                label={"Rådgiver"}
-                labelSmall={"Råd"}
-                title="Få analyse av og forslag til planen din"
-                to="/advisor"
-                hideLabelOnSmall={false}
-                hideIconOnSmall={false}
-              />
-
-              <MainButton
-                icon={<FaWind />}
-                label={"Omstilling"}
-                labelSmall={"Grønt"}
-                title="Se hva som erstatter oljen"
-                to="/transition"
-                hideLabelOnSmall={false}
-                hideIconOnSmall={false}
-              />
-
-              {gameEnded || (
-                <MainButton
-                  icon={<MdHelp />}
-                  label={"Hjelp"}
-                  labelSmall={"Hjelp"}
-                  title="Hjelp"
-                  to="/tutorial"
-                  hideLabelOnSmall={false}
-                  hideIconOnSmall={false}
-                />
+              {!inGame && (
+                <>
+                  <MainButton
+                    icon={<FaWind />}
+                    label={"Omstilling"}
+                    labelSmall={"Grønt"}
+                    title="Se hva som erstatter oljen"
+                    to="/transition"
+                    hideLabelOnSmall={false}
+                    hideIconOnSmall={false}
+                  />
+                  <MainButton
+                    icon={<FaLightbulb />}
+                    label={"Rådgiver"}
+                    labelSmall={"Råd"}
+                    title="Få analyse av og forslag til planen din"
+                    to="/advisor"
+                    hideLabelOnSmall={false}
+                    hideIconOnSmall={false}
+                  />
+                  <MainButton
+                    icon={<FaPlay />}
+                    label={"Spill Oljespillet"}
+                    labelSmall={"Spill"}
+                    title="Lag din egen utfasingsplan"
+                    to="/map"
+                    defaultColor="#a5e34d"
+                    hideLabelOnSmall={false}
+                    hideIconOnSmall={false}
+                  />
+                </>
               )}
 
-              <div
-                style={{
-                  height: "75%",
-                  width: "0.125rem",
-                  backgroundColor: "grey",
-                  opacity: "0.25",
-                  marginLeft: "0.5rem",
-                  marginRight: "0.5rem",
-                }}
-              ></div>
+              {inGame && (
+                <>
+                  <MainButton
+                    icon={<FaMap />}
+                    label={"Kart"}
+                    labelSmall={"Kart"}
+                    to="/map"
+                    hideLabelOnSmall={false}
+                    hideIconOnSmall={false}
+                  />
 
-              <MainButton
-                icon={<FaRedo />}
-                label={"Restart"}
-                labelSmall={"Ny"}
-                title="Start på nytt"
-                onClick={restart}
-                hideLabelOnSmall={false}
-                hideIconOnSmall={false}
-              />
+                  <MainButton
+                    icon={<BiSolidBarChartAlt2 />}
+                    label={"Plan"}
+                    labelSmall={"Plan"}
+                    to="/plan"
+                    hideLabelOnSmall={false}
+                    hideIconOnSmall={false}
+                  />
+
+                  <MainButton
+                    icon={<FaLightbulb />}
+                    label={"Rådgiver"}
+                    labelSmall={"Råd"}
+                    title="Få analyse av og forslag til planen din"
+                    to="/advisor"
+                    hideLabelOnSmall={false}
+                    hideIconOnSmall={false}
+                  />
+
+                  <MainButton
+                    icon={<FaWind />}
+                    label={"Omstilling"}
+                    labelSmall={"Grønt"}
+                    title="Se hva som erstatter oljen"
+                    to="/transition"
+                    hideLabelOnSmall={false}
+                    hideIconOnSmall={false}
+                  />
+
+                  {gameEnded || (
+                    <MainButton
+                      icon={<MdHelp />}
+                      label={"Hjelp"}
+                      labelSmall={"Hjelp"}
+                      title="Hjelp"
+                      to="/tutorial"
+                      hideLabelOnSmall={false}
+                      hideIconOnSmall={false}
+                    />
+                  )}
+
+                  <div
+                    style={{
+                      height: "75%",
+                      width: "0.125rem",
+                      backgroundColor: "grey",
+                      opacity: "0.25",
+                      marginLeft: "0.5rem",
+                      marginRight: "0.5rem",
+                    }}
+                  ></div>
+
+                  <MainButton
+                    icon={<FaRedo />}
+                    label={"Restart"}
+                    labelSmall={"Ny"}
+                    title="Start på nytt"
+                    onClick={restart}
+                    hideLabelOnSmall={false}
+                    hideIconOnSmall={false}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
 
-        <StatusBar />
+        {inGame && <StatusBar />}
       </div>
     </header>
   );

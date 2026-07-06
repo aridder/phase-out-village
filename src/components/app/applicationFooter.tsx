@@ -8,15 +8,7 @@ import { RxReset } from "react-icons/rx";
 import { MainButton } from "../ui/mainButton";
 import { FcViewDetails } from "react-icons/fc";
 
-/** Routes where the game loop is active and the action footer belongs */
-const GAME_ROUTES = [
-  "/map",
-  "/phaseout",
-  "/plan",
-  "/emissions",
-  "/production",
-  "/data",
-];
+import { isGameRoute } from "../../data/gameRoutes";
 
 /**
  * The guided action footer: instead of three context-free buttons on every
@@ -47,8 +39,12 @@ export function ApplicationFooter() {
   const draftCount = Object.keys(phaseOutDraft).length;
   const draftNames = Object.keys(phaseOutDraft);
 
-  // The footer belongs to the game — stay out of the way everywhere else
-  if (!GAME_ROUTES.some((route) => location.pathname.startsWith(route)))
+  // The footer belongs to the game — stay out of the way everywhere else.
+  // On /summary the result dialog carries its own actions.
+  if (
+    !isGameRoute(location.pathname) ||
+    location.pathname.startsWith("/summary")
+  )
     return null;
 
   function runPhaseOut() {
