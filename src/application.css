@@ -195,14 +195,18 @@ dialog .button-row {
 .oilfield-map {
   display: grid;
   height: 100%;
-  grid-template-rows: 1fr 1fr;
+  /* Content first, map second: the guide/details row takes what it needs
+     (up to 60 % of the height, scrolling beyond), the map gets the rest —
+     the map is a supporting visual, not the main attraction */
+  grid-template-rows: fit-content(60%) minmax(0, 1fr);
 
   .map-container {
     height: 100%;
+    min-height: 200px;
   }
 
   .details {
-    overflow-y: scroll;
+    overflow-y: auto;
     padding-bottom: 1em;
     h1 {
       /* width: 100%; */
@@ -219,7 +223,7 @@ dialog .button-row {
 
   @media (width > 600px) {
     grid-template-rows: unset;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(340px, 2fr) 3fr;
   }
 }
 
