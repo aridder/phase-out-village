@@ -34,10 +34,10 @@ export const energyData = {
     /** Calendar year the trade values cover */
     year: "2024",
     /** Export value of electricity @unit billion NOK/year (SSB utenrikshandel) */
-    exportValueBnNok: 20.3,
+    exportValueBnNok: 20.5,
     /** Import value of electricity @unit billion NOK/year */
-    importValueBnNok: 4.8,
+    importValueBnNok: 8.2,
     /** Export value of crude oil + natural gas @unit billion NOK/year */
-    petroleumExportValueBnNok: 1050,
+    petroleumExportValueBnNok: 556.6,
   },
 };
