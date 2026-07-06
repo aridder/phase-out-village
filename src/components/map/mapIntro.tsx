@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
 import { gameData } from "../../data/gameData";
+import { goalCutPercent } from "../../data/gameGoal";
 
 /**
  * The panel next to the map: instead of a bare list of 34 field names, it
@@ -26,6 +27,17 @@ export function MapIntro() {
       }}
     >
       <h2 style={{ margin: 0 }}>Norsk sokkel – {total} felter</h2>
+
+      <div
+        style={{
+          border: "1px solid currentColor",
+          borderRadius: "0.5rem",
+          padding: "0.5rem 0.75rem",
+        }}
+      >
+        🎯 <strong>Målet ditt:</strong> kutt de samlede utslippene med minst{" "}
+        {goalCutPercent()} % innen 2040 – like mye som MDG-planen.
+      </div>
 
       <div style={{ fontSize: "1.05em" }}>
         <strong>{retired}</strong> av {total} felter har fått sluttdato i planen

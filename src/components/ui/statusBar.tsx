@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
 import { gameData, sumOverYears, totalProduction } from "../../data/gameData";
+import { goalCutPercent } from "../../data/gameGoal";
 import "./statusBar.css";
 
 /**
@@ -33,11 +34,12 @@ export function StatusBar() {
     ? "🏁 2040 – reisen er fullført"
     : `${periods[round - 1].years[0]}–${periods[round - 1].years[periods[round - 1].years.length - 1]} · ${round}. stortingsperiode av ${periods.length}`;
 
+  const goal = goalCutPercent();
   const story = finished
     ? `Planen din avviklet ${fieldsClosed} felter og kuttet utslippene mot 2040 med ${cutPercent} %.`
     : fieldsClosed === 0
-      ? `Reisen starter: ${fieldsTotal} felter på sokkelen, målet er 2040.`
-      : `${fieldsClosed} felter har fått sluttdato – utslippene mot 2040 er allerede kuttet ${cutPercent} %.`;
+      ? `Klarer du å kutte minst ${goal} % innen 2040 – like mye som MDG-planen?`
+      : `${fieldsClosed} felter har fått sluttdato – utslippene mot 2040 er kuttet ${cutPercent} % av målet på ${goal} %.`;
 
   return (
     <div className="status-bar" role="status">
@@ -59,8 +61,9 @@ export function StatusBar() {
               </strong>{" "}
               felter
             </span>
-            <span title="Kutt i samlede utslipp 2025–2040 med planen din">
-              🌍 <strong>−{cutPercent} %</strong> CO₂
+            <span title={`Kutt i samlede utslipp 2025–2040 med planen din. Målet er minst ${goal} % – like mye som MDG-planen.`}>
+              🌍 <strong>−{cutPercent} %</strong>
+              <span className="status-goal"> av 🎯 −{goal} %</span>
             </span>
           </span>
         )}
