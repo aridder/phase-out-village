@@ -1,0 +1,117 @@
+.front-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.front-hero h1 {
+  font-size: 2em;
+  margin-bottom: 0.5rem;
+}
+
+.front-hero .subtitle {
+  font-size: 1.15em;
+  max-width: 60ch;
+}
+
+.front-controls {
+  border: 2px solid var(--gran);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.front-controls .control-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.front-controls .control-row > div {
+  flex: 1;
+  min-width: 240px;
+}
+
+.front-controls .chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+.front-controls .chips button.active {
+  background-color: var(--gran);
+  color: var(--lime);
+}
+
+.front-controls input[type="range"] {
+  width: 100%;
+  accent-color: var(--gran);
+}
+
+.front-answer {
+  border: 2px solid currentColor;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.front-answer .big-number {
+  font-size: 3em;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.front-answer .big-label {
+  font-size: 1.2em;
+  margin-top: 0.25rem;
+}
+
+.front-answer .sub-numbers {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.front-answer .sub-numbers > div {
+  min-width: 150px;
+}
+
+.front-answer .sub-numbers .value {
+  font-size: 1.35em;
+  font-weight: bold;
+}
+
+.front-note {
+  font-size: 0.95em;
+  opacity: 0.85;
+  max-width: 70ch;
+}
+
+.front-cta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.front-cta button {
+  font-size: 1.15em;
+  padding: 0.6rem 1rem;
+}
+
+.front-cta button.primary {
+  background-color: var(--gran);
+  color: var(--lime);
+}
+
+.front-disclaimer {
+  font-size: 0.85em;
+  opacity: 0.7;
+}
