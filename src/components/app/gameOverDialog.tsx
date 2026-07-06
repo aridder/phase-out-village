@@ -66,6 +66,9 @@ export function GameOverDialog() {
             <button onClick={() => navigate("/map")} style={{ fontSize: "1.25em" }}>🔍 Se over din plan</button>
           </div>
           <div>
+            <button onClick={() => navigate("/transition")} style={{ fontSize: "1.25em" }}>🔋 Se hva som erstatter oljen</button>
+          </div>
+          <div>
             <button onClick={restart} style={{ fontSize: "1.25em" }}>↺ Prøv på nytt</button>
           </div>
         </div>

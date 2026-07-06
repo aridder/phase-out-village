@@ -41,12 +41,18 @@ As future production is secret and emission is tied to production, the following
   displayed. The revenue is divided into fund contributions and direct budget contributions
 - When the user selects an oil field, the graphs are limited to that oil field
 
-## AI features (this fork)
+## New features (this fork)
 
-This fork adds an **AI climate advisor** to demonstrate useful applications of AI in the energy transition debate.
-All analysis runs locally in the browser on the game's open dataset — no data leaves the page.
+This fork adds features focused on making the phase-out message easier to understand.
+Everything runs locally in the browser on the game's open dataset — no data leaves the page.
 
-- **AI-klimarådgiver** (`/advisor`): analyzes the player's phase-out plan and generates a report in natural language —
+- **Energy transition view** (`/transition`): answers "what replaces the oil?" — the argument the base game leaves
+  out. A three-step explainer shows that only ~35% of the energy in oil becomes useful work (the rest is waste
+  heat), and a chart on a single TWh axis shows fossil energy declining with the player's plan next to the far
+  smaller renewable buildout needed to replace its usefulness. Big relatable numbers (offshore wind turbines,
+  households powered) and a scenario switch between the player's plan, MDG's plan and full phase-out by 2035
+  (`src/data/energyTransition.ts`)
+- **Klimarådgiveren** (`/advisor`): analyzes the player's phase-out plan and generates a report in plain language —
   a climate grade (A+ to F) benchmarked against MDG's reference plan, plus concrete insights such as high-intensity
   fields still running, praise for well-chosen phase-outs, and the climate effect per barrel of forgone production
   (`src/ai/advisorEngine.ts`)

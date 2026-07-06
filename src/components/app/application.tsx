@@ -16,6 +16,7 @@ import { DataViewRoute } from "../dataView/dataViewRoute";
 import { PhaseOutSchedule } from "../../data/gameData";
 import { TutorialRoute } from "./tutorialRoute";
 import { AdvisorRoute } from "../advisor/advisorRoute";
+import { TransitionRoute } from "../transition/transitionRoute";
 
 function ApplicationRoutes() {
   return (
@@ -28,6 +29,7 @@ function ApplicationRoutes() {
       <Route path={"/production/*"} element={<ProductionRoute />} />
       <Route path={"/tutorial"} element={<TutorialRoute />} />
       <Route path={"/advisor"} element={<AdvisorRoute />} />
+      <Route path={"/transition"} element={<TransitionRoute />} />
       <Route path={"/summary"} element={<GameOverDialog />} />
       <Route path={"/data/*"} element={<DataViewRoute />} />
       <Route path={"*"} element={<h2>Not Found</h2>} />

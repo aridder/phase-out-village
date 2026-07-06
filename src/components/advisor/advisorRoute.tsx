@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { FaRobot } from "react-icons/fa";
+import { FaLightbulb } from "react-icons/fa";
 import { ApplicationContext } from "../../applicationContext";
 import { analyzePlan } from "../../ai/advisorEngine";
 import { emissionEquivalents } from "../../ai/emissionEquivalents";
@@ -31,11 +31,11 @@ function useTypewriter(text: string, speedMs: number = 12) {
   return { visible: text.slice(0, length), done: length >= text.length };
 }
 
-/** Short "the AI is thinking" indicator shown before the analysis appears. */
+/** Short "analysis in progress" indicator shown before the report appears. */
 function ThinkingIndicator() {
   return (
     <div className="advisor-thinking">
-      <FaRobot style={{ width: "24px", height: "24px" }} />
+      <FaLightbulb style={{ width: "24px", height: "24px" }} />
       <span>
         Analyserer planen din<span className="dot">.</span>
         <span className="dot">.</span>
@@ -46,7 +46,7 @@ function ThinkingIndicator() {
 }
 
 /**
- * The AI climate advisor page.
+ * The climate advisor page.
  *
  * Analyzes the player's committed phase-out plan and presents:
  * - a grade and a generated natural language summary
@@ -77,7 +77,7 @@ export function AdvisorRoute() {
   return (
     <div className="advisor-page">
       <h2 style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-        <FaRobot /> AI-klimarådgiver
+        <FaLightbulb /> Klimarådgiveren
       </h2>
 
       {thinking ? (
@@ -180,7 +180,7 @@ function PlanOptimizer() {
 
   return (
     <div className="advisor-optimizer">
-      <h3>🎯 La AI-en foreslå en plan</h3>
+      <h3>🎯 Få forslag til en plan</h3>
       <div>
         Velg et klimamål, så finner optimalisereren utfasingsplanen som når
         målet med minst mulig produksjonstap.
