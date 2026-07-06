@@ -29,7 +29,7 @@ export function PhaseOutRoute() {
       <Dialog open={open} onClose={() => navigate(from)}>
         <PhaseOutDialog close={() => setOpen(false)} from={from} />
       </Dialog>
-{/*       <OilFieldMap />
+      {/*       <OilFieldMap />
       <div className="details">
         <OilFieldMapList />
       </div> */}

@@ -35,7 +35,6 @@
   }
 
   .dialog-information-container {
-
   }
 
   .phaseout-latest-oilfield {
@@ -124,4 +123,81 @@
   padding: 0.2rem;
   border-radius: 0.25rem;
   border: 1px solid #ccc;
+}
+
+/* --- Field rows with key data (phase-out selector) --- */
+.field-row-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.45rem 0.5rem;
+  cursor: pointer;
+}
+
+.field-row-label input[type="checkbox"] {
+  margin-top: 0.3rem;
+}
+
+.field-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.field-name {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.field-badge {
+  font-size: 0.72em;
+  font-weight: 600;
+  border: 1px solid #c77400;
+  color: #c77400;
+  border-radius: 999px;
+  padding: 0 0.45rem;
+  white-space: nowrap;
+}
+
+.field-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  font-size: 0.85em;
+  opacity: 0.9;
+  margin-top: 0.15rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.field-intensity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.intensity-bar {
+  display: inline-block;
+  width: 72px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(128, 128, 128, 0.25);
+  overflow: hidden;
+}
+
+.intensity-bar .fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: #c0392b;
+}
+
+.phaseout-checkboxes ul {
+  list-style: none;
+}
+
+.phaseout-checkboxes li::marker {
+  content: "";
 }

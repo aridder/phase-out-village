@@ -19,6 +19,7 @@ import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
 
 /** Keys that can be used to sort oil fields in PhaseOutDialog. */
 type SortKey =
+  | "recommended"
   | "alphabetical"
   | "totalProduction"
   | "emission"
@@ -64,8 +65,15 @@ export function PhaseOutDialog({
   close: () => void;
   from: string;
 }) {
-  const { year, proceed, phaseOut, setPhaseOut, phaseOutDraft, setPhaseOutDraft, getEndOfTermYear } =
-    useContext(ApplicationContext);
+  const {
+    year,
+    proceed,
+    phaseOut,
+    setPhaseOut,
+    phaseOutDraft,
+    setPhaseOutDraft,
+    getEndOfTermYear,
+  } = useContext(ApplicationContext);
 
   // Draft selection state for the current period
   // const [draft, setDraft] = useState<PhaseOutSchedule>({});
@@ -76,7 +84,7 @@ export function PhaseOutDialog({
   const isSmall = useIsSmallScreen();
   const isDarkMode = usePrefersDarkMode();
 
-  const [sortKey, setSortKey] = useState<SortKey>("alphabetical");
+  const [sortKey, setSortKey] = useState<SortKey>("recommended");
 
   // Latest selected field for displaying charts
   const [latestSelectedField, setLatestSelectedField] =
@@ -186,18 +194,53 @@ export function PhaseOutDialog({
   //     return (bData?.[sortKey]?.value ?? -Infinity) - (aData?.[sortKey]?.value ?? -Infinity); // descending
   //   });
 
-  const sortedFields = useMemo(() => {
-    return Object.keys(gameData.data)
+  // Key figures per field for the current year, plus a "worst first" score
+  // that combines size (emissions) and inefficiency (emissions per barrel)
+  const fieldRows = useMemo(() => {
+    const rows = Object.keys(gameData.data)
       .filter((k) => !(k in phaseOut))
-      .sort((a, b) => {
-        const aData = gameData.data[a]?.[year];
-        const bData = gameData.data[b]?.[year];
-
-        if (sortKey === "alphabetical") return a.localeCompare(b);
-
-        return (bData?.[sortKey]?.value ?? -Infinity) - (aData?.[sortKey]?.value ?? -Infinity);
+      .map((k) => {
+        const d = gameData.data[k]?.[year];
+        return {
+          field: k as OilfieldName,
+          emission: d?.emission?.value ?? 0,
+          production: d?.totalProduction?.value ?? 0,
+          intensity: d?.emissionIntensity?.value ?? 0,
+        };
       });
-  }, [gameData.data, phaseOut, sortKey, year]);
+    const maxEmission = Math.max(1, ...rows.map((r) => r.emission));
+    const maxIntensity = Math.max(1, ...rows.map((r) => r.intensity));
+    // Shelf average intensity in kg CO2 per barrel, for the versting badge
+    const totalEmissionAll = rows.reduce((sum, r) => sum + r.emission, 0);
+    const totalProductionAll = rows.reduce((sum, r) => sum + r.production, 0);
+    const shelfAvgIntensity =
+      totalProductionAll > 0
+        ? (totalEmissionAll * 1000) / (totalProductionAll * 6.2898 * 1_000_000)
+        : 0;
+    return rows.map((r) => ({
+      ...r,
+      score: r.emission / maxEmission + r.intensity / maxIntensity,
+      intensityShare: r.intensity / maxIntensity,
+      isWorst: r.intensity > shelfAvgIntensity * 1.5,
+    }));
+  }, [phaseOut, year]);
+
+  const sortedRows = useMemo(() => {
+    return [...fieldRows].sort((a, b) => {
+      switch (sortKey) {
+        case "alphabetical":
+          return a.field.localeCompare(b.field);
+        case "totalProduction":
+          return b.production - a.production;
+        case "emission":
+          return b.emission - a.emission;
+        case "emissionIntensity":
+          return b.intensity - a.intensity;
+        default:
+          return b.score - a.score;
+      }
+    });
+  }, [fieldRows, sortKey]);
 
   // Calculate total production/emission reductions for draft fields
   const totalOilProduction = sumFieldValues(
@@ -226,11 +269,20 @@ export function PhaseOutDialog({
   function getSortKeyTranslation(str: string) {
     let translation = str;
     switch (str) {
-      case "alphabetical": translation = "Alfabetisk"; break;
-      case "totalProduction": translation = "Total produksjon"; break;
-      case "emission": translation = "Utslipp"; break;
-      case "emissionIntensity": translation = "Utslippsintensitet"; break;
-      default: break;
+      case "alphabetical":
+        translation = "Alfabetisk";
+        break;
+      case "totalProduction":
+        translation = "Total produksjon";
+        break;
+      case "emission":
+        translation = "Utslipp";
+        break;
+      case "emissionIntensity":
+        translation = "Utslippsintensitet";
+        break;
+      default:
+        break;
     }
     return translation;
   }
@@ -238,11 +290,20 @@ export function PhaseOutDialog({
   function getMeasurementUnit(str: string) {
     let measurement = "";
     switch (str) {
-      case "alphabetical": measurement = ""; break;
-      case "totalProduction": measurement = "Sm³"; break;
-      case "emission": measurement = "tonn CO₂"; break;
-      case "emissionIntensity": measurement = "kg CO₂e/Sm³"; break;
-      default: break;
+      case "alphabetical":
+        measurement = "";
+        break;
+      case "totalProduction":
+        measurement = "Sm³";
+        break;
+      case "emission":
+        measurement = "tonn CO₂";
+        break;
+      case "emissionIntensity":
+        measurement = "kg CO₂e/Sm³";
+        break;
+      default:
+        break;
     }
     return measurement;
   }
@@ -261,32 +322,39 @@ export function PhaseOutDialog({
   }
 
   return (
-    <form className="" onSubmit={handleSubmit} style={{ width: "100%", all: "unset" }}>
-
-      <div style={{
-        width: "100%",
-        minWidth: isSmall ? "" : "612px",
-        maxWidth: "1024px",
-        paddingTop: "1rem",
-        paddingLeft: "1rem",
-        paddingRight: "1rem",
-        backgroundColor: isDarkMode ? "#133600" : "#e0ffb2",
-        color: isDarkMode ? 'inherit' : 'black',
-        // color: "#e0ffb2",
-      }}>
-
-        <div className={``} style={{
-          display: isSmall ? "block" : "none",
-          position: isSmall ? "fixed" : "sticky",
-          top: "1rem",
-          right: "1rem",
-          zIndex: "3"
-        }}>
+    <form
+      className=""
+      onSubmit={handleSubmit}
+      style={{ width: "100%", all: "unset" }}
+    >
+      <div
+        style={{
+          width: "100%",
+          minWidth: isSmall ? "" : "612px",
+          maxWidth: "1024px",
+          paddingTop: "1rem",
+          paddingLeft: "1rem",
+          paddingRight: "1rem",
+          backgroundColor: isDarkMode ? "#133600" : "#e0ffb2",
+          color: isDarkMode ? "inherit" : "black",
+          // color: "#e0ffb2",
+        }}
+      >
+        <div
+          className={``}
+          style={{
+            display: isSmall ? "block" : "none",
+            position: isSmall ? "fixed" : "sticky",
+            top: "1rem",
+            right: "1rem",
+            zIndex: "3",
+          }}
+        >
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              navigate(from)
+              navigate(from);
             }}
             title="Tilbake"
           >
@@ -303,100 +371,103 @@ export function PhaseOutDialog({
                 onClick={(e) => e.stopPropagation()}
                 onChange={(e) => setSortKey(e.target.value as SortKey)}
               >
+                <option value="recommended">
+                  Størst og mest ineffektiv først (anbefalt)
+                </option>
+                <option value="emission">Størst utslipp</option>
+                <option value="emissionIntensity">Mest utslipp per fat</option>
+                <option value="totalProduction">Størst produksjon</option>
                 <option value="alphabetical">Alfabetisk</option>
-                <option value="totalProduction">Total produksjon</option>
-                <option value="emission">Utslipp</option>
-                <option value="emissionIntensity">Utslippsintensitet</option>
               </select>
             </label>
           </div>
 
-          <div style={{ display: isSmall ? "none" : "block", position: isSmall ? "fixed" : "sticky", top: "0.25rem", right: "0.25rem", zIndex: "3" }}>
+          <div
+            style={{
+              display: isSmall ? "none" : "block",
+              position: isSmall ? "fixed" : "sticky",
+              top: "0.25rem",
+              right: "0.25rem",
+              zIndex: "3",
+            }}
+          >
             <button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate(from)
+                navigate(from);
               }}
               title="Tilbake"
             >
               X
             </button>
           </div>
-
         </div>
 
-        <div className="phaseout-checkboxes" style={{ marginTop: "1.5rem", paddingLeft: "1rem" }}>
+        <div
+          className="phaseout-checkboxes"
+          style={{ marginTop: "1.5rem", paddingLeft: "1rem" }}
+        >
           <h3 className="phaseout-header" style={{ marginBottom: "1.5rem" }}>
             Velg felter for avvikling {year}-{getEndOfTermYear()}
           </h3>
           <ul style={{ marginTop: "0.5rem", marginLeft: 0, padding: 0 }}>
-            <li
-              style={{
-                display: "grid",
-                gridTemplateColumns: isSmall ? "1fr 156px" : "1fr 196px",
-                alignItems: "center",
-                marginBottom: "0.5rem",
-                fontWeight: "bold",
-                borderBottom: "1px solid #cccccc80",
-                padding: "0.25rem 0.5rem",
-              }}
-            >
-              <label style={{ paddingLeft: "0rem", fontWeight: "bold", }}>
-                Navn
-              </label>
-              <div style={{ fontWeight: "bold", }}>
-                {getSortKeyTranslation(sortKey)}
-                {sortKey !== "alphabetical" && (
-                  <>
-                    <br />
-                    ({getMeasurementUnit(sortKey)})
-                  </>
-                )}
-              </div>
-            </li>
-            {sortedFields
-              .map((k) => {
-                const isDisabled = k in phaseOut;
-                const dataForYear = gameData.data[k]?.[year];
-                const value =
-                  sortKey === "alphabetical"
-                    ? ""
-                    : dataForYear?.[sortKey]?.value ?? "";
-
-                return (
-                  <li
-                    key={k}
-                    className={`phaseout-row ${isDisabled ? "grayed-out-oilfield-checklist" : ""}`}
-                    style={{ borderBottom: "1px solid #cccccc0e", }}
-                  >
-                    <label
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: isSmall ? "1fr 156px" : "1fr 196px",
-                        alignItems: "center",
-                        width: "100%",
-                        cursor: isDisabled ? "not-allowed" : "pointer",
-                        padding: "0.25rem 0.5rem",
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                        <input
-                          disabled={isDisabled}
-                          type="checkbox"
-                          onChange={(e) => toggle(k, e.target.checked)}
-                          checked={!!draft[k]}
-                          onClick={(e) => e.stopPropagation()} // prevent double toggling
-                        />
-                        {k}
-                      </div>
-                      <div style={{ textAlign: "left", userSelect: "none", pointerEvents: "none" }}>
-                        {value !== "" ? value.toLocaleString("no-NO") : ""}
-                      </div>
-                    </label>
-                  </li>
-                );
-              })}
+            {sortedRows.map((row) => (
+              <li
+                key={row.field}
+                className="phaseout-row"
+                style={{ borderBottom: "1px solid #cccccc2e" }}
+              >
+                <label className="field-row-label">
+                  <input
+                    type="checkbox"
+                    onChange={(e) => toggle(row.field, e.target.checked)}
+                    checked={!!draft[row.field]}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <div className="field-info">
+                    <div className="field-name">
+                      {row.field}
+                      {row.isWorst && (
+                        <span
+                          className="field-badge"
+                          title="Utslipp per fat langt over sokkel-snittet"
+                        >
+                          🔥 versting
+                        </span>
+                      )}
+                    </div>
+                    <div className="field-stats">
+                      <span title={`Utslipp i ${year}`}>
+                        🌫️{" "}
+                        {Math.round(row.emission / 1000).toLocaleString(
+                          "nb-NO",
+                        )}{" "}
+                        kt CO₂/år
+                      </span>
+                      <span title={`Produksjon i ${year}`}>
+                        🛢️ {row.production.toLocaleString("nb-NO")} mill. Sm³/år
+                      </span>
+                      <span
+                        className="field-intensity"
+                        title="Utslipp per fat, målt mot det verste feltet"
+                      >
+                        <span className="intensity-bar">
+                          <span
+                            className="fill"
+                            style={{
+                              width: `${Math.max(3, Math.round(row.intensityShare * 100))}%`,
+                            }}
+                          />
+                        </span>
+                        {Math.round(row.intensity).toLocaleString("nb-NO")}{" "}
+                        kg/fat
+                      </span>
+                    </div>
+                  </div>
+                </label>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -441,30 +512,62 @@ export function PhaseOutDialog({
 
         </div> */}
 
-        <div style={{
-          position: "sticky",
-          height: "auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: "0px",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          padding: "1rem",
-          marginTop: "0.5rem",
-          // backgroundColor: "#133600",
-          borderTop: "1px solid #e0ffb2",
-          backgroundColor: isDarkMode ? "#133600" : "#e0ffb2",
-          color: isDarkMode ? 'inherit' : 'black',
-        }}>
-
-          <div className={"button-row"} style={{ width: "100%", flex: 1, marginTop: "0rem" }}>
-            <button onClick={() => setPhaseOutDraft({})} disabled={Object.keys(phaseOutDraft).length < 1}>Tøm</button>
+        <div
+          style={{
+            position: "sticky",
+            height: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0px",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: "1rem",
+            marginTop: "0.5rem",
+            // backgroundColor: "#133600",
+            borderTop: "1px solid #e0ffb2",
+            backgroundColor: isDarkMode ? "#133600" : "#e0ffb2",
+            color: isDarkMode ? "inherit" : "black",
+          }}
+        >
+          {Object.keys(draft).length > 0 && (
+            <div style={{ marginBottom: "0.5rem", fontSize: "0.95em" }}>
+              Valget fjerner{" "}
+              <strong>
+                ~{Math.round(totalEmission / 1000).toLocaleString("nb-NO")} kt
+                CO₂
+              </strong>{" "}
+              og{" "}
+              <strong>
+                {(
+                  Math.round((totalOilProduction + totalGasProduction) * 10) /
+                  10
+                ).toLocaleString("nb-NO")}{" "}
+                mill. Sm³
+              </strong>{" "}
+              produksjon per år.
+            </div>
+          )}
+          <div
+            className={"button-row"}
+            style={{ width: "100%", flex: 1, marginTop: "0rem" }}
+          >
+            <button
+              onClick={() => setPhaseOutDraft({})}
+              disabled={Object.keys(phaseOutDraft).length < 1}
+            >
+              Tøm
+            </button>
             <button onClick={handleMdgPlanClick}>
               {isSmall ? `Velg MDGs felter` : `Velg felter fra MDGs plan`}
             </button>
-            <button type="submit" disabled={year === "2040"} style={{ flex: 1 }}>
-              ♻ Avvikle {' ' + Object.keys(phaseOutDraft).length + ' '} {isSmall ? `felt` : `oljefelt`}
+            <button
+              type="submit"
+              disabled={year === "2040"}
+              style={{ flex: 1 }}
+            >
+              ♻ Avvikle {" " + Object.keys(phaseOutDraft).length + " "}{" "}
+              {isSmall ? `felt` : `oljefelt`}
             </button>
           </div>
 
@@ -495,11 +598,8 @@ export function PhaseOutDialog({
             </button>
             <button onClick={handleMdgPlanClick}>Velg felter fra MDGs plan</button>
           </div> */}
-
         </div>
-
       </div>
-
     </form>
 
     // <form className="phaseout-dialog" onSubmit={handleSubmit}>
