@@ -67,9 +67,8 @@ export function PhaseOutDialog({
 }) {
   const {
     year,
-    proceed,
+    commitDraft,
     phaseOut,
-    setPhaseOut,
     phaseOutDraft,
     setPhaseOutDraft,
     getEndOfTermYear,
@@ -102,13 +101,15 @@ export function PhaseOutDialog({
     [latestSelectedField],
   );
 
-  // Handles submission: merges draft into main phaseOut state and proceeds to next period
+  // Handles submission: commitDraft() retires the fields, records the
+  // decision and navigates to the period report (or the final summary).
+  // Deliberately does NOT call close(): closing the native dialog fires its
+  // "close" event asynchronously, and the route's onClose would navigate
+  // back and override commitDraft's navigation. Navigating away unmounts
+  // the dialog without firing the event.
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setPhaseOut((phaseOut) => ({ ...phaseOut, ...draft }));
-    setPhaseOutDraft({}); // Clear the draft after submit
-    proceed();
-    close();
+    commitDraft();
   }
 
   const periodEnd = (parseInt(year) + 3).toString();
@@ -129,6 +130,21 @@ export function PhaseOutDialog({
       ),
     );
     setDraft(fields);
+  }
+
+  // Quick pick: adds the five worst remaining fields (size + inefficiency
+  // combined — the same score behind the recommended sort) to the draft
+  function handleWorstClick(e: FormEvent) {
+    e.preventDefault();
+    const worst = [...fieldRows]
+      .sort((a, b) => b.score - a.score)
+      .filter((r) => !draft[r.field])
+      .slice(0, 5);
+    setDraft((d) => ({
+      ...d,
+      ...fromEntries(worst.map((r) => [r.field, year])),
+    }));
+    setLatestSelectedField(worst[worst.length - 1]?.field);
   }
 
   // Removes a field from the draft plan
@@ -557,6 +573,9 @@ export function PhaseOutDialog({
               disabled={Object.keys(phaseOutDraft).length < 1}
             >
               Tøm
+            </button>
+            <button onClick={handleWorstClick} title="Legg til de fem feltene med størst utslipp og dårligst effektivitet">
+              {isSmall ? `⚡ 5 verste` : `⚡ Velg de 5 verste`}
             </button>
             <button onClick={handleMdgPlanClick}>
               {isSmall ? `Velg MDGs felter` : `Velg felter fra MDGs plan`}

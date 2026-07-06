@@ -1,0 +1,120 @@
+.period-report {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.period-report h1 {
+  margin: 0;
+  font-size: 1.7em;
+}
+
+.period-report .pace {
+  border: 1px solid currentColor;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.period-report .pace .verdict-line {
+  font-size: 1.15em;
+  margin-bottom: 0.75rem;
+}
+
+.period-report .goal-meter {
+  position: relative;
+  height: 1.6rem;
+  border: 1px solid currentColor;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.period-report .goal-meter .fill {
+  height: 100%;
+  background-color: #a5e34d;
+  border-radius: 0.8rem;
+  transition: width 0.6s ease-out;
+}
+
+.period-report .goal-meter .goal-mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: currentColor;
+}
+
+.period-report .goal-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85em;
+  opacity: 0.85;
+  margin-top: 0.25rem;
+}
+
+.period-report .decided-fields {
+  display: flex;
+  /* the global ul rule sets column — chips must flow as a wrapped row */
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  list-style: none;
+}
+
+.period-report .decided-fields li {
+  width: fit-content;
+}
+
+.period-report .decided-fields li {
+  border: 1px solid currentColor;
+  border-radius: 2rem;
+  padding: 0.15rem 0.7rem;
+  font-size: 0.9em;
+}
+
+.period-report .world {
+  border: 1px solid currentColor;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.period-report .world h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2em;
+}
+
+.period-report .world .world-headline {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.period-report .world ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.period-report .cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.period-report .cta-row button {
+  font-size: 1.15em;
+}
+
+.period-report .cta-row .primary {
+  background-color: #a5e34d;
+  color: #133600;
+  flex: 1;
+  min-width: 240px;
+}

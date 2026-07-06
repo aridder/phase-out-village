@@ -20,7 +20,7 @@ export function PhaseOutRoute() {
   const [open, setOpen] = useState(true);
 
   // Path to navigate back to after closing the dialog
-  const from = location.state?.from?.pathname || "/production";
+  const from = location.state?.from?.pathname || "/map";
 
   return (
     <div className="oilfield-map">

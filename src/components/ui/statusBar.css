@@ -36,6 +36,11 @@
   font-size: 1.05em;
 }
 
+.status-bar .status-goal {
+  opacity: 0.85;
+  font-size: 0.9em;
+}
+
 /* --- The journey timeline --- */
 .status-timeline {
   display: flex;

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { FaLightbulb, FaMap, FaRecycle, FaRedo, FaWind } from "react-icons/fa";
 import { MdEdit, MdHelp } from "react-icons/md";
 import { BiSolidBarChartAlt2 } from "react-icons/bi";
@@ -152,27 +152,17 @@ function GameHeader() {
 function GameFooter() {
   const {
     year,
-    proceed,
-    setPhaseOut,
+    commitDraft,
     phaseOutDraft,
     setPhaseOutDraft,
     getCurrentRound,
     getTotalRounds,
     getEndOfTermYear,
   } = useContext(ApplicationContext);
-  const navigate = useNavigate();
   const isSmall = useIsSmallScreen();
   const gameEnded = year === "2040";
   const draftCount = Object.keys(phaseOutDraft).length;
   const draftNames = Object.keys(phaseOutDraft);
-
-  function runPhaseOut() {
-    const finalRound = getEndOfTermYear() >= 2040;
-    setPhaseOut((phaseOut) => ({ ...phaseOut, ...phaseOutDraft }));
-    setPhaseOutDraft({});
-    proceed(); // navigates to /summary on the final round
-    if (!finalRound) navigate("/map");
-  }
 
   if (gameEnded)
     return (
@@ -288,7 +278,7 @@ function GameFooter() {
           labelSmall={"Avvikle"}
           title={`Avvikle ${draftCount} felter og gå til neste periode`}
           count={draftCount}
-          onClick={runPhaseOut}
+          onClick={commitDraft}
           defaultColor="#a5e34d"
           hideLabelOnSmall={false}
           hideIconOnSmall={false}

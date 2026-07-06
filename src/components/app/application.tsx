@@ -1,7 +1,8 @@
 import React from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { MapRoute } from "../map/mapRoute";
-import { ApplicationContext } from "../../applicationContext";
+import { ApplicationContext, PeriodDecision } from "../../applicationContext";
+import { PeriodReportRoute } from "../report/periodReportRoute";
 import { FrontPage } from "./frontPage";
 import { PhaseOutRoute } from "../phaseout/phaseOutRoute";
 import { ProductionRoute } from "../production/productionRoute";
@@ -46,6 +47,7 @@ function ApplicationRoutes() {
         <Route path={"/emissions/*"} element={<EmissionRoute />} />
         <Route path={"/production/*"} element={<ProductionRoute />} />
         <Route path={"/data/*"} element={<DataViewRoute />} />
+        <Route path={"/report"} element={<PeriodReportRoute />} />
         <Route path={"/summary"} element={<GameOverDialog />} />
       </Route>
     </Routes>
@@ -87,6 +89,9 @@ export function Application() {
     "phaseOutDraftSchedule",
     {},
   );
+  // Persist the most recently committed decision, for the period report
+  const [lastDecision, setLastDecision] =
+    useSessionState<PeriodDecision | null>("lastDecision", null);
   const navigate = useNavigate();
 
   /**
@@ -108,6 +113,27 @@ export function Application() {
   }
 
   /**
+   * Commits the current draft: retires the drafted fields, records the
+   * decision for the period report, advances to the next period, and
+   * navigates to the report — or straight to the summary after the final
+   * round. Both "avvikle" buttons (footer and field selector) go through
+   * here, so the report step can never be skipped by accident.
+   */
+  function commitDraft() {
+    const toYear = getEndOfTermYear();
+    setLastDecision({
+      round: getCurrentRound(),
+      fromYear: year,
+      toYear,
+      fields: Object.keys(phaseOutDraft),
+    });
+    setPhaseOut((phaseOut) => ({ ...phaseOut, ...phaseOutDraft }));
+    setPhaseOutDraft({});
+    setYear(toYear.toString() as Year);
+    navigate(toYear >= endYear ? "/summary" : "/report");
+  }
+
+  /**
    * Resets the entire simulation back to its starting state:
    * - Year is reset to 2025
    * - All phase-out data is cleared
@@ -117,6 +143,7 @@ export function Application() {
     setYear(startYear.toString() as Year);
     setPhaseOut({});
     setPhaseOutDraft({});
+    setLastDecision(null);
 
     navigate("/");
   }
@@ -157,11 +184,13 @@ export function Application() {
       value={{
         year,
         proceed,
+        commitDraft,
         restart,
         phaseOut,
         setPhaseOut,
         phaseOutDraft,
         setPhaseOutDraft,
+        lastDecision,
         getCurrentRound,
         getTotalRounds,
         startYear,
