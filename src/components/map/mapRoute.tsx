@@ -9,24 +9,23 @@ import { OilfieldName } from "../../data/gameData";
 /**
  * Main route for the oil field map.
  *
- * Displays a list and map of all oil fields, or a specific field based on the URL slug.
- * - Default path ("") shows all oil fields on the map with a details list.
+ * Content first, map second: the guide/details panel leads and the map is
+ * the supporting visual below (mobile) or to the right (desktop).
+ * - Default path ("") shows the play guide with the map of all fields.
  * - Path with a slug (":slug") shows a specific oil field and its details.
  */
 export function MapRoute() {
   return (
     <Routes>
-      {/* Default route: show map and list of all oil fields */}
+      {/* Default route: play guide first, map of all oil fields after */}
       <Route
         path={""}
         element={
           <div className="oilfield-map">
-            <OilFieldMap /> {/* Interactive oil field map */}
             <div className="details">
-              {" "}
-              {/* Sidebar: how to play + progress */}
               <MapIntro />
             </div>
+            <OilFieldMap /> {/* Interactive oil field map */}
           </div>
         }
       />
@@ -41,13 +40,13 @@ const SlugWrapper = () => {
   const { slug } = useParams();
   return (
     <div className="oilfield-map">
-      <OilFieldMap slug={slug as Slugify<OilfieldName>} />{" "}
-      {/* Map focused on a specific oil field */}
       <div className="details">
         {" "}
-        {/* Sidebar with details for this specific oil field */}
+        {/* Key figures for this specific oil field */}
         <OilfieldDetails slug={slug as Slugify<OilfieldName>} />
       </div>
+      <OilFieldMap slug={slug as Slugify<OilfieldName>} />{" "}
+      {/* Map focused on a specific oil field */}
     </div>
   );
 };

@@ -1,13 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
 import { gameData } from "../../data/gameData";
 import { goalCutPercent } from "../../data/gameGoal";
 
 /**
- * The panel next to the map: instead of a bare list of 34 field names, it
- * explains what the player is looking at and what to do next, with the
- * running tally of retired fields.
+ * The panel leading the map page: the mission, the running tally, the three
+ * worst remaining fields (so the page helps you decide, not just look), and
+ * the primary CTA into the field selector. The map below/beside is the
+ * supporting visual.
  */
 export function MapIntro() {
   const { year, phaseOut, getCurrentRound, getEndOfTermYear } =
@@ -17,13 +18,37 @@ export function MapIntro() {
   const retired = Object.keys(phaseOut).length;
   const total = gameData.allFields.length;
 
+  // The three worst remaining fields, by the same size + inefficiency score
+  // as the field selector's recommended sort
+  const worst = useMemo(() => {
+    const rows = Object.keys(gameData.data)
+      .filter((f) => !(f in phaseOut))
+      .map((f) => {
+        const d = gameData.data[f]?.[year];
+        return {
+          field: f,
+          emission: d?.emission?.value ?? 0,
+          intensity: d?.emissionIntensity?.value ?? 0,
+        };
+      });
+    const maxEmission = Math.max(1, ...rows.map((r) => r.emission));
+    const maxIntensity = Math.max(1, ...rows.map((r) => r.intensity));
+    return rows
+      .map((r) => ({
+        ...r,
+        score: r.emission / maxEmission + r.intensity / maxIntensity,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3);
+  }, [phaseOut, year]);
+
   return (
     <div
       style={{
-        padding: "1rem 1.25rem",
+        padding: "0.75rem 1.25rem",
         display: "flex",
         flexDirection: "column",
-        gap: "0.9rem",
+        gap: "0.75rem",
       }}
     >
       <h2 style={{ margin: 0 }}>Norsk sokkel – {total} felter</h2>
@@ -35,13 +60,9 @@ export function MapIntro() {
           padding: "0.5rem 0.75rem",
         }}
       >
-        🎯 <strong>Målet ditt:</strong> kutt de samlede utslippene med minst{" "}
-        {goalCutPercent()} % innen 2040 – like mye som MDG-planen.
-      </div>
-
-      <div style={{ fontSize: "1.05em" }}>
-        <strong>{retired}</strong> av {total} felter har fått sluttdato i planen
-        din.
+        🎯 <strong>Målet ditt:</strong> kutt utslippene minst{" "}
+        {goalCutPercent()} % innen 2040 – like mye som MDG-planen.{" "}
+        <strong>{retired}</strong> av {total} felter har fått sluttdato.
       </div>
 
       {gameEnded ? (
@@ -61,25 +82,41 @@ export function MapIntro() {
         </>
       ) : (
         <>
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}
-          >
+          {worst.length > 0 && (
             <div>
-              <strong>1. Se sokkelen.</strong> Hvert navn på kartet er et olje-
-              og gassfelt: <span style={{ color: "#c0392b" }}>rødt</span> er i
-              drift, grått er avviklet. Trykk på et felt for nøkkeltall.
+              <strong>🔥 Verstingene som er igjen:</strong>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.25rem",
+                  marginTop: "0.35rem",
+                }}
+              >
+                {worst.map((row) => (
+                  <div
+                    key={row.field}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: "0.75rem",
+                      fontSize: "0.95em",
+                    }}
+                  >
+                    <span>
+                      <strong>{row.field}</strong>
+                    </span>
+                    <span style={{ whiteSpace: "nowrap" }}>
+                      🌫️ {Math.round(row.emission / 1000).toLocaleString(
+                        "nb-NO",
+                      )}{" "}
+                      kt/år · {Math.round(row.intensity)} kg/fat
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div>
-              <strong>2. Velg hvem som skal stenges.</strong> I feltvelgeren
-              ligger de største og mest forurensende feltene øverst – det er der
-              utfasing monner mest.
-            </div>
-            <div>
-              <strong>3. Avvikle og gå videre.</strong> Du styrer fire
-              stortingsperioder frem til 2040. Følg utslippskuttet ditt i
-              statuslinjen øverst.
-            </div>
-          </div>
+          )}
 
           <div>
             <button
@@ -89,6 +126,12 @@ export function MapIntro() {
               ✏️ Velg felter for {year}–{getEndOfTermYear()} (
               {getCurrentRound()}. periode)
             </button>
+          </div>
+
+          <div style={{ fontSize: "0.9em", opacity: 0.85 }}>
+            Kartet: <span style={{ color: "#c0392b" }}>rødt</span> = i drift,
+            grått = avviklet. Trykk på et felt for nøkkeltall. Du styrer fire
+            stortingsperioder frem til 2040 – følg målet i statuslinjen øverst.
           </div>
         </>
       )}
