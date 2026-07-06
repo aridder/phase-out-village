@@ -19,6 +19,11 @@ jobs:
         with:
           enablement: true
       - run: npm ci
+      # Refresh key power-system figures from SSB's open API at build time,
+      # so the deployed site always shows current numbers. Non-fatal: on
+      # failure the committed (seeded or last fetched) figures are used.
+      - run: npm run data:energy
+        continue-on-error: true
       - run: npm run build
         env:
           # Default to /<repo name>/ so forks deploy without configuring the
