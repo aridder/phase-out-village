@@ -21,6 +21,7 @@ import {
   USEFUL_ENERGY_FACTOR,
 } from "../../data/energyTransition";
 import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
+import { energyData } from "../../generated/energyData";
 import "./transition.css";
 
 ChartJS.register(
@@ -83,8 +84,9 @@ export function TransitionRoute() {
           <div>
             Norske olje- og gassfelt produserer rundt{" "}
             <strong>{baseline2025.toLocaleString("nb-NO")} TWh</strong> energi i
-            året. Nesten alt eksporteres. Til sammenligning bruker hele Norge
-            ca. 140 TWh strøm i året.
+            året. Nesten alt eksporteres. Til sammenligning bruker hele Norge{" "}
+            {energyData.electricity.consumptionTwh.toLocaleString("nb-NO")} TWh
+            strøm i året.
           </div>
         </div>
         <div className="transition-step">
@@ -172,8 +174,70 @@ export function TransitionRoute() {
         </div>
       </div>
 
+      <h3>Norge selger allerede energi til Europa – bare i feil form</h3>
+      <div className="transition-steps">
+        <div className="transition-step">
+          <div className="step-emoji">🔌</div>
+          <h4>Strøm er allerede eksportvare</h4>
+          <div>
+            I {energyData.referenceYear} eksporterte Norge{" "}
+            <strong>
+              {energyData.electricity.exportTwh.toLocaleString("nb-NO")} TWh
+            </strong>{" "}
+            strøm til en verdi av{" "}
+            <strong>
+              {energyData.trade.exportValueBnNok.toLocaleString("nb-NO")}{" "}
+              milliarder kroner
+            </strong>
+            . Utfasing betyr ikke å slutte å selge energi til Europa – det betyr
+            å bytte produkt.
+          </div>
+        </div>
+        <div className="transition-step">
+          <div className="step-emoji">🌬️</div>
+          <h4>Er det realistisk? Sammenlign med i dag</h4>
+          <div>
+            Norsk vindkraft produserer allerede{" "}
+            <strong>
+              {energyData.electricity.windProductionTwh.toLocaleString("nb-NO")}{" "}
+              TWh
+            </strong>{" "}
+            i året. Erstatningsbehovet i dette scenarioet (
+            {summary.replacementTwh.toLocaleString("nb-NO")} TWh) tilsvarer{" "}
+            <strong>
+              {(
+                Math.round(
+                  (summary.replacementTwh /
+                    energyData.electricity.windProductionTwh) *
+                    10,
+                ) / 10
+              ).toLocaleString("nb-NO")}{" "}
+              ganger
+            </strong>{" "}
+            dagens norske vindkraftproduksjon – fordelt over 15 år.
+          </div>
+        </div>
+        <div className="transition-step">
+          <div className="step-emoji">⚖️</div>
+          <h4>Vi har allerede overskudd</h4>
+          <div>
+            Norge produserer{" "}
+            {energyData.electricity.productionTwh.toLocaleString("nb-NO")} TWh
+            strøm og bruker{" "}
+            {energyData.electricity.consumptionTwh.toLocaleString("nb-NO")} TWh.
+            Kraftoverskuddet er allerede en del av erstatningen – resten må
+            bygges, og det er dét omstillingen handler om.
+          </div>
+        </div>
+      </div>
+
       <div className="transition-disclaimer">
-        Omregninger: 1 mill. Sm³ o.e. ≈ 10 TWh; ~35 % av fossil energi blir
+        Nøkkeltall om kraftsystemet: SSB (elektrisitetsbalansen og
+        utenrikshandel med varer), {energyData.referenceYear}
+        {energyData.verified
+          ? `, hentet automatisk ${energyData.updatedAt}`
+          : " (foreløpige anslag – oppdateres automatisk fra SSBs åpne API)"}
+        . Omregninger: 1 mill. Sm³ o.e. ≈ 10 TWh; ~35 % av fossil energi blir
         nyttig arbeid (IEA-anslag 30–40 %); én 15 MW havvindturbin produserer
         ~60 GWh/år; en husholdning bruker ~20 000 kWh/år. Tallene er forenklede
         anslag for å vise størrelsesorden.
