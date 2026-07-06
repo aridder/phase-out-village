@@ -105,8 +105,9 @@ export function GameOverDialog() {
             <div className="emoji">⚡</div>
             <div className="value">{energy.phasedOutTwh} TWh</div>
             <div>
-              fossil energi borte i 2040 – nytten erstattes av ~
-              {energy.replacementTwh} TWh ren strøm
+              fossil energi borte i 2040. Bare ~{energy.replacementTwh} TWh ren
+              strøm erstatter nytten – resten var spillvarme fra motorer og
+              kraftverk
             </div>
           </div>
           <div className="transition-stat">
