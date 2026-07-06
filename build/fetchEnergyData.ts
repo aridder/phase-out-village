@@ -260,14 +260,26 @@ async function fetchElectricityTradeValue() {
           selection: { filter: "top", values: ["2"] },
         },
       ];
-    const commodityIndex = variable.values.indexOf("27160000");
-    if (commodityIndex >= 0)
+    // The commodity variable: match "elektrisk energi" by label, since the
+    // exact code format varies between StatBank tables
+    const commodityIndex = variable.valueTexts.findIndex((t) => {
+      const lower = t.toLowerCase();
+      return lower.includes("elektrisk") && lower.includes("energi");
+    });
+    if (commodityIndex >= 0) {
+      console.error(
+        `Commodity match in ${variable.code}: ${variable.values[commodityIndex]} = ${variable.valueTexts[commodityIndex]}`,
+      );
       return [
         {
           code: variable.code,
-          selection: { filter: "item", values: ["27160000"] },
+          selection: {
+            filter: "item",
+            values: [variable.values[commodityIndex]],
+          },
         },
       ];
+    }
     if (variable.code === "ContentsCode") {
       const valueIndex = variable.valueTexts.findIndex((t) =>
         t.toLowerCase().includes("verdi"),
