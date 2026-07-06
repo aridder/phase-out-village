@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import arildHermstad from "./arild-hermstad.png";
+import asbjornRiddervold from "./asbjorn-riddervold.png";
 import "./landingPage.css";
 
 const OLJEPLAN_LINK = "https://mdg.no/oljeplan";
@@ -20,8 +20,8 @@ export function LandingPage() {
 
       <p>
         <img
-          src={arildHermstad}
-          alt="MDG-leder Arild Hermstad peker på deg: Norge trenger en utfasingsplan"
+          src={asbjornRiddervold}
+          alt="Asbjørn Riddervold, som har laget denne videreutviklingen"
         />
         Hei! Jeg heter <strong>Asbjørn Riddervold</strong>, og dette er min
         videreutvikling av{" "}

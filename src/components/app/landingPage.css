@@ -16,10 +16,10 @@
 
 .landing img {
   float: right;
-  max-width: 30%;
+  max-width: 28%;
   margin-left: 1rem;
   margin-bottom: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 50%;
 }
 
 .landing .landing-cta button {
