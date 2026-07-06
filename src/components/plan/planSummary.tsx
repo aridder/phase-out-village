@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { ApplicationContext } from "../../applicationContext";
 import { ProductionReductionChart } from "../production/productionReductionChart";
 import { EmissionStackedBarChart } from "../emissions/emissionStackedBarChart";
@@ -6,7 +6,8 @@ import { EmissionSummaryCard } from "../emissions/emissionSummaryCard";
 import { EmissionForAllFieldsPage } from "../emissions/emissionsForAllFieldsPage";
 import { EmissionSummaryPage } from "../emissions/emissionSummaryPage";
 import { ProductionSummaryPage } from "../production/productionSummaryPage";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { decodePlan, planShareUrl } from "../../data/planShare";
 import { ProductionSummaryCard } from "../production/productionSummaryCard";
 import { gameData, oilEquivalentToBarrel, sumOverYears, totalProduction } from "../../data/gameData";
 import { PlanProgressionBar } from "../ui/planProgressionBar";
@@ -18,11 +19,35 @@ import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
  * production reduction and emission over time based on the phase-out schedule.
  */
 export function PlanSummary() {
-  const { year, phaseOut } = useContext(ApplicationContext);
+  const { year, phaseOut: ownPlan, setPhaseOut } = useContext(ApplicationContext);
   const navigate = useNavigate();
   const location = useLocation();
   const isSmall = useIsSmallScreen();
   const isDarkMode = usePrefersDarkMode();
+  const [searchParams] = useSearchParams();
+  const [copied, setCopied] = useState(false);
+
+  // A plan shared via link ("?delt=...") is shown instead of the player's own
+  const sharedParam = searchParams.get("delt");
+  const sharedPlan = useMemo(
+    () => (sharedParam ? decodePlan(sharedParam) : undefined),
+    [sharedParam],
+  );
+  const isSharedView = !!sharedPlan && Object.keys(sharedPlan).length > 0;
+  const phaseOut = isSharedView ? sharedPlan! : ownPlan;
+
+  /** Copies a share link for the player's own plan to the clipboard. */
+  async function sharePlan() {
+    await navigator.clipboard.writeText(planShareUrl(ownPlan));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  }
+
+  /** Adopts the shared plan as the player's own and leaves the shared view. */
+  function adoptSharedPlan() {
+    setPhaseOut(sharedPlan!);
+    navigate("/plan");
+  }
 
   // Emission summary data
   const years = gameData.gameYears;
@@ -57,8 +82,28 @@ export function PlanSummary() {
       </div>
 
       <h2>
-        Din plan
+        {isSharedView ? "Delt plan" : "Din plan"}
       </h2>
+
+      {isSharedView ? (
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", padding: "1rem", border: "2px dashed currentColor", borderRadius: "0.5rem" }}>
+          <div style={{ flex: 1, minWidth: "220px" }}>
+            📬 Noen har delt en utfasingsplan med deg! Den avvikler{" "}
+            <strong>{Object.keys(sharedPlan!).length} felter</strong>. Du kan
+            gjøre den til din egen plan, eller fortsette med din egen.
+          </div>
+          <button onClick={adoptSharedPlan}>Bruk som min plan</button>
+          <button onClick={() => navigate("/plan")}>Vis min egen plan</button>
+        </div>
+      ) : (
+        Object.keys(ownPlan).length > 0 && (
+          <div>
+            <button onClick={sharePlan} title="Kopier en delbar lenke til planen din">
+              {copied ? "✅ Lenke kopiert!" : "📤 Del planen din"}
+            </button>
+          </div>
+        )
+      )}
 
       <div style={{ 
         width: "100%", 
@@ -76,7 +121,7 @@ export function PlanSummary() {
               Uten inngrep vil oljefeltene produsere <strong style={{ color: isDarkMode ? "white" : "black" }}>{baselineEmRounded} millioner tonn CO₂</strong> innen {gameData.allYears[gameData.allYears.length - 1]}.
             </div>
             <div style={{ marginBottom: "0.5rem" }}>
-              Din plan har så langt redusert utslipp med <strong style={{ color: isDarkMode ? "white" : "black" }}>{preventedEmRounded} millioner tonn CO₂ ({reductionEmPositive}%)</strong>{parseInt(year) > 2025 ? '!' : '.'}
+              {isSharedView ? "Denne planen" : "Din plan"} har så langt redusert utslipp med <strong style={{ color: isDarkMode ? "white" : "black" }}>{preventedEmRounded} millioner tonn CO₂ ({reductionEmPositive}%)</strong>{parseInt(year) > 2025 ? '!' : '.'}
             </div>
             <div style={{ marginBottom: "0.25rem" }}>
               <PlanProgressionBar
@@ -102,7 +147,7 @@ export function PlanSummary() {
               Uten inngrep vil oljefeltene produsere <strong style={{ color: isDarkMode ? "white" : "black" }}>{baselinePrRounded} milliarder fat olje</strong> innen {gameData.allYears[gameData.allYears.length - 1]}.
             </div>
             <div style={{ marginBottom: "0.5rem" }}>
-              Din plan har så langt redusert produksjonen med <strong style={{ color: isDarkMode ? "white" : "black" }}>{preventedPrRounded} milliarder fat olje ({reductionPrPositive}%)</strong>{parseInt(year) > 2025 ? '!' : '.'}
+              {isSharedView ? "Denne planen" : "Din plan"} har så langt redusert produksjonen med <strong style={{ color: isDarkMode ? "white" : "black" }}>{preventedPrRounded} milliarder fat olje ({reductionPrPositive}%)</strong>{parseInt(year) > 2025 ? '!' : '.'}
             </div>
             <div style={{ marginBottom: "0.25rem" }}>
               <PlanProgressionBar

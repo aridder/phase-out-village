@@ -41,6 +41,23 @@ As future production is secret and emission is tied to production, the following
   displayed. The revenue is divided into fund contributions and direct budget contributions
 - When the user selects an oil field, the graphs are limited to that oil field
 
+## AI features (this fork)
+
+This fork adds an **AI climate advisor** to demonstrate useful applications of AI in the energy transition debate.
+All analysis runs locally in the browser on the game's open dataset — no data leaves the page.
+
+- **AI-klimarådgiver** (`/advisor`): analyzes the player's phase-out plan and generates a report in natural language —
+  a climate grade (A+ to F) benchmarked against MDG's reference plan, plus concrete insights such as high-intensity
+  fields still running, praise for well-chosen phase-outs, and the climate effect per barrel of forgone production
+  (`src/ai/advisorEngine.ts`)
+- **Plan optimizer**: pick an emission reduction target (e.g. "cut 60% by 2040") and a strategy, and a greedy
+  optimizer generates the phase-out schedule that reaches the target with the smallest possible production loss.
+  The suggested fields for the current period can be applied to the game with one click (`src/ai/planOptimizer.ts`)
+- **Emission equivalents**: avoided emissions are translated into relatable quantities — petrol cars taken off the
+  road, Oslo–New York flights, years of Norway's total emissions (`src/ai/emissionEquivalents.ts`)
+- **Shareable plans**: the plan page has a "Del planen din" button that encodes the whole phase-out schedule into a
+  compact link, so players can share and compare plans (`src/data/planShare.ts`)
+
 ## Technology
 
 This game is a pure frontend application developed with React. OpenLayers are used for the maps and Chart.js for the
