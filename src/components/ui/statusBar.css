@@ -1,0 +1,133 @@
+.status-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem 0.6rem;
+}
+
+.status-bar .status-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.status-bar .status-period {
+  font-weight: 700;
+  font-size: 1.05em;
+  white-space: nowrap;
+}
+
+.status-bar .status-story {
+  opacity: 0.9;
+  font-size: 0.95em;
+  min-width: 0;
+}
+
+.status-bar .status-stats {
+  display: flex;
+  gap: 1rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-bar .status-stats strong {
+  font-size: 1.05em;
+}
+
+/* --- The journey timeline --- */
+.status-timeline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-segment {
+  flex: 1;
+  position: relative;
+  height: 14px;
+  border-radius: 7px;
+  border: 1px solid rgba(224, 255, 178, 0.45);
+  overflow: hidden;
+}
+
+.status-segment .fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  background: linear-gradient(to right, #79b83a, #a5e34d);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.8s ease;
+}
+
+.status-segment.done .fill {
+  transform: scaleX(1);
+}
+
+.status-segment.current .fill {
+  transform: scaleX(0.5);
+  animation: status-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.status-flag {
+  font-size: 1.1em;
+  line-height: 1;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.status-flag.reached {
+  filter: none;
+  opacity: 1;
+  animation: status-flag-pop 0.6s ease;
+}
+
+@keyframes status-flag-pop {
+  0% {
+    transform: scale(0.4);
+  }
+  70% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.status-years {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72em;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-bar .status-cta button {
+  font-size: 1em;
+  padding: 0.35rem 0.8rem;
+}
+
+@media (width < 600px) {
+  .status-bar .status-story {
+    display: none;
+  }
+  .status-bar .status-stats {
+    gap: 0.75rem;
+    font-size: 0.9em;
+  }
+  .status-bar .status-period {
+    font-size: 0.95em;
+  }
+}
