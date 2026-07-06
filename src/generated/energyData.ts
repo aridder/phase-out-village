@@ -37,5 +37,7 @@ export const energyData = {
     exportValueBnNok: 20.3,
     /** Import value of electricity @unit billion NOK/year */
     importValueBnNok: 4.8,
+    /** Export value of crude oil + natural gas @unit billion NOK/year */
+    petroleumExportValueBnNok: 1107.8,
   },
 };

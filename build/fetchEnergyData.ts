@@ -33,6 +33,7 @@ const fallback = {
   oilGasConsumptionTwh: 11,
   exportValueBnNok: 15,
   importValueBnNok: 6,
+  petroleumExportValueBnNok: 1050,
 };
 
 type JsonStat2 = {
@@ -236,7 +237,22 @@ async function fetchElectricityBalance() {
   };
 }
 
-async function fetchElectricityTradeValue() {
+/**
+ * Commodity groups extracted from the foreign trade table, matched by
+ * HS code prefix — the international Harmonized System chapters are stable
+ * and unambiguous, unlike Norwegian labels (label matching famously caught
+ * steel pipes and electric cars):
+ * - 2709: crude petroleum oils
+ * - 2711: petroleum gases (natural gas incl. LNG, and NGL like propane)
+ * - 2716: electrical energy
+ */
+const TRADE_GROUPS = [
+  { key: "electricity", codePrefix: "2716" },
+  { key: "crudeOil", codePrefix: "2709" },
+  { key: "gas", codePrefix: "2711" },
+] as const;
+
+async function fetchTradeValues() {
   const table = "08801";
   const meta = await getStatbankMetadata(table);
   console.error(
@@ -244,42 +260,47 @@ async function fetchElectricityTradeValue() {
     meta.variables.map((v) => `${v.code} (${v.text})`).join("; "),
   );
 
-  // Build the query from metadata: find the commodity code for electrical
-  // energy, the import/export variable and the value ContentsCode. Large
-  // eliminable dimensions (e.g. partner country) are left out of the query so
-  // the API aggregates them — selecting all their values trips the API's
-  // "Too many values selected" limit.
+  // Find the commodity variable and every code matching one of the groups
+  const groupCodes = new Map<string, string[]>();
+  let commodityCode: string | undefined;
+  for (const variable of meta.variables) {
+    if (variable.time || variable.code === "Tid") continue;
+    for (const group of TRADE_GROUPS) {
+      const matches = variable.values.filter((value) =>
+        value.startsWith(group.codePrefix),
+      );
+      if (matches.length > 0) {
+        commodityCode = variable.code;
+        groupCodes.set(group.key, matches);
+        console.error(
+          `Commodity group ${group.key} in ${variable.code}:`,
+          matches.join(", "),
+        );
+      }
+    }
+    if (commodityCode) break;
+  }
+  if (!commodityCode) throw new Error("no commodity variable matched");
+  const allCodes = [...new Set([...groupCodes.values()].flat())];
+
+  // Build the query from metadata. Large eliminable dimensions (e.g. partner
+  // country) are left out so the API aggregates them — selecting all their
+  // values trips the API's "Too many values selected" limit.
   const query = meta.variables.flatMap((variable) => {
     const isTime = variable.time || variable.code === "Tid";
     if (isTime)
       // The table is yearly; fetch the two most recent years so we can pick
       // the last complete one
       return [
-        {
-          code: variable.code,
-          selection: { filter: "top", values: ["2"] },
-        },
+        { code: variable.code, selection: { filter: "top", values: ["2"] } },
       ];
-    // The commodity variable: match "elektrisk energi" by label, since the
-    // exact code format varies between StatBank tables
-    const commodityIndex = variable.valueTexts.findIndex((t) => {
-      const lower = t.toLowerCase();
-      return lower.includes("elektrisk") && lower.includes("energi");
-    });
-    if (commodityIndex >= 0) {
-      console.error(
-        `Commodity match in ${variable.code}: ${variable.values[commodityIndex]} = ${variable.valueTexts[commodityIndex]}`,
-      );
+    if (variable.code === commodityCode)
       return [
         {
           code: variable.code,
-          selection: {
-            filter: "item",
-            values: [variable.values[commodityIndex]],
-          },
+          selection: { filter: "item", values: allCodes },
         },
       ];
-    }
     if (variable.code === "ContentsCode") {
       const valueIndex = variable.valueTexts.findIndex((t) =>
         t.toLowerCase().includes("verdi"),
@@ -307,39 +328,65 @@ async function fetchElectricityTradeValue() {
   // Use the second most recent year: the newest one is usually incomplete
   const years = Object.keys(data.dimension["Tid"].category.index).sort();
   const tradeYear = years.length > 1 ? years[years.length - 2] : years[0];
-  const yearIndex = data.dimension["Tid"].category.index[tradeYear];
 
-  for (const dimCode of data.id) {
-    if (dimCode === "Tid") continue;
-    console.error(
-      `${table} dim ${dimCode} (bn NOK):`,
-      [...sumPerCategory(data, dimCode)]
-        .map(([k, v]) => `${k}=${(v / 1e9).toFixed(1)}`)
-        .join("; "),
-    );
-  }
-
-  // Zero out every value that is not from the chosen trade year, so the
-  // keyword search below only sums that year
-  const tidDim = data.id.indexOf("Tid");
   const strides: number[] = new Array(data.size.length).fill(1);
   for (let i = data.size.length - 2; i >= 0; i--)
     strides[i] = strides[i + 1] * data.size[i + 1];
-  const yearOnly: JsonStat2 = {
-    ...data,
-    value: data.value.map((v, flat) =>
-      Math.floor(flat / strides[tidDim]) % data.size[tidDim] === yearIndex
-        ? v
-        : 0,
-    ),
-  };
+
+  /** Keeps only values where dimCode's category is in the accepted set. */
+  function filterDim(
+    input: JsonStat2,
+    dimCode: string,
+    accepted: Set<number>,
+  ): JsonStat2 {
+    const dimIndex = input.id.indexOf(dimCode);
+    return {
+      ...input,
+      value: input.value.map((v, flat) =>
+        accepted.has(
+          Math.floor(flat / strides[dimIndex]) % input.size[dimIndex],
+        )
+          ? v
+          : 0,
+      ),
+    };
+  }
+
+  const yearOnly = filterDim(
+    data,
+    "Tid",
+    new Set([data.dimension["Tid"].category.index[tradeYear]]),
+  );
 
   const bn = (v: number | undefined) =>
     v === undefined ? undefined : Math.round(v / 1e8) / 10;
+
+  /** Export/import value in bn NOK for one commodity group in the trade year. */
+  function groupValue(groupKey: string, flow: string): number | undefined {
+    const codes = groupCodes.get(groupKey) ?? [];
+    const commodityIndexes = new Set(
+      codes.map((c) => data.dimension[commodityCode!].category.index[c]),
+    );
+    const grouped = filterDim(yearOnly, commodityCode!, commodityIndexes);
+    return bn(findAcrossDimensions(grouped, [flow]));
+  }
+
+  for (const group of TRADE_GROUPS) {
+    console.error(
+      `${tradeYear} ${group.key}: eksport=${groupValue(group.key, "eksport")} bn, import=${groupValue(group.key, "import")} bn`,
+    );
+  }
+
+  const crude = groupValue("crudeOil", "eksport");
+  const gas = groupValue("gas", "eksport");
   return {
     tradeYear,
-    exportValueBnNok: bn(findAcrossDimensions(yearOnly, ["eksport"])),
-    importValueBnNok: bn(findAcrossDimensions(yearOnly, ["import"])),
+    exportValueBnNok: groupValue("electricity", "eksport"),
+    importValueBnNok: groupValue("electricity", "import"),
+    petroleumExportValueBnNok:
+      crude !== undefined && gas !== undefined
+        ? Math.round((crude + gas) * 10) / 10
+        : undefined,
   };
 }
 
@@ -376,13 +423,16 @@ async function main() {
   }
 
   try {
-    const trade = await fetchElectricityTradeValue();
+    const trade = await fetchTradeValues();
     tradeYear = trade.tradeYear;
     if (inRange(trade.exportValueBnNok, 1, 100))
       result.exportValueBnNok = trade.exportValueBnNok!;
     else verified = false;
     if (inRange(trade.importValueBnNok, 0.1, 100))
       result.importValueBnNok = trade.importValueBnNok!;
+    else verified = false;
+    if (inRange(trade.petroleumExportValueBnNok, 600, 2500))
+      result.petroleumExportValueBnNok = trade.petroleumExportValueBnNok!;
     else verified = false;
   } catch (error) {
     console.error("Trade value fetch failed:", error);
@@ -428,6 +478,8 @@ export const energyData = {
     exportValueBnNok: ${result.exportValueBnNok},
     /** Import value of electricity @unit billion NOK/year */
     importValueBnNok: ${result.importValueBnNok},
+    /** Export value of crude oil + natural gas @unit billion NOK/year */
+    petroleumExportValueBnNok: ${result.petroleumExportValueBnNok},
   },
 };
 `;
