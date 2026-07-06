@@ -131,7 +131,7 @@ export function FrontPage() {
             <div className="value">
               {cumulative.toLocaleString("nb-NO")} mrd
             </div>
-            <div>kroner totalt i redusert sparing</div>
+            <div>kroner mindre spart i Oljefondet over hele perioden</div>
           </div>
           <div>
             <div className="value">
@@ -141,7 +141,10 @@ export function FrontPage() {
           </div>
           <div>
             <div className="value">0 kr</div>
-            <div>kuttes fra dagens velferd – det er sparingen som bremses</div>
+            <div>
+              kuttes fra dagens velferd – oljeinntektene går til sparing i
+              Oljefondet, så det er sparingen som bremses, ikke forbruket
+            </div>
           </div>
         </div>
       </div>
@@ -171,8 +174,8 @@ export function FrontPage() {
             {energyData.electricity.oilGasConsumptionTwh} TWh
           </div>
           <div>
-            strøm frigjøres fra oljeplattformene – nesten like mye som all norsk
-            vindkraft i dag
+            strøm frigjøres når plattformene stenges – de bruker i dag nesten
+            like mye strøm som all norsk vindkraft produserer
           </div>
         </div>
         <div className="transition-stat">
@@ -181,8 +184,10 @@ export function FrontPage() {
             {energy.replacementTwh.toLocaleString("nb-NO")} TWh
           </div>
           <div>
-            fornybar strøm gir samme nytte som hele oljeeksporten – bare 35 % av
-            energimengden, fordi spillvarmen forsvinner
+            ren strøm er alt som trengs for å erstatte nytten av energien
+            sokkelen ellers ville levert i 2040. Høres lite ut? To tredjedeler
+            av fossil energi blir aldri til nytte – den går tapt som varme i
+            eksos og kraftverk. Strøm har nesten ikke slike tap.
           </div>
         </div>
         <div className="transition-stat">

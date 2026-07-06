@@ -159,8 +159,9 @@ export function TransitionRoute() {
             {summary.replacementTwh.toLocaleString("nb-NO")} TWh
           </div>
           <div>
-            fornybar strøm gir samme nytte – bare{" "}
-            {Math.round(USEFUL_ENERGY_FACTOR * 100)} % av energimengden
+            ren strøm er nok til å erstatte nytten av alt sammen – de andre{" "}
+            {100 - Math.round(USEFUL_ENERGY_FACTOR * 100)} % av fossilenergien
+            var spillvarme som ingen fikk glede av
           </div>
         </div>
         <div className="transition-stat">
