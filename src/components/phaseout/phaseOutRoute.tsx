@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog } from "../ui/dialog";
 import { PhaseOutDialog } from "./phaseOutDialog";
-import { OilFieldMap } from "../map/oilFieldMap";
-import { OilFieldMapList } from "../map/oilFieldMapList";
 
 /**
  * Route component for the phase-out map and dialog.
@@ -29,10 +27,6 @@ export function PhaseOutRoute() {
       <Dialog open={open} onClose={() => navigate(from)}>
         <PhaseOutDialog close={() => setOpen(false)} from={from} />
       </Dialog>
-      {/*       <OilFieldMap />
-      <div className="details">
-        <OilFieldMapList />
-      </div> */}
     </div>
   );
 }

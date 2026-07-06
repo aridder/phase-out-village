@@ -1,4 +1,5 @@
 import { FeatureLike } from "ol/Feature";
+import { getUid } from "ol/util";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import { Point } from "ol/geom";
 import { createEmpty, extend, getCenter } from "ol/extent";
@@ -22,6 +23,29 @@ const oilfieldSource = new VectorSource({
 /** Vector source containing all oilfield features loaded from GeoJSON. */
 function oilfieldName(f: FeatureLike) {
   return f.getProperties()["fldName"];
+}
+
+/**
+ * The one feature per aggregate field that carries the name label on the
+ * map — the largest polygon, so multi-part fields like Troll get a single
+ * label instead of one per fragment.
+ */
+let labelFeatureIds = new Set<string>();
+
+function computeLabelFeatures() {
+  // Plain object (the name Map is taken by OpenLayers in this file)
+  const best: Record<string, { id: string; area: number }> = {};
+  for (const f of oilfieldSource.getFeatures()) {
+    const aggregate = aggregateOilFields[oilfieldName(f)];
+    if (!aggregate) continue;
+    const extent = f.getGeometry()?.getExtent();
+    if (!extent) continue;
+    const area = (extent[2] - extent[0]) * (extent[3] - extent[1]);
+    if (!best[aggregate] || area > best[aggregate].area)
+      best[aggregate] = { id: getUid(f), area };
+  }
+  labelFeatureIds = new Set(Object.values(best).map((b) => b.id));
+  oilfieldSource.changed();
 }
 
 /**
@@ -71,25 +95,25 @@ function showFieldNameStyle(f: FeatureLike, resolution: number) {
 }
 
 /**
- * Returns a style with smaller, optional text for the field name.
- * Used for unselected or background oilfields.
- * @param f FeatureLike
- * @param resolution Map resolution
+ * Always-visible name label anchored to the polygon center, one per
+ * aggregate field. The layer's declutter option hides labels that would
+ * collide at low zoom; zooming in reveals the rest.
  */
-function showFieldNameIfAvailableStyle(f: FeatureLike, resolution: number) {
+function fieldLabelStyle(f: FeatureLike, resolution: number) {
   const zoom = Math.round(Math.log2(15643.03392804097 / resolution));
-  const fontSize = Math.max(10, Math.min(16, 6 + zoom));
+  const fontSize = Math.max(11, Math.min(16, 6 + zoom));
 
   return new Style({
     text: new Text({
       font: `${fontSize}px sans-serif`,
-      text: oilfieldName(f),
-      overflow: false,
+      text: aggregateOilFields[oilfieldName(f)] ?? oilfieldName(f),
+      overflow: true,
       placement: "point",
       fill: new Fill({ color: "white" }),
-      stroke: new Stroke({ color: "black", width: 1.5 }),
-      offsetY: -5,
+      stroke: new Stroke({ color: "black", width: 2 }),
+      offsetY: -6,
     }),
+    geometry: new Point(getCenter(f.getGeometry()!.getExtent())),
   });
 }
 
@@ -194,6 +218,7 @@ export function useOilfieldLayer(map: Map, slug: string | undefined) {
   useEffect(() => {
     // Define the handler with a stable reference for cleanup
     function handleFeaturesLoadEnd() {
+      computeLabelFeatures();
       selectOilField();
     }
 
@@ -246,15 +271,22 @@ export function useOilfieldLayer(map: Map, slug: string | undefined) {
     (f: FeatureLike, resolution: number) => Style[]
   >(() => {
     return (f: FeatureLike, resolution: number): Style[] => {
-      return isSelected(f)
-        ? [selectedStyle(f), showFieldNameStyle(f, resolution)]
-        : [unselectedStyle(f), showFieldNameIfAvailableStyle(f, resolution)];
+      if (isSelected(f))
+        return [selectedStyle(f), showFieldNameStyle(f, resolution)];
+      return labelFeatureIds.has(getUid(f))
+        ? [unselectedStyle(f), fieldLabelStyle(f, resolution)]
+        : [unselectedStyle(f)];
     };
   }, [selectedFieldNames, selectedStyle, unselectedStyle]);
 
   // Create the vector layer with source and styling
   const oilfieldLayer = useMemo(
-    () => new VectorLayer({ source: oilfieldSource, style: oilfieldStyle }),
+    () =>
+      new VectorLayer({
+        source: oilfieldSource,
+        style: oilfieldStyle,
+        declutter: true,
+      }),
     [oilfieldStyle],
   );
   return { oilfieldLayer };

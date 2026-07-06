@@ -1,7 +1,7 @@
 import { OilFieldMap } from "./oilFieldMap";
 import { Route, Routes, useParams } from "react-router-dom";
 import React from "react";
-import { OilFieldMapList } from "./oilFieldMapList";
+import { MapIntro } from "./mapIntro";
 import { OilfieldDetails } from "./oilfieldDetails";
 import { Slugify } from "../../data/slugify";
 import { OilfieldName } from "../../data/gameData";
@@ -22,13 +22,16 @@ export function MapRoute() {
         element={
           <div className="oilfield-map">
             <OilFieldMap /> {/* Interactive oil field map */}
-            <div className="details"> {/* Sidebar/details panel listing all oil fields */}
-              <OilFieldMapList />
+            <div className="details">
+              {" "}
+              {/* Sidebar: how to play + progress */}
+              <MapIntro />
             </div>
           </div>
         }
       />
-      <Route path={":slug"} element={<SlugWrapper />} /> {/* Route for a specific oil field based on slug */}
+      <Route path={":slug"} element={<SlugWrapper />} />{" "}
+      {/* Route for a specific oil field based on slug */}
     </Routes>
   );
 }
@@ -38,8 +41,11 @@ const SlugWrapper = () => {
   const { slug } = useParams();
   return (
     <div className="oilfield-map">
-      <OilFieldMap slug={slug as Slugify<OilfieldName>} /> {/* Map focused on a specific oil field */}
-      <div className="details"> {/* Sidebar with details for this specific oil field */}
+      <OilFieldMap slug={slug as Slugify<OilfieldName>} />{" "}
+      {/* Map focused on a specific oil field */}
+      <div className="details">
+        {" "}
+        {/* Sidebar with details for this specific oil field */}
         <OilfieldDetails slug={slug as Slugify<OilfieldName>} />
       </div>
     </div>
