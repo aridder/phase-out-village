@@ -1,18 +1,22 @@
 import * as fs from "fs";
 
 /**
- * Fetches key figures about the Norwegian power system from open APIs and
- * regenerates src/generated/energyData.ts.
+ * Fetches key figures about the Norwegian power system from SSB's open
+ * StatBank API and regenerates src/generated/energyData.ts.
  *
  * Sources:
- * - SSB StatBank table 12824 "Elektrisitetsbalansen (MWh)":
- *   production, consumption, import, export and wind production per month
- * - SSB StatBank table 08801 "Utenrikshandel med varer":
- *   import/export value of electrical energy (commodity code 27160000)
+ * - The electricity balance ("elektrisitetsbalanse"): production, consumption,
+ *   import, export and wind production per month. The table is FOUND VIA
+ *   SEARCH rather than hardcoded, because SSB regularly discontinues tables
+ *   and publishes successors (12824 stopped at 2023M12, for example).
+ * - "Utenrikshandel med varer" (table 08801): import/export value of
+ *   electrical energy (commodity code 27160000). The query is built from the
+ *   table's own metadata so variable codes are never guessed.
  *
  * The script is defensive: each source is fetched independently, results are
  * sanity-checked against plausible ranges, and on any failure the seeded
- * fallback value is kept for that field. This makes it safe to run from CI.
+ * fallback value is kept for that field. It also prints the categories it
+ * found to stderr, so a CI log is enough to diagnose schema drift.
  *
  * Usage: npx tsx build/fetchEnergyData.ts
  */
@@ -45,6 +49,18 @@ type JsonStat2 = {
   value: (number | null)[];
 };
 
+type StatbankMetadata = {
+  title: string;
+  variables: {
+    code: string;
+    text: string;
+    values: string[];
+    valueTexts: string[];
+    time?: boolean;
+    elimination?: boolean;
+  }[];
+};
+
 async function queryStatbank(
   table: string,
   query: object[],
@@ -55,16 +71,27 @@ async function queryStatbank(
     body: JSON.stringify({ query, response: { format: "json-stat2" } }),
   });
   if (!response.ok)
-    throw new Error(`SSB table ${table}: HTTP ${response.status}`);
+    throw new Error(
+      `SSB table ${table}: HTTP ${response.status}: ${(await response.text()).slice(0, 200)}`,
+    );
   return (await response.json()) as JsonStat2;
 }
 
-async function getStatbankMetadata(table: string): Promise<{
-  variables: { code: string; values: string[]; valueTexts: string[] }[];
-}> {
+async function getStatbankMetadata(table: string): Promise<StatbankMetadata> {
   const response = await fetch(`https://data.ssb.no/api/v0/no/table/${table}`);
   if (!response.ok)
     throw new Error(`SSB table ${table} metadata: HTTP ${response.status}`);
+  return await response.json();
+}
+
+async function searchStatbankTables(
+  query: string,
+): Promise<{ id: string; title: string }[]> {
+  const response = await fetch(
+    `https://data.ssb.no/api/v0/no/table/?query=${encodeURIComponent(query)}`,
+  );
+  if (!response.ok)
+    throw new Error(`SSB table search "${query}": HTTP ${response.status}`);
   return await response.json();
 }
 
@@ -89,13 +116,20 @@ function sumPerCategory(data: JsonStat2, dimCode: string): Map<string, number> {
   return result;
 }
 
-function findByKeyword(
-  sums: Map<string, number>,
+/**
+ * Searches every non-time dimension of a json-stat2 response for a category
+ * whose label contains all keywords, and returns its total.
+ */
+function findAcrossDimensions(
+  data: JsonStat2,
   keywords: string[],
 ): number | undefined {
-  for (const [label, value] of sums) {
-    const lower = label.toLowerCase();
-    if (keywords.every((k) => lower.includes(k))) return value;
+  for (const dimCode of data.id) {
+    if (dimCode === "Tid") continue;
+    for (const [label, value] of sumPerCategory(data, dimCode)) {
+      const lower = label.toLowerCase();
+      if (keywords.every((k) => lower.includes(k))) return value;
+    }
   }
   return undefined;
 }
@@ -104,63 +138,157 @@ function inRange(value: number | undefined, min: number, max: number) {
   return value !== undefined && value >= min && value <= max;
 }
 
-async function fetchElectricityBalance() {
-  const meta = await getStatbankMetadata("12824");
-  const contents = meta.variables.find((v) => v.code === "ContentsCode");
-  if (!contents) throw new Error("table 12824: no ContentsCode variable");
+const BALANCE_KEYWORDS = [
+  ["produksjon"],
+  ["bruttoforbruk"],
+  ["eksport"],
+  ["import"],
+  ["vindkraft"],
+];
 
-  const data = await queryStatbank("12824", [
-    {
-      code: "ContentsCode",
-      selection: { filter: "item", values: contents.values },
-    },
-    { code: "Tid", selection: { filter: "top", values: ["12"] } },
-  ]);
+/**
+ * Finds the current (non-discontinued) monthly electricity balance table by
+ * searching StatBank, then verifies from metadata that it actually contains
+ * the balance categories and recent months before using it.
+ */
+async function findBalanceTable(): Promise<{
+  table: string;
+  meta: StatbankMetadata;
+}> {
+  const candidates = await searchStatbankTables("elektrisitetsbalanse");
+  console.error(
+    "Balance table candidates:",
+    candidates.map((c) => `${c.id}: ${c.title}`).join(" | "),
+  );
+  const currentYear = new Date().getFullYear();
+  for (const candidate of candidates) {
+    if (candidate.title.toLowerCase().includes("opphørt")) continue;
+    try {
+      const meta = await getStatbankMetadata(candidate.id);
+      const time = meta.variables.find((v) => v.time || v.code === "Tid");
+      const lastPeriod = time?.values[time.values.length - 1] ?? "";
+      if (parseInt(lastPeriod.slice(0, 4)) < currentYear - 1) continue;
+      const labels = meta.variables
+        .flatMap((v) => v.valueTexts)
+        .map((t) => t.toLowerCase());
+      const hasCategories = BALANCE_KEYWORDS.every((keywords) =>
+        labels.some((label) => keywords.every((k) => label.includes(k))),
+      );
+      if (hasCategories) return { table: candidate.id, meta };
+    } catch (error) {
+      console.error(`Skipping candidate ${candidate.id}:`, error);
+    }
+  }
+  throw new Error("no usable electricity balance table found");
+}
+
+async function fetchElectricityBalance() {
+  const { table, meta } = await findBalanceTable();
+  console.error(`Using balance table ${table}: ${meta.title}`);
+
+  // Include every variable: matched category codes where we can match,
+  // everything for the rest ("Tid" limited to the last 12 months)
+  const query = meta.variables.map((variable) => {
+    if (variable.time || variable.code === "Tid")
+      return {
+        code: variable.code,
+        selection: { filter: "top", values: ["12"] },
+      };
+    return {
+      code: variable.code,
+      selection: { filter: "item", values: variable.values },
+    };
+  });
+  const data = await queryStatbank(table, query);
 
   const timeLabels = Object.keys(data.dimension["Tid"].category.index).sort();
   const periodLabel = `siste 12 md. til ${timeLabels[timeLabels.length - 1]}`;
 
-  const sums = sumPerCategory(data, "ContentsCode");
-  console.error(
-    "12824 categories (TWh):",
-    [...sums.entries()]
-      .map(([k, v]) => `${k}=${(v / 1e6).toFixed(1)}`)
-      .join("; "),
-  );
+  for (const dimCode of data.id) {
+    if (dimCode === "Tid") continue;
+    console.error(
+      `${table} dim ${dimCode} (TWh):`,
+      [...sumPerCategory(data, dimCode)]
+        .map(([k, v]) => `${k}=${(v / 1e6).toFixed(1)}`)
+        .join("; "),
+    );
+  }
 
-  // Table unit is MWh → TWh
+  // Balance tables are published in MWh (older) or GWh (newer) — detect by
+  // magnitude: annual production must land between 100 and 250 TWh.
+  const rawProduction = findAcrossDimensions(data, ["produksjon"]);
+  if (!rawProduction) throw new Error("production category not found");
+  const divisor = rawProduction > 1e7 ? 1e6 : 1e3; // MWh vs GWh → TWh
   const twh = (v: number | undefined) =>
-    v === undefined ? undefined : Math.round(v / 1e6);
+    v === undefined ? undefined : Math.round(v / divisor);
+
   return {
     periodLabel,
-    productionTwh: twh(findByKeyword(sums, ["produksjon i alt"])),
-    consumptionTwh: twh(findByKeyword(sums, ["bruttoforbruk"])),
-    exportTwh: twh(findByKeyword(sums, ["eksport"])),
-    importTwh: twh(findByKeyword(sums, ["import"])),
-    windProductionTwh: twh(findByKeyword(sums, ["vindkraft"])),
+    productionTwh: twh(rawProduction),
+    consumptionTwh: twh(findAcrossDimensions(data, ["bruttoforbruk"])),
+    exportTwh: twh(findAcrossDimensions(data, ["eksport"])),
+    importTwh: twh(findAcrossDimensions(data, ["import"])),
+    windProductionTwh: twh(findAcrossDimensions(data, ["vindkraft"])),
   };
 }
 
 async function fetchElectricityTradeValue() {
-  const data = await queryStatbank("08801", [
-    {
-      code: "Varekoder",
-      selection: { filter: "item", values: ["27160000"] },
-    },
-    { code: "Tid", selection: { filter: "top", values: ["12"] } },
-  ]);
-  const sums = sumPerCategory(data, "ImpEks");
+  const table = "08801";
+  const meta = await getStatbankMetadata(table);
   console.error(
-    "08801 categories (bn NOK):",
-    [...sums.entries()]
-      .map(([k, v]) => `${k}=${(v / 1e9).toFixed(1)}`)
-      .join("; "),
+    `Trade table ${table} variables:`,
+    meta.variables.map((v) => `${v.code} (${v.text})`).join("; "),
   );
+
+  // Build the query from metadata: find the commodity code for electrical
+  // energy, the import/export variable and the value ContentsCode
+  const query = meta.variables.map((variable) => {
+    const isTime = variable.time || variable.code === "Tid";
+    if (isTime)
+      return {
+        code: variable.code,
+        selection: { filter: "top", values: ["12"] },
+      };
+    const commodityIndex = variable.values.indexOf("27160000");
+    if (commodityIndex >= 0)
+      return {
+        code: variable.code,
+        selection: { filter: "item", values: ["27160000"] },
+      };
+    if (variable.code === "ContentsCode") {
+      const valueIndex = variable.valueTexts.findIndex((t) =>
+        t.toLowerCase().includes("verdi"),
+      );
+      return {
+        code: variable.code,
+        selection: {
+          filter: "item",
+          values: [variable.values[valueIndex >= 0 ? valueIndex : 0]],
+        },
+      };
+    }
+    return {
+      code: variable.code,
+      selection: { filter: "item", values: variable.values },
+    };
+  });
+  const data = await queryStatbank(table, query);
+
+  for (const dimCode of data.id) {
+    if (dimCode === "Tid") continue;
+    console.error(
+      `${table} dim ${dimCode} (bn NOK):`,
+      [...sumPerCategory(data, dimCode)]
+        .map(([k, v]) => `${k}=${(v / 1e9).toFixed(1)}`)
+        .join("; "),
+    );
+  }
+
   const bn = (v: number | undefined) =>
     v === undefined ? undefined : Math.round(v / 1e8) / 10;
   return {
-    exportValueBnNok: bn(findByKeyword(sums, ["eksport"])),
-    importValueBnNok: bn(findByKeyword(sums, ["import"])),
+    exportValueBnNok: bn(findAcrossDimensions(data, ["eksport"])),
+    importValueBnNok: bn(findAcrossDimensions(data, ["import"])),
   };
 }
 
@@ -248,7 +376,6 @@ export const energyData = {
   console.error(
     `Wrote ${OUTPUT} (verified=${verified}, period=${periodLabel})`,
   );
-  if (!verified) process.exitCode = 0; // partial data is fine; fallbacks kept
 }
 
 main();
