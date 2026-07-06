@@ -115,3 +115,14 @@
   font-size: 0.85em;
   opacity: 0.7;
 }
+
+/* Prose sections replacing the old tile grids — reads like an article,
+   with the numbers bold inside running text */
+.front-prose {
+  max-width: 68ch;
+}
+
+.front-prose p {
+  margin-bottom: 0.9em;
+  line-height: 1.55;
+}
