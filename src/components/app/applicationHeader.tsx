@@ -3,7 +3,7 @@ import { ApplicationContext } from "../../applicationContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { EmissionSummaryCard } from "../emissions/emissionSummaryCard";
 import { ProductionSummaryCard } from "../production/productionSummaryCard";
-import { FaPlay, FaInfoCircle, FaRedo, FaRecycle, FaMap } from "react-icons/fa";
+import { FaPlay, FaInfoCircle, FaRedo, FaRecycle, FaMap, FaLightbulb, FaWind } from "react-icons/fa";
 import { MdBarChart, MdHelp, MdInfo, MdOutlineBarChart } from "react-icons/md";
 import logo from "./MDG_Logo_2025.png"
 import { BiSolidBarChartAlt2 } from "react-icons/bi";
@@ -150,6 +150,26 @@ export function ApplicationHeader() {
                 label={"Plan"}
                 labelSmall={"Plan"}
                 to="/plan"
+                hideLabelOnSmall={false}
+                hideIconOnSmall={false}
+              />
+
+              <MainButton
+                icon={<FaLightbulb />}
+                label={"Rådgiver"}
+                labelSmall={"Råd"}
+                title="Få analyse av og forslag til planen din"
+                to="/advisor"
+                hideLabelOnSmall={false}
+                hideIconOnSmall={false}
+              />
+
+              <MainButton
+                icon={<FaWind />}
+                label={"Omstilling"}
+                labelSmall={"Grønt"}
+                title="Se hva som erstatter oljen"
+                to="/transition"
                 hideLabelOnSmall={false}
                 hideIconOnSmall={false}
               />

@@ -13,10 +13,23 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
         with: { node-version: 22.x, cache: "npm" }
+      # Creates the GitHub Pages site with the "GitHub Actions" source if it
+      # does not exist yet, so forks deploy without touching repo settings
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - run: npm ci
+      # Refresh key power-system figures from SSB's open API at build time,
+      # so the deployed site always shows current numbers. Non-fatal: on
+      # failure the committed (seeded or last fetched) figures are used.
+      - run: npm run data:energy
+        continue-on-error: true
       - run: npm run build
         env:
-          REPO_BASE: ${{ vars.REPO_BASE }}
+          # Default to /<repo name>/ so forks deploy without configuring the
+          # REPO_BASE variable; set the variable to override (e.g. for a
+          # custom domain, use "/")
+          REPO_BASE: ${{ vars.REPO_BASE || format('/{0}/', github.event.repository.name) }}
       - uses: actions/upload-pages-artifact@v3
         with: { path: ./dist }
       - uses: actions/deploy-pages@v4
