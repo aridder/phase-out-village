@@ -1,55 +1,78 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import arildHermstad from "./arild-hermstad.png";
 import asbjornRiddervold from "./asbjorn-riddervold.png";
 import "./landingPage.css";
 
 const OLJEPLAN_LINK = "https://mdg.no/oljeplan";
 const ORIGINAL_REPO_LINK = "https://github.com/degronne/phase-out-village";
+const SSB_LINK =
+  "https://www.ssb.no/natur-og-miljo/forurensning-og-klima/statistikk/utslipp-til-luft";
 
 /**
- * The landing page, in the spirit of the original Oljespillet welcome: plain
- * prose that says who made this and what it explores, one clear way in, and
- * no dashboard furniture.
+ * The landing page: the original Oljespillet welcome text and picture,
+ * rendered inline instead of in a modal, with a small byline badge saying
+ * this fork is Asbjørn's continuation of it.
  */
 export function LandingPage() {
   const navigate = useNavigate();
 
   return (
     <div className="welcome landing">
+      <div className="landing-badge">
+        <img
+          src={asbjornRiddervold}
+          alt="Asbjørn Riddervold"
+        />
+        <span>
+          <strong>Asbjørn Riddervold</strong> har tatt{" "}
+          <a href={ORIGINAL_REPO_LINK}>Oljespillet</a> videre – med ekte tall
+          for <Link to="/kostnad">kostnad</Link>,{" "}
+          <Link to="/transition">energi</Link> og{" "}
+          <Link to="/advisor">råd</Link>.
+        </span>
+      </div>
+
       <h1>Chill, baby! Chill!</h1>
+      <h2>Regjeringen trenger din hjelp!</h2>
+
+      <p>
+        Norge sliter med å nå sine klimamål, og en av årsakene er høye
+        utslipp fra norsk sokkel – faktisk står produksjon av olje og gass for{" "}
+        <a href={SSB_LINK}>en fjerdedel av Norges utslipp av klimagasser</a>!
+        Til tross for at det planlegges å bruke 17 TWh med kraft årlig til
+        elektrifisering, vil oljenæringen slippe ut 170 millioner tonn CO2 de
+        neste 15 årene. Og da regner vi ikke med utslippene når oljen og
+        gassen brennes i utlandet, som er cirka 50 ganger så høye!
+      </p>
 
       <p>
         <img
-          src={asbjornRiddervold}
-          alt="Asbjørn Riddervold, som har laget denne videreutviklingen"
+          src={arildHermstad}
+          alt={"MDG partileder Arild Hermstad"}
+          className="landing-illustration"
         />
-        Hei! Jeg heter <strong>Asbjørn Riddervold</strong>, og dette er min
-        videreutvikling av{" "}
-        <a href={ORIGINAL_REPO_LINK}>Oljespillet</a>, laget for{" "}
-        <a href={OLJEPLAN_LINK}>MDGs oljeplan</a>: spillet der du blir
-        energiminister og lager en utfasingsplan for norsk sokkel.
+        Samtidig er sokkelen i ferd med å tømmes for reserver, og norsk
+        næringsliv trenger flere ben å stå på. Klimautvalget 2050 har anbefalt
+        Norge å lage en «strategi for sluttfasen av norsk
+        petroleumsvirksomhet», og{" "}
+        <a href={OLJEPLAN_LINK}>MDG har laget en slik plan</a>. Vi vil fase ut
+        feltene på norsk sokkel innen 2040, og ønsker å starte med de feltene
+        med høyest utslipp og lavest produksjon.
       </p>
 
       <p>
-        Jeg syntes ideen var for god til å stoppe der, og ville utforske om
-        den kunne berikes med ekte tall for kroner, energi og utslipp – slik
-        at det blir enklere å forstå hva det faktisk betyr å stenge et
-        oljefelt. Så her kan du også se{" "}
-        <Link to="/kostnad">hva utfasing koster</Link>, hva som{" "}
-        <Link to="/transition">erstatter energien</Link>, og få en{" "}
-        <Link to="/advisor">rådgivers dom</Link> over planen din. Tallene
-        hentes automatisk fra SSB og Norsk Petroleum.
+        Sittende og tidligere regjeringer har vist liten vilje til å diskutere
+        hvordan utfasing av olje- og gassproduksjon kan skje på en måte som
+        balanserer utslippskutt og produksjon på norsk sokkel. Vi utfordrer
+        derfor deg til å ta på deg jobben som energiminister for en dag, og
+        gir deg 15 års tidshorisont (til 2040).
       </p>
 
-      <p>
-        Men spillet er kjernen: fire stortingsperioder, 34 felter, ett mål –
-        klarer du å kutte like mye som MDG-planen innen 2040?
-      </p>
+      <p>Har du det som skal til for å lage utfasingsplanen Norge trenger?</p>
 
       <p className="landing-cta">
-        <button onClick={() => navigate("/map")}>
-          Jeg er klar – gjør meg til energiminister
-        </button>
+        <button onClick={() => navigate("/map")}>Jeg er klar</button>
       </p>
 
       <p className="landing-links">
