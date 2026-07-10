@@ -335,3 +335,21 @@ dialog .button-row {
     height: 48px;
   }
 }
+
+/* Shared sources block at the bottom of pages that show figures */
+.sources-note {
+  font-size: 0.85em;
+  opacity: 0.75;
+  max-width: 75ch;
+  margin-top: 1.5rem;
+}
+
+.sources-note ul {
+  margin: 0.4rem 0 0.4rem 1.2rem;
+  padding: 0;
+  gap: 0.3rem;
+}
+
+.sources-note li {
+  list-style: disc;
+}

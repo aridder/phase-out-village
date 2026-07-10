@@ -13,6 +13,7 @@ import {
   OIL_FUND_BN_NOK,
   RESERVOIR_CAPACITY_TWH,
 } from "../../data/norwayFacts";
+import { SourcesNote } from "../ui/sourcesNote";
 import "../transition/transition.css";
 import "./costPage.css";
 
@@ -221,13 +222,9 @@ export function CostPage() {
 
       <div className="front-disclaimer">
         Planen bak tallene stenger de mest forurensende feltene først, jevnt
-        fordelt frem til året du velger. Kroner er regnet med dagens priser og
-        verdi per produsert enhet (statens netto kontantstrøm ~661 mrd, Norsk
-        Petroleum 2024; eksportverdier fra SSB). Statsbudsjettets utgifter ~
-        {STATE_BUDGET_BN_NOK.toLocaleString("nb-NO")} mrd (2025). Magasin- og
-        fondstall: NVE og NBIM. Alt er forenklede anslag for å vise
-        størrelsesorden.
+        fordelt frem til året du velger.
       </div>
+      <SourcesNote />
     </div>
   );
 }

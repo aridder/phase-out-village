@@ -30,6 +30,7 @@ import {
   STATE_BUDGET_BN_NOK,
   STATE_NET_CASH_FLOW_BN_NOK,
 } from "../../data/petroleumEconomy";
+import { SourcesNote } from "../ui/sourcesNote";
 import "./transition.css";
 
 ChartJS.register(
@@ -249,24 +250,7 @@ export function TransitionRoute() {
 
       <EconomySection schedule={schedule} />
 
-      <div className="transition-disclaimer">
-        Nøkkeltall om kraftsystemet: SSB (elektrisitetsbalansen og
-        utenrikshandel med varer), {energyData.referenceYear}
-        {energyData.verified
-          ? `, hentet automatisk ${energyData.updatedAt}`
-          : " (foreløpige anslag – oppdateres automatisk fra SSBs åpne API)"}
-        . Omregninger: 1 mill. Sm³ o.e. ≈ 10 TWh; ~35 % av fossil energi blir
-        nyttig arbeid (IEA-anslag 30–40 %); én 15 MW havvindturbin produserer
-        ~60 GWh/år; en husholdning bruker ~20 000 kWh/år. Pengetall:
-        eksportverdi av råolje og naturgass fra SSB utenrikshandel; statens
-        netto kontantstrøm ~{STATE_NET_CASH_FLOW_BN_NOK} mrd (2024, Norsk
-        Petroleum); sjømateksport ~{SEAFOOD_EXPORT_BN_NOK} mrd (2024, Norges
-        sjømatråd); fondsuttak ~{FUND_WITHDRAWAL_BN_NOK} mrd, statsbudsjettets
-        utgifter ~{STATE_BUDGET_BN_NOK} mrd og forsvarsbudsjett ~
-        {DEFENSE_BUDGET_BN_NOK} mrd (2025). Tapte inntekter er regnet med dagens
-        priser og verdi per produsert enhet. Tallene er forenklede anslag for å
-        vise størrelsesorden.
-      </div>
+      <SourcesNote />
     </div>
   );
 }
