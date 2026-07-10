@@ -1,38 +1,22 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import arildHermstad from "./arild-hermstad.png";
-import asbjornRiddervold from "./asbjorn-riddervold.png";
 import "./landingPage.css";
 
 const OLJEPLAN_LINK = "https://mdg.no/oljeplan";
-const ORIGINAL_REPO_LINK = "https://github.com/degronne/phase-out-village";
 const SSB_LINK =
   "https://www.ssb.no/natur-og-miljo/forurensning-og-klima/statistikk/utslipp-til-luft";
 
 /**
  * The landing page: the original Oljespillet welcome text and picture,
- * rendered inline instead of in a modal, with a small byline badge saying
- * this fork is Asbjørn's continuation of it.
+ * rendered inline instead of in a modal, with quiet shortcuts to the
+ * cost, transition and advisor pages.
  */
 export function LandingPage() {
   const navigate = useNavigate();
 
   return (
     <div className="welcome landing">
-      <div className="landing-badge">
-        <img
-          src={asbjornRiddervold}
-          alt="Asbjørn Riddervold"
-        />
-        <span>
-          <strong>Asbjørn Riddervold</strong> har tatt{" "}
-          <a href={ORIGINAL_REPO_LINK}>Oljespillet</a> videre – med ekte tall
-          for <Link to="/kostnad">kostnad</Link>,{" "}
-          <Link to="/transition">energi</Link> og{" "}
-          <Link to="/advisor">råd</Link>.
-        </span>
-      </div>
-
       <h1>Chill, baby! Chill!</h1>
       <h2>Regjeringen trenger din hjelp!</h2>
 

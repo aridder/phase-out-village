@@ -11,6 +11,7 @@ import { cumulativeEmissions } from "../../ai/fieldStats";
 import { economySummary } from "../../data/petroleumEconomy";
 import { transitionSummary } from "../../data/energyTransition";
 import { emissionEquivalents } from "../../ai/emissionEquivalents";
+import { SourcesNote } from "../ui/sourcesNote";
 import "../transition/transition.css";
 import "./gameOver.css";
 
@@ -209,6 +210,8 @@ export function GameOverDialog() {
             </button>
           </div>
         </div>
+
+        <SourcesNote />
       </div>
     </Dialog>
   );
