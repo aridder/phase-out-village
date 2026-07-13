@@ -49,8 +49,8 @@ export function EmissionIntensityChart({
         yMin: 15,
         yMax: 20,
         label: "Verdensgjennomsnitt",
-        fill: "rgba(255, 165, 0, 0.25)",
-        stroke: "orange",
+        fill: "rgba(199, 116, 0, 0.18)",
+        stroke: "var(--chart-referanse)",
       }}
     />
   );

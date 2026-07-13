@@ -276,6 +276,32 @@ export function LineChart({
                 height={geometry.plot.height + 5}
               />
             </clipPath>
+            {/* Én vertikal gradient per fylt serie: sterk ved linjen, ut mot
+                null. Gir flatene dybde uten å skjule det som ligger bak. */}
+            {visibleSeries.map((s, i) =>
+              s.fill ? (
+                <linearGradient
+                  key={s.label}
+                  id={`${clipId}-fill-${i}`}
+                  gradientUnits="userSpaceOnUse"
+                  x1={0}
+                  y1={geometry.plot.top}
+                  x2={0}
+                  y2={geometry.yScale.toPx(0)}
+                >
+                  <stop
+                    offset="0%"
+                    style={{ stopColor: s.fill }}
+                    stopOpacity={s.fillOpacity ?? 0.32}
+                  />
+                  <stop
+                    offset="100%"
+                    style={{ stopColor: s.fill }}
+                    stopOpacity={0}
+                  />
+                </linearGradient>
+              ) : null,
+            )}
           </defs>
           <Axes
             plot={geometry.plot}
@@ -319,8 +345,7 @@ export function LineChart({
                         {area && (
                           <path
                             d={area}
-                            style={{ fill: s.fill }}
-                            fillOpacity={s.fillOpacity ?? 0.2}
+                            fill={`url(#${clipId}-fill-${seriesIndex})`}
                           />
                         )}
                         {solid && (

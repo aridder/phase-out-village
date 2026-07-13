@@ -195,6 +195,10 @@ export function BarChart({
                   if (height <= 0) return null;
                   const y = stackTop - height;
                   stackTop = y;
+                  // A hairline of surface between stacked segments, and softly
+                  // rounded corners — reads cleaner than hard-butted blocks
+                  const gap = 1.5;
+                  const drawnHeight = Math.max(1, height - gap);
                   // Colors go through style so var(--chart-…) references work;
                   // striped series fill from the SVG pattern instead
                   const style: React.CSSProperties = {};
@@ -206,7 +210,9 @@ export function BarChart({
                       x={geometry.barX(categoryIndex)}
                       y={y}
                       width={geometry.barWidth}
-                      height={height}
+                      height={drawnHeight}
+                      rx={2}
+                      ry={2}
                       fill={
                         s.striped
                           ? `url(#${patternIdBase}-${seriesIndex})`

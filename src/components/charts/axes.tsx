@@ -134,7 +134,9 @@ export function Axes({
 }) {
   const right = plot.left + plot.width;
   const bottom = plot.top + plot.height;
-  const gridOpacity = 0.14;
+  // Rolige, prikkede hjelpelinjer som gir avlesning uten å stjele blikket
+  const gridOpacity = 0.12;
+  const gridDash = "1 5";
 
   return (
     <g fontSize={TICK_FONT} fill="currentColor">
@@ -149,6 +151,8 @@ export function Axes({
               y2={y}
               stroke="currentColor"
               strokeOpacity={gridOpacity}
+              strokeDasharray={gridDash}
+              strokeLinecap="round"
             />
             <text x={plot.left - 6} y={y + TICK_FONT / 3} textAnchor="end">
               {formatY(tick)}
@@ -166,6 +170,8 @@ export function Axes({
               y2={bottom}
               stroke="currentColor"
               strokeOpacity={gridOpacity}
+              strokeDasharray={gridDash}
+              strokeLinecap="round"
             />
           )}
           <text x={px} y={bottom + TICK_FONT + 4} textAnchor="middle">
