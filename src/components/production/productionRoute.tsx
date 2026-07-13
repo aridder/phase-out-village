@@ -3,6 +3,7 @@ import { Link, Route, Routes } from "react-router-dom";
 import { ProductionPerFieldPage } from "./productionPerFieldPage";
 import { YearlyTotalProductionChart } from "./yearlyTotalProductionChart";
 import { ProductionSummaryPage } from "./productionSummaryPage";
+import "./production.css";
 
 /**
  * Defines the routing for the production section of the app.

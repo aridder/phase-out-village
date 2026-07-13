@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
+import "./tutorial.css";
 
 /**
  * Steps for the tutorial dialog. Each step has:
@@ -134,80 +134,29 @@ const steps = [
 export function TutorialDialog({ onClose }: { onClose?: () => void }) {
   const [index, setIndex] = useState(0);
   const last = index === steps.length - 1;
-  const isSmall = useIsSmallScreen();
 
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        maxWidth: "100%",
-        display: "flex",
-        flex: 1,
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: isSmall ? "end" : "space-between",
-          alignItems: "center",
-          paddingTop: isSmall ? "" : "",
-        }}
-      >
-        <h2 style={{ display: isSmall ? "none" : "block" }}>
-          {steps[index].title}
-        </h2>
-        <button
-          onClick={onClose}
-          style={{ borderRadius: "1rem" }}
-          title={`Lukk`}
-        >
+    <div className="tutorial-steps">
+      <div className="top-bar">
+        <h2 className="title-desktop">{steps[index].title}</h2>
+        <button onClick={onClose} className="close-button" title={`Lukk`}>
           ✖
         </button>
       </div>
 
       <div>
-        <h2
-          style={{ display: isSmall ? "block" : "none", paddingLeft: "1rem" }}
-        >
-          {steps[index].title}
-        </h2>
-        <div
-          style={{
-            display: "flex",
-            flex: 1,
-            flexDirection: "column",
-            marginTop: "1rem",
-            marginBottom: "1rem",
-            overflowY: "auto",
-          }}
-        >
-          {steps[index].body}
-        </div>
+        <h2 className="title-mobile">{steps[index].title}</h2>
+        <div className="step-body">{steps[index].body}</div>
       </div>
 
-      <div
-        className="button-row"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflowY: "auto",
-          gap: "1rem",
-          paddingTop: isSmall ? "" : "1rem",
-          paddingBottom: isSmall ? "1rem" : "",
-        }}
-      >
+      <div className="button-row">
         <button
           onClick={() => setIndex((i) => Math.max(0, i - 1))}
           disabled={index === 0}
         >
           Tilbake
         </button>
-        <span style={{ minWidth: 70, textAlign: "center" }}>
+        <span className="step-counter">
           Steg: {index + 1} / {steps.length}
         </span>
         {last ? (

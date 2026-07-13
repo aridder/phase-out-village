@@ -2,6 +2,7 @@ import React from "react";
 import { EmissionStackedBarChart } from "./emissionStackedBarChart";
 import { Link } from "react-router-dom";
 import { PhaseOutSchedule } from "../../data/gameData";
+import "./emissions.css";
 
 /**
  * Page showing the stacked bar chart for total annual emissions.

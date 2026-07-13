@@ -40,8 +40,9 @@ src/components/<side>/*.css  ← stiler som bare én side bruker
    styling-props og ikke én inline style.
 
 5. **Side-spesifikt.** Hver side eier sin egen CSS-fil ved siden av
-   komponenten (`costPage.css`, `transition.css`, …). Ingen side styler en
-   annen sides klasser.
+   komponenten (`costPage.css`, `map.css`, `emissions.css`,
+   `dataView.css`, …). Ingen side styler en annen sides klasser, og
+   `application.css` inneholder bare det som faktisk er globalt.
 
 ## Breakpoints
 
@@ -70,15 +71,15 @@ JS aldri er uenige om hva «mobil» betyr.
 
 ## Kjent arv
 
-To ting fra før forken er bevisst latt i fred, og er greie å vite om:
+Én ting fra før forken er bevisst latt i fred, og er grei å vite om:
 
 - **`ul` er global flex-kolonne.** Endres den, må hver liste i appen
   sjekkes — derfor står den, med kommentar, og komponenter overstyrer
   lokalt.
-- **Eldre sider har fortsatt inline styles i JSX** (feltvelgeren,
-  plan-/utslipps-/produksjonssidene, veiledningen). Chromen og alle sidene
-  dette bidraget har lagt til følger kjørereglene; arven flyttes når sidene
-  likevel skal endres, ikke som ren flytte-PR.
+
+Inline styles i JSX finnes fortsatt, men bare der verdien er data: en
+målers bredde i prosent, en søylefarge som kommer som prop. Alt av layout
+ligger i CSS-filene.
 
 ## Hvordan verifisere at en endring ikke brakk noe
 

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog } from "../ui/dialog";
 import { TutorialDialog } from "./tutorialDialog";
 import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
+import "./tutorial.css";
 
 /**
  * TutorialRoute component renders a TutorialDialog inside a Dialog modal.
@@ -35,19 +36,7 @@ export function TutorialRoute() {
       onClose={() => navigate(from)}
       className={`${isSmall ? "" : "tutorial-modal"}`}
     >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "100%",
-          height: "100%",
-          maxHeight: "100%",
-          display: "flex",
-          flex: 1,
-          alignItems: "center",
-          placeSelf: "center",
-          padding: isSmall ? "1rem" : "",
-        }}
-      >
+      <div className="tutorial-frame">
         <TutorialDialog onClose={() => navigate(from)} />
       </div>
     </Dialog>

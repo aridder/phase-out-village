@@ -2,13 +2,10 @@ import React, { useContext, useMemo, useState } from "react";
 import { ApplicationContext } from "../../applicationContext";
 import { ProductionReductionChart } from "../production/productionReductionChart";
 import { EmissionStackedBarChart } from "../emissions/emissionStackedBarChart";
-import { EmissionSummaryCard } from "../emissions/emissionSummaryCard";
-import { EmissionForAllFieldsPage } from "../emissions/emissionsForAllFieldsPage";
 import { EmissionSummaryPage } from "../emissions/emissionSummaryPage";
 import { ProductionSummaryPage } from "../production/productionSummaryPage";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { decodePlan, planShareUrl } from "../../data/planShare";
-import { ProductionSummaryCard } from "../production/productionSummaryCard";
 import {
   gameData,
   oilEquivalentToBarrel,
@@ -16,8 +13,7 @@ import {
   totalProduction,
 } from "../../data/gameData";
 import { PlanProgressionBar } from "../ui/planProgressionBar";
-import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
-import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
+import "./plan.css";
 
 /**
  * Displays a summary of the user's plan, including charts for
@@ -31,8 +27,6 @@ export function PlanSummary() {
   } = useContext(ApplicationContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const isSmall = useIsSmallScreen();
-  const isDarkMode = usePrefersDarkMode();
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
 
@@ -63,8 +57,6 @@ export function PlanSummary() {
   const baselineEm = sumOverYears(totalProduction({}, years), "emission");
   const baselineEmRounded = Math.round(baselineEm / 1_000_000); // In millions of tons
   const currentEm = sumOverYears(totalProduction(phaseOut, years), "emission");
-  const currentEmRounded = Math.round(currentEm / 1_000_000); // In millions of tons
-  const reductionEm = Math.round(((currentEm - baselineEm) / baselineEm) * 100);
   const preventedEmRounded = Math.round((baselineEm - currentEm) / 1_000_000);
   const reductionEmPositive = Math.round(
     ((baselineEm - currentEm) / baselineEm) * 100,
@@ -82,10 +74,6 @@ export function PlanSummary() {
     "totalProduction",
   );
   const currentPrCalc = currentPr * oilEquivalentToBarrel;
-  const currentPrRounded = Math.round((currentPrCalc / 1_000) * 10) / 10;
-  const reductionPr = Math.round(
-    ((currentPrCalc - baselinePrCalc) / baselinePrCalc) * 100,
-  );
   const preventedPrRounded =
     Math.round(((baselinePrCalc - currentPrCalc) / 1_000) * 10) / 10;
   const reductionPrPositive = Math.round(
@@ -93,15 +81,8 @@ export function PlanSummary() {
   );
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "2rem",
-        padding: "2rem",
-      }}
-    >
-      <div style={{ position: "absolute", placeSelf: "end", zIndex: "3" }}>
+    <div className="plan-summary">
+      <div className="close-corner">
         <button
           onClick={() => navigate("/map", { state: { from: location } })}
           title="Tilbake"
@@ -113,18 +94,8 @@ export function PlanSummary() {
       <h2>{isSharedView ? "Delt plan" : "Din plan"}</h2>
 
       {isSharedView ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "1rem",
-            flexWrap: "wrap",
-            padding: "1rem",
-            border: "2px dashed currentColor",
-            borderRadius: "0.5rem",
-          }}
-        >
-          <div style={{ flex: 1, minWidth: "220px" }}>
+        <div className="shared-banner">
+          <div className="message">
             📬 Noen har delt en utfasingsplan med deg! Den avvikler{" "}
             <strong>{Object.keys(sharedPlan!).length} felter</strong>. Du kan
             gjøre den til din egen plan, eller fortsette med din egen.
@@ -145,52 +116,24 @@ export function PlanSummary() {
         )
       )}
 
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: isSmall ? "column" : "row",
-          gap: isSmall ? "1.5rem" : "2rem",
-          marginTop: isSmall ? "1rem" : "1.5rem",
-          marginBottom: isSmall ? "1rem" : "1.5rem",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            padding: "1rem",
-            border: "1px solid #e0ffb2",
-            borderRadius: "0.5rem",
-          }}
-        >
+      <div className="summary-cards">
+        <div className="summary-card">
           <div>
-            <div
-              style={{
-                fontWeight: "bold",
-                fontSize: "1.25em",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Utslippsredusering
-            </div>
-            <div style={{ marginBottom: "1.5rem" }}>
+            <div className="card-title">Utslippsredusering</div>
+            <div className="card-lead">
               Uten inngrep vil oljefeltene produsere{" "}
-              <strong style={{ color: isDarkMode ? "white" : "black" }}>
-                {baselineEmRounded} millioner tonn CO₂
-              </strong>{" "}
-              innen {gameData.allYears[gameData.allYears.length - 1]}.
+              <strong>{baselineEmRounded} millioner tonn CO₂</strong> innen{" "}
+              {gameData.allYears[gameData.allYears.length - 1]}.
             </div>
-            <div style={{ marginBottom: "0.5rem" }}>
+            <div className="card-result">
               {isSharedView ? "Denne planen" : "Din plan"} har så langt redusert
               utslipp med{" "}
-              <strong style={{ color: isDarkMode ? "white" : "black" }}>
+              <strong>
                 {preventedEmRounded} millioner tonn CO₂ ({reductionEmPositive}%)
               </strong>
               {parseInt(year) > 2025 ? "!" : "."}
             </div>
-            <div style={{ marginBottom: "0.25rem" }}>
+            <div className="card-meter">
               <PlanProgressionBar
                 current={currentEm}
                 baseline={baselineEm}
@@ -207,42 +150,24 @@ export function PlanSummary() {
           </div>
         </div>
 
-        <div
-          style={{
-            width: "100%",
-            flexDirection: "column",
-            padding: "1rem",
-            border: "1px solid #e0ffb2",
-            borderRadius: "0.5rem",
-          }}
-        >
+        <div className="summary-card">
           <div>
-            <div
-              style={{
-                fontWeight: "bold",
-                fontSize: "1.25em",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Produksjonsredusering
-            </div>
-            <div style={{ marginBottom: "1.5rem" }}>
+            <div className="card-title">Produksjonsredusering</div>
+            <div className="card-lead">
               Uten inngrep vil oljefeltene produsere{" "}
-              <strong style={{ color: isDarkMode ? "white" : "black" }}>
-                {baselinePrRounded} milliarder fat olje
-              </strong>{" "}
-              innen {gameData.allYears[gameData.allYears.length - 1]}.
+              <strong>{baselinePrRounded} milliarder fat olje</strong> innen{" "}
+              {gameData.allYears[gameData.allYears.length - 1]}.
             </div>
-            <div style={{ marginBottom: "0.5rem" }}>
+            <div className="card-result">
               {isSharedView ? "Denne planen" : "Din plan"} har så langt redusert
               produksjonen med{" "}
-              <strong style={{ color: isDarkMode ? "white" : "black" }}>
+              <strong>
                 {preventedPrRounded} milliarder fat olje ({reductionPrPositive}
                 %)
               </strong>
               {parseInt(year) > 2025 ? "!" : "."}
             </div>
-            <div style={{ marginBottom: "0.25rem" }}>
+            <div className="card-meter">
               <PlanProgressionBar
                 current={currentPrCalc}
                 baseline={baselinePrCalc}
@@ -260,37 +185,21 @@ export function PlanSummary() {
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-        <div className={"charts"} style={{ gap: "2rem" }}>
-          <div
-            style={{
-              border: "1px solid rgba(255,255,255,0.0)",
-              borderRadius: "0.5rem",
-              padding: "1rem",
-            }}
-          >
+      <div className="charts-block">
+        <div className="charts roomy">
+          <div className="chart-frame">
             <ProductionReductionChart phaseOut={phaseOut} />
           </div>
-          <div
-            style={{
-              border: "1px solid rgba(255,255,255,0.0)",
-              borderRadius: "0.5rem",
-              padding: "1rem",
-            }}
-          >
+          <div className="chart-frame">
             <EmissionStackedBarChart phaseOut={phaseOut} />
           </div>
         </div>
-        <div
-          style={{ height: "1px", backgroundColor: "grey", opacity: "0.5" }}
-        ></div>
+        <div className="divider"></div>
         <h2>Utslipp</h2>
         <div>
           <EmissionSummaryPage phaseOut={phaseOut} />
         </div>
-        <div
-          style={{ height: "1px", backgroundColor: "grey", opacity: "0.5" }}
-        ></div>
+        <div className="divider"></div>
         <h2>Produksjon</h2>
         <div>
           <ProductionSummaryPage />

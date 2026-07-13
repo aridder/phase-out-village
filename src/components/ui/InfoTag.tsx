@@ -24,10 +24,7 @@ export function InfoTag({
   children?: ReactNode;
 }) {
   return (
-    <span
-      title={title}
-      style={{ cursor: "help", borderBottom: "1px dotted currentColor" }}
-    >
+    <span className="info-tag" title={title}>
       {children ?? "(?)"}
     </span>
   );

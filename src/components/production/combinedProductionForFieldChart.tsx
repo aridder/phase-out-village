@@ -8,6 +8,7 @@ import {
   truncatedDataset,
   yearsInRange,
 } from "../../data/gameData";
+import "./production.css";
 
 /**
  * Bar chart showing combined oil/condensate production and gas exports for a specific oil field,
@@ -105,11 +106,7 @@ export function CombinedProductionForFieldChart({ field }: { field: string }) {
 
   return (
     <div
-      style={{
-        height: 290,
-        maxHeight: 300,
-        position: "relative",
-      }}
+      className="field-production-chart"
     >
       <Bar
         options={{

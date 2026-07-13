@@ -5,6 +5,7 @@ import { EmissionIntensityPage } from "./emissionIntensityPage";
 import { EmissionStackedBarRoute } from "./emissionStackedBarRoute";
 import { EmissionSummaryPage } from "./emissionSummaryPage";
 import { ApplicationContext } from "../../applicationContext";
+import "./emissions.css";
 
 /** Defines the routes for emissions visualization pages. */
 export function EmissionRoute() {

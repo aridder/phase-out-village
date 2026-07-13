@@ -6,12 +6,13 @@
    1. TEMA              fargene og fargeskjemaet, definert én gang
    2. BASISELEMENTER    nakne HTML-elementer (a, ul, td, button, dialog)
    3. APP-SKALLET       #app-gridet og chromen: header, navigasjon, footer
-   4. DELTE KOMPONENTER .main-button, .sources-note, .charts, .data, …
-   5. KART OG DIAGRAM   layout som deles av flere ruter
+   4. DELTE KOMPONENTER .main-button, .charts, .sources-note, .info-tag, …
 
-   Stiler som gjelder ÉN side ligger i komponentmappen til siden:
-   costPage.css, transition.css, periodReport.css, gameOver.css,
-   advisor.css, phaseOut.css, statusBar.css.
+   Alt annet er sidespesifikt og ligger i komponentmappen til siden det
+   gjelder: costPage.css, transition.css, periodReport.css, gameOver.css,
+   advisor.css, phaseOut.css, plan.css, map.css, mapIntro.css,
+   emissions.css, production.css, dataView.css, tutorial.css,
+   statusBar.css, progressionBar.css.
 
    Breakpoints — de samme tre overalt:
      ≤ 600 px    mobil   (samme grense som useIsSmallScreen-hooken)
@@ -20,9 +21,9 @@
 
    Kjøreregler:
    - Ingen !important — med ett dokumentert unntak: Chart.js setter inline
-     størrelse på canvas-elementet i runtime, se .emission-chart canvas.
-   - Inline styles i JSX bare når verdien er data (aktiv knappefarge,
-     målerbredder i prosent) — aldri for layout.
+     størrelse på canvas-elementet i runtime, se emissions.css.
+   - Inline styles i JSX bare når verdien er data (målerbredder i prosent,
+     søylefarger som kommer som props) — aldri for layout.
    ========================================================================== */
 
 /* ==========================================================================
@@ -470,44 +471,7 @@ dialog .button-row {
   font-weight: 600;
 }
 
-/* ==========================================================================
-   5. KART OG DIAGRAM
-   ========================================================================== */
-
-.oilfield-map {
-  display: grid;
-  height: 100%;
-  /* Innhold først, kart etterpå: guiden/detaljene tar det de trenger
-     (inntil 60 % av høyden, scroller utover det), kartet får resten —
-     kartet er støttevisual, ikke hovedattraksjon */
-  grid-template-rows: fit-content(60%) minmax(0, 1fr);
-
-  .map-container {
-    height: 100%;
-    min-height: 200px;
-  }
-
-  .details {
-    overflow-y: auto;
-    padding-bottom: 1em;
-    h1 {
-      text-align: left;
-      margin-left: 1rem;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-    ul {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (width > 600px) {
-    grid-template-rows: unset;
-    grid-template-columns: minmax(340px, 2fr) 3fr;
-  }
-}
-
+/* To diagrammer side om side på desktop, under hverandre på mobil */
 .charts {
   display: grid;
   gap: 1.5rem;
@@ -524,74 +488,25 @@ dialog .button-row {
   }
 }
 
-.emission-chart-container {
-  display: grid;
-  grid-template-columns: 1fr;
+.charts.roomy {
   gap: 2rem;
-  padding: 1rem;
-
-  @media (width <= 600px) {
-    padding: 0.5rem;
-  }
 }
 
-.emission-chart {
-  height: 400px;
-  position: relative;
+/* Den gjennomsiktige rammen beholder diagrammets boksmål fra da rammen
+   var synlig — fjernes den, flytter alt seg to piksler */
+.chart-frame {
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
   padding: 1rem;
 }
 
-/* Unntaket fra !important-regelen: Chart.js setter width/height inline på
-   canvasen i runtime, og de kan bare vinnes over med !important */
-.emission-chart canvas {
-  width: 100% !important;
-  max-width: 100% !important;
-  height: auto !important;
+/* Liten lenkeblokk med nøkkeltall (kartdetaljene) */
+.summary-link-card {
+  padding: 0.25rem 0.5rem 0.5rem;
 }
 
-@media (width <= 600px) {
-  .emission-chart {
-    height: 300px;
-    padding: 0.5rem;
-  }
-}
-
-.production-chart {
-  height: min(80vh, 600px);
-}
-
-/* Datatabellene: klistret topprad og årstall-kolonne */
-.data {
-  thead th {
-    position: sticky;
-    top: 0;
-    background-color: var(--lime);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--gran);
-    }
-  }
-  tr th.rowHeader {
-    position: sticky;
-    left: 0;
-    background-color: var(--lime);
-    z-index: 1;
-    /* Uten denne er årstall-kolonnen lime-på-lime i mørkt tema —
-       helt usynlig (thead th over har samme override) */
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--gran);
-    }
-  }
-  tr:nth-child(even) {
-    background-color: rgb(253, 252, 236);
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--gran);
-    }
-  }
-  td.estimate {
-    font-style: italic;
-    color: red;
-    @media (prefers-color-scheme: dark) {
-      color: hotpink;
-    }
-  }
+/* Inline forklaring med tooltip */
+.info-tag {
+  cursor: help;
+  border-bottom: 1px dotted currentColor;
 }

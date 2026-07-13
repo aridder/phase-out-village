@@ -1,0 +1,33 @@
+/* Utslippssidene (/emissions/*): diagramcontainere */
+
+.emission-chart-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 1rem;
+
+  @media (width <= 600px) {
+    padding: 0.5rem;
+  }
+}
+
+.emission-chart {
+  height: 400px;
+  position: relative;
+  padding: 1rem;
+}
+
+/* Unntaket fra !important-regelen: Chart.js setter width/height inline på
+   canvasen i runtime, og de kan bare vinnes over med !important */
+.emission-chart canvas {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+@media (width <= 600px) {
+  .emission-chart {
+    height: 300px;
+    padding: 0.5rem;
+  }
+}

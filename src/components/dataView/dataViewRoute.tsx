@@ -6,6 +6,7 @@ import { DataFieldTable } from "./dataFieldTable";
 import * as XLSX from "xlsx";
 import { dataFieldToExcel, oilFieldToExcel } from "./exportToExcel";
 import { gameData } from "../../data/gameData";
+import "./dataView.css";
 
 /** Table showing oil production for all fields */
 function OilProductionTable() {
