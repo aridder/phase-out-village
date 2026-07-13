@@ -17,12 +17,9 @@
   padding: 1rem;
 }
 
-/* Unntaket fra !important-regelen: Chart.js setter width/height inline på
-   canvasen i runtime, og de kan bare vinnes over med !important */
-.emission-chart canvas {
-  width: 100% !important;
-  max-width: 100% !important;
-  height: auto !important;
+/* Utslippsdiagrammet for ett felt (kartdetaljene) */
+.field-emission-chart {
+  height: 290px;
 }
 
 @media (width <= 600px) {

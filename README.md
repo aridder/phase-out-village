@@ -66,8 +66,9 @@ Everything runs locally in the browser on the game's open dataset — no data le
 
 ## Technology
 
-This game is a pure frontend application developed with React. OpenLayers are used for the maps and Chart.js for the
-charts. The game is optimized for mobile display format.
+This game is a pure frontend application developed with React. OpenLayers are used for the maps, while the charts are
+drawn with the project's own lightweight SVG chart library (`src/components/charts/`). The game is optimized for
+mobile display format.
 
 The development language is English. The UI language is Norwegian.
 

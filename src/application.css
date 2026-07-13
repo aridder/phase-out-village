@@ -27,8 +27,7 @@
      > 960 px    desktop
 
    Kjøreregler:
-   - Ingen !important — med ett dokumentert unntak: Chart.js setter inline
-     størrelse på canvas-elementet i runtime, se emissions.css.
+   - Ingen !important.
    - Inline styles i JSX bare når verdien er data (målerbredder i prosent,
      søylefarger som kommer som props) — aldri for layout.
    ========================================================================== */
@@ -528,9 +527,8 @@
   }
 
   /* To diagrammer side om side på desktop, under hverandre på mobil.
-     minmax(0, 1fr) og min-width: 0 lar cellene krympe forbi canvasens
-     innholdsbredde — uten dem presser Chart.js sporet bredere enn
-     containeren. (Erstattet en gammel width: 90vw-nødløsning.) */
+     minmax(0, 1fr) og min-width: 0 lar cellene krympe forbi diagrammets
+     innholdsbredde, så sporet aldri presses bredere enn containeren. */
   .charts {
     display: grid;
     gap: 1.5rem;

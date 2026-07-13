@@ -81,9 +81,9 @@ JS aldri er uenige om hva «mobil» betyr.
 
 ## Kjøreregler
 
-- **Ingen `!important`** — med ett dokumentert unntak: Chart.js setter
-  inline størrelse på `canvas` i runtime, og `.emission-chart canvas` må
-  vinne over den.
+- **Ingen `!important`** — diagrammene tegnes som SVG av vårt eget
+  bibliotek (`src/components/charts/`), som styles med vanlig CSS uten
+  runtime-inline-størrelser.
 - **Inline styles i JSX bare for data**: en målers bredde i prosent, en
   søyles fyllgrad. Aldri for layout — layout hører hjemme i CSS-fila.
 - **Mørkt tema testes alltid** sammen med lyst. Alle flater med egen
