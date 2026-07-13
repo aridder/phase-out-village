@@ -3,16 +3,17 @@
  *
  * All factors are deliberately rounded approximations intended for
  * communication, not accounting:
- * - An average Norwegian petrol car emits roughly 2 tonnes CO₂ per year.
+ * - An average petrol car emits roughly 2 tonnes CO₂ per year
+ *   (~12 000 km × ~0.16 kg/km).
  * - A round trip flight Oslo–New York emits roughly 1 tonne CO₂ per passenger.
- * - Norway's total territorial emissions are roughly 47 million tonnes CO₂e
- *   per year (2023, Statistics Norway).
+ * - Norway's total territorial emissions were 44.6 million tonnes CO₂e in
+ *   2024 (Statistics Norway, final figures).
  * - A spruce tree binds roughly 0.5 tonnes CO₂ over its first 100 years.
  */
 
 const TONNES_PER_CAR_YEAR = 2;
 const TONNES_PER_OSLO_NY_ROUND_TRIP = 1;
-const NORWAY_ANNUAL_EMISSIONS_TONNES = 47_000_000;
+const NORWAY_ANNUAL_EMISSIONS_TONNES = 44_600_000;
 const TONNES_PER_TREE_LIFETIME = 0.5;
 
 export type EmissionEquivalent = {
