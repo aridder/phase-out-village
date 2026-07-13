@@ -44,6 +44,28 @@ src/components/<side>/*.css  ← stiler som bare én side bruker
    `dataView.css`, …). Ingen side styler en annen sides klasser, og
    `application.css` inneholder bare det som faktisk er globalt.
 
+## Lagene håndheves av språket
+
+De fire seksjonene i `application.css` er ikke bare kommentarer — de er
+navngitte cascade layers, deklarert øverst i fila:
+
+```css
+@layer tema, base, skall, komponenter;
+```
+
+Ved konflikt vinner alltid det **senere laget**, uansett hvor spesifikk
+selektoren er. Og sidefilene er bevisst _ulagdelte_: ulagdelt CSS slår alle
+lag, så en side vinner alltid over det globale uten å måtte vinne en
+spesifisitetsduell. Spesifisitetskriger er dermed umulige mot de globale
+stilene — vil du overstyre noe, skriver du regelen i sidens egen fil, og
+den vinner.
+
+(Den ene duellen som gjenstår er side-mot-side, og der gjelder vanlig
+spesifisitet — det var slik `.hide-small` tapte mot
+`.progression-bar .bar-label` og prosent-etiketten dukket opp på mobil.
+Derfor eier sidefilene sine egne mobil-unntak i stedet for å lene seg på
+verktøyklassen.)
+
 ## Breakpoints
 
 De samme tre grensene overalt — ingen side finner opp sine egne:

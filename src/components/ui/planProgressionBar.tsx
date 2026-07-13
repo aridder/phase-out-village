@@ -87,7 +87,7 @@ export const PlanProgressionBar: React.FC<PlanProgressionBarProps> = ({
           mobile) */}
       {showLabel && showMiddlePercentage && (
         <div
-          className="bar-label middle hide-small"
+          className="bar-label middle"
           style={{ left: `${progress * 100}%`, opacity: labelOpacity }}
         >
           {`${progress * 100 >= 100 ? "" : reductionPercent}%`}

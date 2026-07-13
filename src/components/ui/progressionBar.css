@@ -70,3 +70,12 @@
     left 0.5s ease;
   z-index: 0;
 }
+
+/* Prosent-etiketten er ikke verdt plassen på mobil. (Egen regel her og
+   ikke .hide-small: verktøyklassen taper spesifisitetsduellen mot
+   .progression-bar .bar-label — sidefilen må selv eie unntaket.) */
+@media (width <= 600px) {
+  .progression-bar .bar-label.middle {
+    display: none;
+  }
+}
