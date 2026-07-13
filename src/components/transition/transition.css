@@ -1,3 +1,5 @@
+/* Omstillingssiden (/transition) + de delte .transition-steps/.transition-stats-rutenettene som kostnads- og resultatsiden gjenbruker */
+
 .transition-page {
   display: flex;
   flex-direction: column;

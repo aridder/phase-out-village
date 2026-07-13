@@ -25,8 +25,6 @@ export function SiteLayout() {
               labelSmall={"Kostnad"}
               title="Se hva utfasing koster – og hva vi får igjen"
               to="/kostnad"
-              hideLabelOnSmall={false}
-              hideIconOnSmall={false}
             />
             <MainButton
               icon={<FaWind />}
@@ -34,8 +32,6 @@ export function SiteLayout() {
               labelSmall={"Grønt"}
               title="Se hva som erstatter oljen"
               to="/transition"
-              hideLabelOnSmall={false}
-              hideIconOnSmall={false}
             />
             <MainButton
               icon={<FaLightbulb />}
@@ -43,8 +39,6 @@ export function SiteLayout() {
               labelSmall={"Råd"}
               title="Få analyse av og forslag til planen din"
               to="/advisor"
-              hideLabelOnSmall={false}
-              hideIconOnSmall={false}
             />
             <MainButton
               icon={<FaPlay />}
@@ -53,8 +47,6 @@ export function SiteLayout() {
               title="Lag din egen utfasingsplan"
               to="/map"
               defaultColor="#a5e34d"
-              hideLabelOnSmall={false}
-              hideIconOnSmall={false}
             />
           </div>
         </div>

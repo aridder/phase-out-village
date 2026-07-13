@@ -1,0 +1,66 @@
+# CSS-en, forklart på fem minutter
+
+Alt av styling følger én flyt, og den får plass i hodet:
+
+```
+src/application.css          ← temaet, basiselementene, app-skallet,
+                               delte komponenter (les toppkommentaren)
+src/components/<side>/*.css  ← stiler som bare én side bruker
+```
+
+## Flyten
+
+1. **Tema.** Tre farger (`--skog`, `--lime`, `--gran`) definert én gang på
+   `:root`. Lyst tema: lime flater, skog tekst. Mørkt tema: fargene bytter
+   roller via én `prefers-color-scheme`-blokk. Ingen komponent finner opp
+   egne grønnfarger.
+
+2. **Basiselementer.** `button`, `dialog`, `ul`, `a`, `td` stylet som nakne
+   elementer. Merk én global overraskelse: `ul` er flex-kolonne i hele
+   appen — komponenter som vil ha chips eller rutenett overstyrer selv.
+
+3. **App-skallet.** `#app` er et tre-raders grid (header / main / footer).
+   Header-raden er `.header-bar` (merkevare + `.header-nav`), footeren er
+   `.footer-row`. Alt av chrome-layout ligger i CSS-klasser — JSX-en
+   inneholder ingen layout-styling.
+
+4. **Delte komponenter.** `.main-button` er den viktigste: ikon + tekst +
+   valgfri tallbadge. All responsivitet (størrelser, kort/lang tekst,
+   stabling på mobil) er rene media queries — komponenten har ingen
+   resize-lyttere og ingen styling-props.
+
+5. **Side-spesifikt.** Hver side eier sin egen CSS-fil ved siden av
+   komponenten (`costPage.css`, `transition.css`, …). Ingen side styler en
+   annen sides klasser.
+
+## Breakpoints
+
+De samme tre grensene overalt — ingen side finner opp sine egne:
+
+| Område  | Bredde     | Hva skjer                                                 |
+| ------- | ---------- | --------------------------------------------------------- |
+| mobil   | ≤ 600 px   | korte knappetekster, stablet ikon+tekst, alt i én kolonne |
+| tablet  | 601–960 px | kompakte knapper, logoen viker for hjemlenken             |
+| desktop | > 960 px   | full størrelse                                            |
+
+600-grensen er med vilje den samme som `useIsSmallScreen`-hooken, så CSS og
+JS aldri er uenige om hva «mobil» betyr.
+
+## Kjøreregler
+
+- **Ingen `!important`** — med ett dokumentert unntak: Chart.js setter
+  inline størrelse på `canvas` i runtime, og `.emission-chart canvas` må
+  vinne over den.
+- **Inline styles i JSX bare for data**: aktiv knappefarge, en målers bredde
+  i prosent. Aldri for layout — layout hører hjemme i CSS-fila.
+- **Mørkt tema testes alltid** sammen med lyst. Alle flater med egen
+  bakgrunnsfarge trenger en `prefers-color-scheme: dark`-override (det var
+  akkurat dette som gjorde årstall-kolonnen i datatabellene usynlig i mørkt
+  tema før).
+
+## Hvordan verifisere at en endring ikke brakk noe
+
+Kjør appen og sjekk sidene ved 390, 650 og 1280 px i begge fargeskjemaer —
+overflow-sjekken er `document.documentElement.scrollWidth >
+clientWidth`. Det er slik feilene i denne opprydningen ble funnet, og det
+tar under et minutt med nettleserens devtools.

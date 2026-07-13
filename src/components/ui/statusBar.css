@@ -1,3 +1,5 @@
+/* Statuslinjen i spill-headeren: periode, mål og fremdriftsmeter */
+
 .status-bar {
   display: flex;
   flex-direction: column;
