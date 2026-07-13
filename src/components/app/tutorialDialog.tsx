@@ -16,9 +16,8 @@ const steps = [
             Lag en plan for å <b>fase ut olje- og gassfelter</b> fram mot 2040.
           </li>
           <li>
-            Du velger
-            hvilke felt som avvikles i hver 4-årsperiode, og ser effekten på
-            utslipp og produksjon.
+            Du velger hvilke felt som avvikles i hver 4-årsperiode, og ser
+            effekten på utslipp og produksjon.
           </li>
         </ul>
       </>
@@ -33,8 +32,8 @@ const steps = [
             Gå til <strong>«Kart»</strong> for å utforske feltene.
           </li>
           <li>
-            Klikk på et felt i kartet eller i
-            listen for å se detaljer om produksjon, utslipp og intensitet.
+            Klikk på et felt i kartet eller i listen for å se detaljer om
+            produksjon, utslipp og intensitet.
           </li>
         </ul>
       </>
@@ -46,14 +45,32 @@ const steps = [
       <>
         <ul>
           <li>
-            <a href={`https://no.wikipedia.org/wiki/Standardkubikkmeter`} target="_blank">MSm³</a> (standardkubikkmeter) for volum av gass/olje.
+            <a
+              href={`https://no.wikipedia.org/wiki/Standardkubikkmeter`}
+              target="_blank"
+            >
+              MSm³
+            </a>{" "}
+            (standardkubikkmeter) for volum av gass/olje.
           </li>
           <li>
-            <a href={`https://no.wikipedia.org/wiki/CO2-ekvivalent`} target="_blank">CO2e</a> (CO2-ekvivalent) per
-            tusen tonn for måling av utslipp.
+            <a
+              href={`https://no.wikipedia.org/wiki/CO2-ekvivalent`}
+              target="_blank"
+            >
+              CO2e
+            </a>{" "}
+            (CO2-ekvivalent) per tusen tonn for måling av utslipp.
           </li>
           <li>
-            CO2e / <a href="https://en.wikipedia.org/wiki/Barrel_of_oil_equivalent" target="_blank">BOE</a> (barrel of oil equivalent) i kg for måling av utslippsintensitet.
+            CO2e /{" "}
+            <a
+              href="https://en.wikipedia.org/wiki/Barrel_of_oil_equivalent"
+              target="_blank"
+            >
+              BOE
+            </a>{" "}
+            (barrel of oil equivalent) i kg for måling av utslippsintensitet.
           </li>
         </ul>
       </>
@@ -80,8 +97,8 @@ const steps = [
       <>
         <ul>
           <li>
-            Under <b>Emissioner og Produksjon</b> ser du grafer som oppdateres med din
-            plan.
+            Under <b>Emissioner og Produksjon</b> ser du grafer som oppdateres
+            med din plan.
           </li>
           <li>
             <strong>«Plan»</strong> viser hvilke felt du allerede har avviklet.
@@ -98,9 +115,7 @@ const steps = [
           <li>
             Når du når <b>2040</b> vises en oppsummering.
           </li>
-          <li>
-            Du kan når som helst starte på nytt fra toppmenyen.
-          </li>
+          <li>Du kan når som helst starte på nytt fra toppmenyen.</li>
         </ul>
       </>
     ),
@@ -122,24 +137,54 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
   const isSmall = useIsSmallScreen();
 
   return (
-    <div style={{ height: "100%", width: "100%", maxWidth: "100%", display: "flex", flex: 1, flexDirection: "column", justifyContent: "space-between", }}>
-
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        maxWidth: "100%",
+        display: "flex",
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
       <div
         style={{
           width: "100%",
           display: "flex",
           justifyContent: isSmall ? "end" : "space-between",
           alignItems: "center",
-          paddingTop: isSmall ? "" : ""
+          paddingTop: isSmall ? "" : "",
         }}
       >
-        <h2 style={{ display: isSmall ? "none" : "block" }}>{steps[index].title}</h2>
-        <button onClick={onClose} style={{ borderRadius: '1rem' }} title={`Lukk`}>✖</button>
+        <h2 style={{ display: isSmall ? "none" : "block" }}>
+          {steps[index].title}
+        </h2>
+        <button
+          onClick={onClose}
+          style={{ borderRadius: "1rem" }}
+          title={`Lukk`}
+        >
+          ✖
+        </button>
       </div>
 
       <div>
-        <h2 style={{ display: isSmall ? "block" : "none", paddingLeft: "1rem"}}>{steps[index].title}</h2>
-        <div style={{ display: "flex", flex: 1, flexDirection: "column", marginTop: "1rem", marginBottom: "1rem", overflowY: "auto" }}>
+        <h2
+          style={{ display: isSmall ? "block" : "none", paddingLeft: "1rem" }}
+        >
+          {steps[index].title}
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            flexDirection: "column",
+            marginTop: "1rem",
+            marginBottom: "1rem",
+            overflowY: "auto",
+          }}
+        >
           {steps[index].body}
         </div>
       </div>
@@ -153,7 +198,7 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
           overflowY: "auto",
           gap: "1rem",
           paddingTop: isSmall ? "" : "1rem",
-          paddingBottom: isSmall ? "1rem" : ""
+          paddingBottom: isSmall ? "1rem" : "",
         }}
       >
         <button
@@ -176,7 +221,6 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
           </button>
         )}
       </div>
-
     </div>
   );
 }

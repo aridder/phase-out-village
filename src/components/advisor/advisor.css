@@ -1,3 +1,5 @@
+/* Rådgiversiden (/advisor): karakterkort, innsikter og plan-tabell */
+
 .advisor-page {
   display: flex;
   flex-direction: column;
@@ -5,6 +7,12 @@
   padding: 1.5rem;
   max-width: 1100px;
   margin: 0 auto;
+}
+
+.advisor-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .advisor-hero {
@@ -63,6 +71,11 @@
   gap: 0.75rem;
   font-size: 1.15em;
   opacity: 0.8;
+}
+
+.advisor-thinking .bulb {
+  width: 24px;
+  height: 24px;
 }
 
 .advisor-thinking .dot {
@@ -128,7 +141,7 @@
 }
 
 .advisor-insight.kind-warning {
-  border-color: #c77400;
+  border-color: var(--rav);
 }
 
 .advisor-insight.kind-success {
@@ -175,14 +188,29 @@
 }
 
 /* The app-wide .charts rule sets width: 90vw on small screens, which is
-   wider than this padded, bordered panel — keep the charts inside it */
+   wider than this padded, bordered panel — keep the charts inside it,
+   with a tighter gap than standard */
 .advisor-optimizer .charts {
   width: 100%;
+  gap: 1rem;
 }
 
 .advisor-optimizer input[type="range"] {
   width: 100%;
   accent-color: var(--gran);
+}
+
+.advisor-optimizer select {
+  width: 100%;
+  padding: 0.4rem;
+}
+
+.advisor-optimizer summary {
+  cursor: pointer;
+}
+
+.advisor-optimizer .apply-button {
+  font-size: 1.1em;
 }
 
 .advisor-optimizer-controls {
@@ -228,7 +256,8 @@
   border-bottom: 1px solid rgba(128, 128, 128, 0.4);
 }
 
-.advisor-plan-table th {
+.advisor-plan-table th,
+.advisor-plan-table td.field-name {
   text-align: left;
 }
 

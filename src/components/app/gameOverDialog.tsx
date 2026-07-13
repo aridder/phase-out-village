@@ -5,7 +5,6 @@ import { ApplicationContext } from "../../applicationContext";
 import { mdgPlan } from "../../generated/dataMdg";
 import { EmissionStackedBarChart } from "../emissions/emissionStackedBarChart";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
 import { gameData } from "../../data/gameData";
 import { cumulativeEmissions } from "../../analysis/fieldStats";
 import { economySummary } from "../../data/petroleumEconomy";
@@ -29,7 +28,6 @@ export function GameOverDialog() {
   const { phaseOut, restart } = useContext(ApplicationContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const isSmall = useIsSmallScreen();
   const from = location.state?.from?.pathname || "/map";
 
   const fieldsClosed = Object.keys(phaseOut).length;
@@ -66,15 +64,7 @@ export function GameOverDialog() {
   return (
     <Dialog open={true} onClose={() => navigate(from)}>
       <div className={"game-over"}>
-        <div
-          style={{
-            display: isSmall ? "block" : "none",
-            position: "fixed",
-            top: "0.5rem",
-            right: "0.5rem",
-            zIndex: "3",
-          }}
-        >
+        <div className="close-corner">
           <button
             onClick={() => navigate("/map", { state: { from: location } })}
             title="Tilbake"
@@ -83,7 +73,7 @@ export function GameOverDialog() {
           </button>
         </div>
 
-        <h2 style={{ marginBottom: "0.25rem" }}>🏁 2040 – slik gikk det</h2>
+        <h2>🏁 2040 – slik gikk det</h2>
         <p className="verdict">{verdict}</p>
 
         <div className="transition-stats">
@@ -125,9 +115,7 @@ export function GameOverDialog() {
           </div>
         </div>
 
-        <h3 style={{ marginBottom: "0.25rem", marginTop: "1rem" }}>
-          Din plan mot MDG-planen
-        </h3>
+        <h3 className="compare-heading">Din plan mot MDG-planen</h3>
         <div className="result-compare">
           <div className="row mine">
             <span>Din plan</span>
@@ -155,7 +143,7 @@ export function GameOverDialog() {
 
         {equivalents.length > 0 && (
           <>
-            <h3 style={{ marginBottom: "0.25rem" }}>Kuttet ditt tilsvarer</h3>
+            <h3>Kuttet ditt tilsvarer</h3>
             <ul className="result-equivalents">
               {equivalents.map((eq) => (
                 <li key={eq.label}>
@@ -166,7 +154,7 @@ export function GameOverDialog() {
           </>
         )}
 
-        <h3 style={{ marginBottom: "0.5rem" }}>Detaljene bak tallene</h3>
+        <h3 className="charts-heading">Detaljene bak tallene</h3>
         <div className={"charts"}>
           <div>
             <ProductionReductionChart phaseOut={phaseOut} />
@@ -176,38 +164,24 @@ export function GameOverDialog() {
           </div>
         </div>
 
-        <div
-          className="button-row"
-          style={{ marginBottom: "0.5rem", marginTop: "1rem" }}
-        >
+        <div className="button-row">
           <div>
-            <button
-              onClick={() => navigate("/advisor")}
-              style={{ fontSize: "1.25em" }}
-            >
+            <button onClick={() => navigate("/advisor")}>
               💡 Få rådgiverens dom
             </button>
           </div>
           <div>
-            <button
-              onClick={() => navigate("/map")}
-              style={{ fontSize: "1.25em" }}
-            >
+            <button onClick={() => navigate("/map")}>
               🔍 Se planen på kartet
             </button>
           </div>
           <div>
-            <button
-              onClick={() => navigate("/transition")}
-              style={{ fontSize: "1.25em" }}
-            >
+            <button onClick={() => navigate("/transition")}>
               🔋 Se hva som erstatter oljen
             </button>
           </div>
           <div>
-            <button onClick={restart} style={{ fontSize: "1.25em" }}>
-              ↺ Prøv på nytt
-            </button>
+            <button onClick={restart}>↺ Prøv på nytt</button>
           </div>
         </div>
 

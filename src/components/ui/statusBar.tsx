@@ -61,7 +61,9 @@ export function StatusBar() {
               </strong>{" "}
               felter
             </span>
-            <span title={`Kutt i samlede utslipp 2025–2040 med planen din. Målet er minst ${goal} % – like mye som MDG-planen.`}>
+            <span
+              title={`Kutt i samlede utslipp 2025–2040 med planen din. Målet er minst ${goal} % – like mye som MDG-planen.`}
+            >
               🌍 <strong>−{cutPercent} %</strong>
               <span className="status-goal"> av 🎯 −{goal} %</span>
             </span>

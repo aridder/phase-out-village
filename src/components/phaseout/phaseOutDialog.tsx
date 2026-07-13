@@ -574,7 +574,10 @@ export function PhaseOutDialog({
             >
               Tøm
             </button>
-            <button onClick={handleWorstClick} title="Legg til de fem feltene med størst utslipp og dårligst effektivitet">
+            <button
+              onClick={handleWorstClick}
+              title="Legg til de fem feltene med størst utslipp og dårligst effektivitet"
+            >
               {isSmall ? `⚡ 5 verste` : `⚡ Velg de 5 verste`}
             </button>
             <button onClick={handleMdgPlanClick}>

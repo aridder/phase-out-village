@@ -6,7 +6,6 @@ import { BiSolidBarChartAlt2 } from "react-icons/bi";
 import { RxReset } from "react-icons/rx";
 import { FcViewDetails } from "react-icons/fc";
 import { ApplicationContext } from "../../applicationContext";
-import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
 import { MainButton } from "../ui/mainButton";
 import { StatusBar } from "../ui/statusBar";
 import { Brand } from "./brand";
@@ -37,14 +36,7 @@ function GameHeader() {
 
   return (
     <header>
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          flex: 1,
-          flexDirection: "column",
-        }}
-      >
+      <div>
         <div className="header-bar">
           <Brand />
           <div className="header-nav">
@@ -53,16 +45,12 @@ function GameHeader() {
               label={"Kart"}
               labelSmall={"Kart"}
               to="/map"
-              hideLabelOnSmall={false}
-              hideIconOnSmall={false}
             />
             <MainButton
               icon={<BiSolidBarChartAlt2 />}
               label={"Plan"}
               labelSmall={"Plan"}
               to="/plan"
-              hideLabelOnSmall={false}
-              hideIconOnSmall={false}
             />
             <MainButton
               icon={<FaLightbulb />}
@@ -70,8 +58,6 @@ function GameHeader() {
               labelSmall={"Råd"}
               title="Få analyse av og forslag til planen din"
               to="/advisor"
-              hideLabelOnSmall={false}
-              hideIconOnSmall={false}
             />
             <MainButton
               icon={<FaWind />}
@@ -79,8 +65,6 @@ function GameHeader() {
               labelSmall={"Grønt"}
               title="Se hva som erstatter oljen"
               to="/transition"
-              hideLabelOnSmall={false}
-              hideIconOnSmall={false}
             />
             {gameEnded || (
               <MainButton
@@ -89,27 +73,15 @@ function GameHeader() {
                 labelSmall={"Hjelp"}
                 title="Hjelp"
                 to="/tutorial"
-                hideLabelOnSmall={false}
-                hideIconOnSmall={false}
               />
             )}
-            <div
-              style={{
-                height: "75%",
-                width: "0.125rem",
-                backgroundColor: "grey",
-                opacity: "0.25",
-                margin: "0 0.5rem",
-              }}
-            ></div>
+            <div className="nav-divider"></div>
             <MainButton
               icon={<FaRedo />}
               label={"Restart"}
               labelSmall={"Ny"}
               title="Start på nytt"
               onClick={restart}
-              hideLabelOnSmall={false}
-              hideIconOnSmall={false}
             />
           </div>
         </div>
@@ -138,7 +110,6 @@ function GameFooter() {
     getTotalRounds,
     getEndOfTermYear,
   } = useContext(ApplicationContext);
-  const isSmall = useIsSmallScreen();
   const gameEnded = year === "2040";
   const draftCount = Object.keys(phaseOutDraft).length;
   const draftNames = Object.keys(phaseOutDraft);
@@ -146,16 +117,8 @@ function GameFooter() {
   if (gameEnded)
     return (
       <footer>
-        <div
-          style={{
-            display: "flex",
-            flex: 1,
-            alignItems: "center",
-            gap: "0.75rem",
-            justifyContent: "space-between",
-          }}
-        >
-          <div style={{ fontSize: "1.05em" }}>
+        <div className="footer-row spread">
+          <div className="footer-note">
             🏁 Alle periodene er spilt – planen din er komplett.
           </div>
           <MainButton
@@ -163,9 +126,7 @@ function GameFooter() {
             label={"Se resultatet"}
             labelSmall={"Resultat"}
             to="/summary"
-            defaultColor="#a5e34d"
-            hideLabelOnSmall={false}
-            hideIconOnSmall={false}
+            primary
           />
         </div>
       </footer>
@@ -174,21 +135,13 @@ function GameFooter() {
   if (draftCount === 0)
     return (
       <footer>
-        <div
-          style={{
-            display: "flex",
-            flex: 1,
-            alignItems: "center",
-            gap: "0.75rem",
-            justifyContent: "space-between",
-          }}
-        >
-          <div style={{ fontSize: "1.05em", minWidth: 0 }}>
+        <div className="footer-row spread">
+          <div className="footer-note">
             <strong>
               Neste steg
-              {isSmall
-                ? ""
-                : ` (${getCurrentRound()} av ${getTotalRounds() - 1})`}
+              <span className="hide-small">
+                {` (${getCurrentRound()} av ${getTotalRounds() - 1})`}
+              </span>
               :
             </strong>{" "}
             velg feltene som skal stenges i {year}–{getEndOfTermYear()}
@@ -199,9 +152,7 @@ function GameFooter() {
             labelSmall={"Velg"}
             title="Velg felter for avvikling"
             to={"/phaseout"}
-            defaultColor="#a5e34d"
-            hideLabelOnSmall={false}
-            hideIconOnSmall={false}
+            primary
           />
         </div>
       </footer>
@@ -209,26 +160,13 @@ function GameFooter() {
 
   return (
     <footer>
-      <div
-        style={{
-          display: "flex",
-          flex: 1,
-          alignItems: "center",
-          gap: "0.5rem",
-        }}
-      >
-        <div
-          style={{ flex: 1, minWidth: 0, maxHeight: "64px", overflowY: "auto" }}
-        >
+      <div className="footer-row">
+        <div className="footer-draft">
           <strong>
             {draftCount} {draftCount === 1 ? "felt" : "felter"} klare for
             avvikling
           </strong>
-          {!isSmall && (
-            <div style={{ opacity: 0.9, fontSize: "0.9em" }}>
-              {draftNames.join(", ")}
-            </div>
-          )}
+          <div className="draft-names hide-small">{draftNames.join(", ")}</div>
         </div>
 
         <MainButton
@@ -237,8 +175,6 @@ function GameFooter() {
           labelSmall={"Endre"}
           title="Endre utvalget"
           to={"/phaseout"}
-          hideLabelOnSmall={false}
-          hideIconOnSmall={false}
         />
 
         <MainButton
@@ -247,8 +183,6 @@ function GameFooter() {
           labelSmall={"Tøm"}
           title="Tilbakestill valgte oljefelt"
           onClick={() => setPhaseOutDraft({})}
-          hideLabelOnSmall={false}
-          hideIconOnSmall={false}
         />
 
         <MainButton
@@ -258,9 +192,7 @@ function GameFooter() {
           title={`Avvikle ${draftCount} felter og gå til neste periode`}
           count={draftCount}
           onClick={commitDraft}
-          defaultColor="#a5e34d"
-          hideLabelOnSmall={false}
-          hideIconOnSmall={false}
+          primary
         />
       </div>
     </footer>

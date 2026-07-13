@@ -21,7 +21,7 @@ export function CombinedProductionForFieldChart({ field }: { field: string }) {
   // Determine text color based on dark mode preference
   const textColor = usePrefersDarkMode() ? "#fff" : "#000";
 
-   // Get raw dataset for the field
+  // Get raw dataset for the field
   const dataset = gameData.data[field];
 
   // Convert production data to timeseries and map to chart format {x: year, y: value}

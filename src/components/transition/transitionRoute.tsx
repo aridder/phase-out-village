@@ -81,7 +81,7 @@ export function TransitionRoute() {
   return (
     <div className="transition-page">
       <h2>🔋 Fra svart til grønn energi</h2>
-      <div style={{ fontSize: "1.1em" }}>
+      <div className="transition-intro">
         Hva skjer egentlig med energien når oljen fases ut? Mindre enn du skulle
         tro – og her er hvorfor.
       </div>

@@ -1,111 +1,47 @@
-* {
-  margin: 0;
-  font-family: bureau-sans, helvetica, sans-serif;
-  box-sizing: border-box;
-}
+/* ==========================================================================
+   Oljespillet — global stylesheet
 
-a {
-  color: unset;
-}
+   Hele CSS-flyten, ovenfra og ned:
 
-ul {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
+   1. TEMA              fargene og fargeskjemaet, definert én gang
+   2. BASISELEMENTER    nakne HTML-elementer (a, ul, td, button, dialog)
+   3. APP-SKALLET       #app-gridet og chromen: header, navigasjon, footer
+   4. DELTE KOMPONENTER .main-button, .sources-note, .charts, .data, …
+   5. KART OG DIAGRAM   layout som deles av flere ruter
 
-dialog {
-  margin: auto;
-  padding: 0;
-  border-radius: 1rem;
-  @media (max-width: 600px) {
-    all: unset;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
+   Stiler som gjelder ÉN side ligger i komponentmappen til siden:
+   costPage.css, transition.css, periodReport.css, gameOver.css,
+   advisor.css, phaseOut.css, statusBar.css.
 
-    margin: 0;
-    /* fixed + own scrolling: the dialog stays pinned to the viewport and
-       long content scrolls inside it, so the background always covers the
-       content and the page behind never scrolls */
-    position: fixed;
-    top: 0;
-    left: 0;
-    overflow-y: auto;
-    background: white;
-  }
-}
+   Breakpoints — de samme tre overalt:
+     ≤ 600 px    mobil   (samme grense som useIsSmallScreen-hooken)
+     601–960 px  tablet
+     > 960 px    desktop
 
-dialog::backdrop {
-  background-color: rgb(0 0 0 / 0.5);
-}
+   Kjøreregler:
+   - Ingen !important — med ett dokumentert unntak: Chart.js setter inline
+     størrelse på canvas-elementet i runtime, se .emission-chart canvas.
+   - Inline styles i JSX bare når verdien er data (aktiv knappefarge,
+     målerbredder i prosent) — aldri for layout.
+   ========================================================================== */
 
-.tutorial-modal {
-  width: min(789px, 92vw);
-  max-height: 85vh;
-  min-height: 196px;
-  padding: 1.25rem 1.5rem;
-  border-radius: 1rem;
-  border: 1px solid currentColor;
-  display: flex;
-  flex-direction: column;
-}
+/* ==========================================================================
+   1. TEMA
 
-/* @media (max-width: 600px) {
-  .tutorial-modal {
-    width: 94vw;
-    max-height: 88vh;
-    padding: 0.75rem 0.75rem;
-  }
-} */
-
-&:disabled {
-  color: revert;
-}
+   Tre farger gjør hele jobben. I lyst tema er --lime flate og --skog tekst;
+   i mørkt tema bytter de roller, med --gran som mørk mellomtone.
+   ========================================================================== */
 
 :root,
 dialog {
-  --skog: #133600;
-  --lime: #e0ffb2;
-  --gran: #347103;
+  --skog: #133600; /* mørkeste grønn — tekst i lyst tema, flater i mørkt */
+  --lime: #e0ffb2; /* lyseste grønn — flater i lyst tema, tekst i mørkt */
+  --gran: #347103; /* mellomgrønn — aksenter og mørk bakgrunn */
+  --eple: #a5e34d; /* frisk grønn — primærknapper og fremdrift */
+  --rav: #c77400; /* ravgul — advarsler og verstinger */
   color-scheme: light dark;
   background-color: var(--lime);
   color: var(--skog);
-}
-
-button {
-  color: var(--skog);
-  background-color: var(--lime);
-  border-color: var(--skog);
-  cursor: pointer;
-  user-select: none;
-  &:disabled {
-    color: grey;
-    cursor: not-allowed;
-  }
-  border-radius: 0.5rem;
-  padding: 0.3rem 0.6rem;
-}
-
-.main-button {
-  display: flex;
-  position: relative;
-  /* flex-direction: row; */
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  height: 64px;
-  @media (width < 600px) {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    height: 48px;
-    gap: 0rem;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -120,9 +56,107 @@ button {
   }
 }
 
+/* ==========================================================================
+   2. BASISELEMENTER
+   ========================================================================== */
+
+* {
+  margin: 0;
+  font-family: bureau-sans, helvetica, sans-serif;
+  box-sizing: border-box;
+}
+
+a {
+  color: unset;
+}
+
+/* NB: lister er flex-kolonner i HELE appen — komponenter som vil ha noe
+   annet (chips, rutenett) overstyrer selv */
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 td {
   text-align: center;
 }
+
+/* Brukere som har slått av animasjoner i operativsystemet skal slippe
+   dem her også (metere som glir, blinkende markører, fade-ins) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}
+
+button {
+  color: var(--skog);
+  background-color: var(--lime);
+  border-color: var(--skog);
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  user-select: none;
+  &:disabled {
+    color: grey;
+    cursor: not-allowed;
+  }
+}
+
+dialog {
+  margin: auto;
+  padding: 0;
+  border-radius: 1rem;
+  @media (width <= 600px) {
+    all: unset;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    margin: 0;
+    /* fixed + egen scrolling: dialogen står fast i viewporten og langt
+       innhold scroller inni den, så bakgrunnen alltid dekker innholdet og
+       siden bak aldri scroller */
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    background: white;
+  }
+}
+
+dialog::backdrop {
+  background-color: rgb(0 0 0 / 0.5);
+}
+
+dialog .button-row {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  button {
+    font-size: 1.25rem;
+  }
+  @media (width <= 600px) {
+    button {
+      font-size: 1rem;
+    }
+  }
+}
+
+/* ==========================================================================
+   3. APP-SKALLET
+
+   #app er et tre-raders grid: header / main / footer. Headeren har én
+   knapperad (.header-bar) med merkevaren til venstre og navigasjonen
+   (.header-nav) til høyre; i spillet ligger StatusBar-en under raden.
+   ========================================================================== */
 
 #app {
   height: 100vh;
@@ -136,18 +170,20 @@ td {
   grid-template-rows: auto 1fr auto;
 }
 
-#app nav,
-#app footer {
-  padding: 0.5rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5em;
+#app main {
+  overflow-y: auto;
+}
+
+/* Kartsiden styrer sin egen høyde og skal ikke scrolle som helhet */
+#app main:has(.oilfield-map) {
+  overflow-y: hidden;
+  height: 100%;
 }
 
 #app header {
-  /* Plain block flow: with a grid here, the track height was computed from
-     the button row's single-line intrinsic size, so when the row wrapped on
-     narrow screens the second line overflowed into the page content */
+  /* Vanlig blokkflyt: med grid her ble radhøyden beregnet fra knappe-
+     radens én-linjes størrelse, så når raden brakk på smale skjermer
+     fløt linje to inn over sideinnholdet */
   display: block;
   padding-bottom: 0px;
   border-bottom: 1px solid var(--lime);
@@ -179,32 +215,37 @@ td {
   row-gap: 0.25rem;
 }
 
-/* Tablet range (601–960px): MainButton sizes its label and icon with inline
-   styles keyed to a ≤600px breakpoint, so this range would get the full
-   desktop size and the button row wrapped into a ragged, right-aligned
-   stack. Compact the buttons (the !importants must win over the inline
-   styles), drop the wide MDG logo but keep the Oljespillet home link, and
-   center whatever still wraps. */
-@media (601px <= width <= 960px) {
-  .header-bar,
-  .header-nav {
-    justify-content: center;
-  }
-  .brand-logo,
-  .brand-divider {
-    display: none;
-  }
-  #app header .main-button {
-    height: 48px;
-    padding: 0.25rem 0.6rem;
-  }
-  #app header .main-button > div {
-    font-size: 1.05em !important;
-  }
-  #app header .main-button > div:first-child {
-    width: 20px !important;
-    height: 20px !important;
-  }
+.nav-divider {
+  height: 75%;
+  width: 0.125rem;
+  background-color: grey;
+  opacity: 0.25;
+  margin: 0 0.5rem;
+}
+
+.brand {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo img {
+  max-width: 196px;
+}
+
+.brand-divider {
+  height: 50%;
+  width: 1px;
+  background-color: white;
+  margin-right: 1.5rem;
+}
+
+#app nav,
+#app footer {
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5em;
 }
 
 #app footer {
@@ -217,35 +258,228 @@ td {
   }
 }
 
-#app main {
+/* Footerens innhold: én rad, midtstilt vertikalt. .spread skyver tekst og
+   knapp fra hverandre; .footer-draft lar en lang feltliste scrolle */
+.footer-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-row.spread {
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.footer-note {
+  font-size: 1.05em;
+  min-width: 0;
+}
+
+.footer-draft {
+  flex: 1;
+  min-width: 0;
+  max-height: 64px;
   overflow-y: auto;
 }
 
-#app main:has(.oilfield-map) {
-  overflow-y: hidden;
+.draft-names {
+  opacity: 0.9;
+  font-size: 0.9em;
+}
+
+/* Innhold som ikke får plass på mobil */
+@media (width <= 600px) {
+  .hide-small {
+    display: none;
+  }
+  .brand {
+    display: none;
+  }
+}
+
+/* Tablet: fire–seks desktop-knapper får ikke plass ved siden av logoen.
+   Knappene komprimeres (se .main-button lenger ned), logoen viker for
+   Oljespillet-hjemlenken, og det som fortsatt brekker sentreres. */
+@media (601px <= width <= 960px) {
+  .header-bar,
+  .header-nav {
+    justify-content: center;
+  }
+  .brand-logo,
+  .brand-divider {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   4. DELTE KOMPONENTER
+   ========================================================================== */
+
+/* Hovedknappen i navigasjon og footer: ikon + tekst + valgfritt antall.
+   All responsivitet OG alle farger skjer her — komponenten selv styrer
+   bare innholdet. Mobil viser den korte teksten (.label-small) stablet
+   under ikonet. */
+.main-button {
+  display: flex;
+  position: relative;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  height: 64px;
+  font-size: 1.5em;
+}
+
+.main-button.primary {
+  background-color: var(--eple);
+}
+
+/* .active etter .primary: ruten du står på vinner over primær-fargen */
+.main-button.active {
+  background-color: cyan;
+}
+
+.main-button:disabled {
+  opacity: 0.6;
+}
+
+.main-button .icon {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.main-button .icon > * {
+  width: 100%;
   height: 100%;
 }
 
-dialog .button-row {
-  display: flex;
-  width: 100%;
-  gap: 1rem;
-  button {
-    font-size: 1.25rem;
+.main-button .label-small {
+  display: none;
+}
+
+.main-button .count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: green;
+  color: white;
+  border-radius: 9999px;
+  padding: 4px 0px;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1;
+  min-width: 22px;
+  text-align: center;
+}
+
+@media (601px <= width <= 960px) {
+  .main-button {
+    height: 48px;
+    padding: 0.25rem 0.6rem;
+    font-size: 1.05em;
   }
-  @media (width < 600px) {
-    button {
-      font-size: 1rem;
-    }
+  .main-button .icon {
+    width: 20px;
+    height: 20px;
   }
 }
+
+@media (width <= 600px) {
+  .main-button {
+    flex-direction: column;
+    height: 48px;
+    padding: 0.25rem 0.5rem;
+    gap: 0;
+    font-size: 1.25em;
+  }
+  .main-button .icon {
+    width: 16px;
+    height: 16px;
+  }
+  .main-button .label-large {
+    display: none;
+  }
+  .main-button .label-small {
+    display: inline;
+  }
+  .main-button .count {
+    font-size: 0.75rem;
+    min-width: 18px;
+  }
+}
+
+.tutorial-modal {
+  width: min(789px, 92vw);
+  max-height: 85vh;
+  min-height: 196px;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid currentColor;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estimerte verdier i tabeller og tall markeres som usikre */
+.projected {
+  color: red;
+  font-style: italic;
+}
+
+/* Forsidens overskrift: den globale resetten fjerner alle marger og main
+   har ingen padding, så den trenger sin egen luft */
+.front-title {
+  margin: 0.5rem 1rem;
+}
+
+.welcome p {
+  max-width: 60ch;
+  margin-bottom: 1em;
+
+  img {
+    float: right;
+    max-width: 25%;
+  }
+}
+
+/* Kildeblokken nederst på sidene som viser tall */
+.sources-note {
+  font-size: 0.85em;
+  opacity: 0.75;
+  max-width: 75ch;
+  margin-top: 1.5rem;
+}
+
+.sources-note ul {
+  margin: 0.4rem 0 0.4rem 1.2rem;
+  padding: 0;
+  gap: 0.3rem;
+}
+
+.sources-note li {
+  list-style: disc;
+}
+
+.calculation-note {
+  margin-top: 0.75rem;
+}
+
+.calculation-note summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   5. KART OG DIAGRAM
+   ========================================================================== */
 
 .oilfield-map {
   display: grid;
   height: 100%;
-  /* Content first, map second: the guide/details row takes what it needs
-     (up to 60 % of the height, scrolling beyond), the map gets the rest —
-     the map is a supporting visual, not the main attraction */
+  /* Innhold først, kart etterpå: guiden/detaljene tar det de trenger
+     (inntil 60 % av høyden, scroller utover det), kartet får resten —
+     kartet er støttevisual, ikke hovedattraksjon */
   grid-template-rows: fit-content(60%) minmax(0, 1fr);
 
   .map-container {
@@ -257,7 +491,6 @@ dialog .button-row {
     overflow-y: auto;
     padding-bottom: 1em;
     h1 {
-      /* width: 100%; */
       text-align: left;
       margin-left: 1rem;
       margin-top: 0.5rem;
@@ -275,25 +508,10 @@ dialog .button-row {
   }
 }
 
-.projected {
-  color: red;
-  font-style: italic;
-}
-
-.welcome p {
-  max-width: 60ch;
-  margin-bottom: 1em;
-
-  img {
-    float: right;
-    max-width: 25%;
-  }
-}
-
 .charts {
   display: grid;
   gap: 1.5rem;
-  @media (width < 600px) {
+  @media (width <= 600px) {
     width: 90vw;
   }
 
@@ -323,13 +541,15 @@ dialog .button-row {
   padding: 1rem;
 }
 
+/* Unntaket fra !important-regelen: Chart.js setter width/height inline på
+   canvasen i runtime, og de kan bare vinnes over med !important */
 .emission-chart canvas {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
   .emission-chart {
     height: 300px;
     padding: 0.5rem;
@@ -340,6 +560,7 @@ dialog .button-row {
   height: min(80vh, 600px);
 }
 
+/* Datatabellene: klistret topprad og årstall-kolonne */
 .data {
   thead th {
     position: sticky;
@@ -354,8 +575,8 @@ dialog .button-row {
     left: 0;
     background-color: var(--lime);
     z-index: 1;
-    /* Without this the year column is lime-on-lime in dark mode —
-       completely invisible (thead th above has the same override) */
+    /* Uten denne er årstall-kolonnen lime-på-lime i mørkt tema —
+       helt usynlig (thead th over har samme override) */
     @media (prefers-color-scheme: dark) {
       background-color: var(--gran);
     }
@@ -373,45 +594,4 @@ dialog .button-row {
       color: hotpink;
     }
   }
-}
-
-.info-card {
-  height: 64px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  font-size: 1em;
-  margin-right: 0rem;
-  border: 1px solid #e0ffb26e;
-  border-radius: 0.5rem;
-  @media (width <= 600px) {
-    height: 48px;
-  }
-}
-
-/* Shared sources block at the bottom of pages that show figures */
-.sources-note {
-  font-size: 0.85em;
-  opacity: 0.75;
-  max-width: 75ch;
-  margin-top: 1.5rem;
-}
-
-.sources-note ul {
-  margin: 0.4rem 0 0.4rem 1.2rem;
-  padding: 0;
-  gap: 0.3rem;
-}
-
-.sources-note li {
-  list-style: disc;
-}
-
-.calculation-note {
-  margin-top: 0.75rem;
-}
-
-.calculation-note summary {
-  cursor: pointer;
-  font-weight: 600;
 }
