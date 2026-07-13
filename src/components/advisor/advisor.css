@@ -187,11 +187,7 @@
   gap: 1rem;
 }
 
-/* The app-wide .charts rule sets width: 90vw on small screens, which is
-   wider than this padded, bordered panel — keep the charts inside it,
-   with a tighter gap than standard */
 .advisor-optimizer .charts {
-  width: 100%;
   gap: 1rem;
 }
 

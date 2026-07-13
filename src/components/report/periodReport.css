@@ -115,8 +115,6 @@
 }
 
 .period-report .cta-row .primary {
-  background-color: var(--eple);
-  color: var(--skog);
   flex: 1;
   min-width: 240px;
 }

@@ -115,6 +115,8 @@
   padding: 0.6rem 1rem;
 }
 
+/* Bevisst mørkere enn den globale eple-primæren — som ulagdelt sidefil
+   vinner denne over komponent-laget uten spesifisitetstriks */
 .front-cta button.primary {
   background-color: var(--gran);
   color: var(--lime);

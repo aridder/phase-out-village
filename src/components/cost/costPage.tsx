@@ -14,7 +14,6 @@ import {
   RESERVOIR_CAPACITY_TWH,
 } from "../../data/norwayFacts";
 import { SourcesNote } from "../ui/sourcesNote";
-import "../transition/transition.css";
 import "./costPage.css";
 
 /** Oil price assumption, scaling all kroner figures */

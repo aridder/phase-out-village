@@ -39,10 +39,6 @@
   font-size: 1.1em;
 }
 
-.map-intro .cta.primary {
-  background-color: var(--eple);
-}
-
 .map-intro .legend {
   font-size: 0.9em;
   opacity: 0.85;

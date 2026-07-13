@@ -143,8 +143,8 @@ export function TransitionRoute() {
       </div>
 
       <h3>Slik ser regnestykket ut i 2040</h3>
-      <div className="transition-stats">
-        <div className="transition-stat">
+      <div className="stat-tiles">
+        <div className="stat-tile">
           <div className="emoji">🛢️</div>
           <div className="value">
             {summary.phasedOutTwh.toLocaleString("nb-NO")} TWh
@@ -154,7 +154,7 @@ export function TransitionRoute() {
             sokkelen)
           </div>
         </div>
-        <div className="transition-stat highlight">
+        <div className="stat-tile highlight">
           <div className="emoji">⚡</div>
           <div className="value">
             {summary.replacementTwh.toLocaleString("nb-NO")} TWh
@@ -165,14 +165,14 @@ export function TransitionRoute() {
             var spillvarme som ingen fikk glede av
           </div>
         </div>
-        <div className="transition-stat">
+        <div className="stat-tile">
           <div className="emoji">🌬️</div>
           <div className="value">
             {summary.turbines.toLocaleString("nb-NO")}
           </div>
           <div>moderne havvindturbiner (15 MW) kan produsere den strømmen</div>
         </div>
-        <div className="transition-stat">
+        <div className="stat-tile">
           <div className="emoji">🏠</div>
           <div className="value">
             {(summary.households / 1_000_000).toLocaleString("nb-NO", {
@@ -315,8 +315,8 @@ function EconomySection({ schedule }: { schedule: PhaseOutSchedule }) {
       {planPercent > 0 && (
         <>
           <h3>Regningen for planen i dette scenarioet</h3>
-          <div className="transition-stats">
-            <div className="transition-stat">
+          <div className="stat-tiles">
+            <div className="stat-tile">
               <div className="emoji">📤</div>
               <div className="value">
                 {economy.lostExportValueBnNok.toLocaleString("nb-NO")} mrd
@@ -326,7 +326,7 @@ function EconomySection({ schedule }: { schedule: PhaseOutSchedule }) {
                 nedgang, dagens priser)
               </div>
             </div>
-            <div className="transition-stat highlight">
+            <div className="stat-tile highlight">
               <div className="emoji">🏛️</div>
               <div className="value">
                 {economy.lostStateRevenueBnNok.toLocaleString("nb-NO")} mrd
@@ -336,7 +336,7 @@ function EconomySection({ schedule }: { schedule: PhaseOutSchedule }) {
                 {economy.perCapitaKr.toLocaleString("nb-NO")} kr per innbygger
               </div>
             </div>
-            <div className="transition-stat">
+            <div className="stat-tile">
               <div className="emoji">🐟</div>
               <div className="value">
                 {economy.seafoodMultiple.toLocaleString("nb-NO")} ×
@@ -346,7 +346,7 @@ function EconomySection({ schedule }: { schedule: PhaseOutSchedule }) {
                 eksportnæringsliv trengs for samme kjøpekraft
               </div>
             </div>
-            <div className="transition-stat">
+            <div className="stat-tile">
               <div className="emoji">🏦</div>
               <div className="value">{economy.fundWithdrawalPercent} %</div>
               <div>
@@ -354,7 +354,7 @@ function EconomySection({ schedule }: { schedule: PhaseOutSchedule }) {
                 gjør omstillingen mulig
               </div>
             </div>
-            <div className="transition-stat">
+            <div className="stat-tile">
               <div className="emoji">🧾</div>
               <div className="value">
                 {economy.cumulativeLostStateRevenueBnNok.toLocaleString(
@@ -369,7 +369,7 @@ function EconomySection({ schedule }: { schedule: PhaseOutSchedule }) {
                 mrd)
               </div>
             </div>
-            <div className="transition-stat">
+            <div className="stat-tile">
               <div className="emoji">🎖️</div>
               <div className="value">
                 {economy.defenseBudgetMultiple.toLocaleString("nb-NO")} ×
