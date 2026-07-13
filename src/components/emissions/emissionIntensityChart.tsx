@@ -83,7 +83,7 @@ export function EmissionIntensityChart({
             bodySpacing: 2,
             callbacks: {
               label: (context) => {
-                const emission = context.parsed.y?.toFixed(1) ?? '-';
+                const emission = context.parsed.y?.toFixed(1) ?? "-";
                 const production = Math.round(
                   context.parsed.x ?? 0,
                 ).toLocaleString();

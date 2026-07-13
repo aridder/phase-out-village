@@ -35,7 +35,7 @@ function useTypewriter(text: string, speedMs: number = 12) {
 function ThinkingIndicator() {
   return (
     <div className="advisor-thinking">
-      <FaLightbulb style={{ width: "24px", height: "24px" }} />
+      <FaLightbulb className="bulb" />
       <span>
         Analyserer planen din<span className="dot">.</span>
         <span className="dot">.</span>
@@ -76,7 +76,7 @@ export function AdvisorRoute() {
 
   return (
     <div className="advisor-page">
-      <h2 style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+      <h2 className="advisor-title">
         <FaLightbulb /> Klimarådgiveren
       </h2>
 
@@ -206,7 +206,6 @@ function PlanOptimizer() {
           <select
             id="advisor-strategy"
             value={strategy}
-            style={{ width: "100%", padding: "0.4rem" }}
             onChange={(e) => setStrategy(e.target.value as OptimizerStrategy)}
           >
             <option value="intensity">
@@ -246,7 +245,7 @@ function PlanOptimizer() {
 
       {plan.fieldCount > 0 && (
         <>
-          <div className={"charts"} style={{ gap: "1rem" }}>
+          <div className="charts">
             <div>
               <EmissionStackedBarChart phaseOut={plan.schedule} />
             </div>
@@ -256,7 +255,7 @@ function PlanOptimizer() {
           </div>
 
           <details>
-            <summary style={{ cursor: "pointer" }}>
+            <summary>
               Se hele den foreslåtte planen ({plan.fieldCount} felter)
             </summary>
             <table className="advisor-plan-table">
@@ -269,7 +268,7 @@ function PlanOptimizer() {
               <tbody>
                 {sortedSchedule.map(([field, phaseOutYear]) => (
                   <tr key={field}>
-                    <td style={{ textAlign: "left" }}>{field}</td>
+                    <td className="field-name">{field}</td>
                     <td>{phaseOutYear}</td>
                   </tr>
                 ))}
@@ -278,7 +277,7 @@ function PlanOptimizer() {
           </details>
 
           <div>
-            <button onClick={applyToDraft} style={{ fontSize: "1.1em" }}>
+            <button className="apply-button" onClick={applyToDraft}>
               {applied
                 ? "✅ Lagt til i utvalget ditt!"
                 : `Bruk forslaget for perioden ${year}`}

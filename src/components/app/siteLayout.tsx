@@ -46,7 +46,7 @@ export function SiteLayout() {
               labelSmall={"Spill"}
               title="Lag din egen utfasingsplan"
               to="/map"
-              defaultColor="#a5e34d"
+              primary
             />
           </div>
         </div>

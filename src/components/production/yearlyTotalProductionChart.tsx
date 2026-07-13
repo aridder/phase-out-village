@@ -62,7 +62,7 @@ export function YearlyTotalProductionChart() {
           tooltip: { mode: "index", intersect: false },
           legend: { position: "top", labels: { color: textColor } },
         },
-         // Interaction mode for tooltips and highlighting
+        // Interaction mode for tooltips and highlighting
         interaction: { mode: "index", intersect: false },
         scales: {
           x: {

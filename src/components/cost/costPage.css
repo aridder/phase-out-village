@@ -131,3 +131,7 @@
   margin-bottom: 0.9em;
   line-height: 1.55;
 }
+
+.front-controls .endyear-value {
+  font-size: 1.2em;
+}

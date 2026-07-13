@@ -126,7 +126,7 @@ function GameFooter() {
             label={"Se resultatet"}
             labelSmall={"Resultat"}
             to="/summary"
-            defaultColor="#a5e34d"
+            primary
           />
         </div>
       </footer>
@@ -152,7 +152,7 @@ function GameFooter() {
             labelSmall={"Velg"}
             title="Velg felter for avvikling"
             to={"/phaseout"}
-            defaultColor="#a5e34d"
+            primary
           />
         </div>
       </footer>
@@ -192,7 +192,7 @@ function GameFooter() {
           title={`Avvikle ${draftCount} felter og gå til neste periode`}
           count={draftCount}
           onClick={commitDraft}
-          defaultColor="#a5e34d"
+          primary
         />
       </div>
     </footer>

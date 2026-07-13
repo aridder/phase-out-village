@@ -37,6 +37,8 @@ dialog {
   --skog: #133600; /* mørkeste grønn — tekst i lyst tema, flater i mørkt */
   --lime: #e0ffb2; /* lyseste grønn — flater i lyst tema, tekst i mørkt */
   --gran: #347103; /* mellomgrønn — aksenter og mørk bakgrunn */
+  --eple: #a5e34d; /* frisk grønn — primærknapper og fremdrift */
+  --rav: #c77400; /* ravgul — advarsler og verstinger */
   color-scheme: light dark;
   background-color: var(--lime);
   color: var(--skog);
@@ -78,6 +80,18 @@ ul {
 
 td {
   text-align: center;
+}
+
+/* Brukere som har slått av animasjoner i operativsystemet skal slippe
+   dem her også (metere som glir, blinkende markører, fade-ins) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
 }
 
 button {
@@ -304,8 +318,9 @@ dialog .button-row {
    ========================================================================== */
 
 /* Hovedknappen i navigasjon og footer: ikon + tekst + valgfritt antall.
-   All responsivitet skjer her — komponenten selv styrer bare innholdet.
-   Mobil viser den korte teksten (.label-small) stablet under ikonet. */
+   All responsivitet OG alle farger skjer her — komponenten selv styrer
+   bare innholdet. Mobil viser den korte teksten (.label-small) stablet
+   under ikonet. */
 .main-button {
   display: flex;
   position: relative;
@@ -314,6 +329,15 @@ dialog .button-row {
   padding: 0.75rem;
   height: 64px;
   font-size: 1.5em;
+}
+
+.main-button.primary {
+  background-color: var(--eple);
+}
+
+/* .active etter .primary: ruten du står på vinner over primær-fargen */
+.main-button.active {
+  background-color: cyan;
 }
 
 .main-button:disabled {
@@ -401,6 +425,12 @@ dialog .button-row {
 .projected {
   color: red;
   font-style: italic;
+}
+
+/* Forsidens overskrift: den globale resetten fjerner alle marger og main
+   har ingen padding, så den trenger sin egen luft */
+.front-title {
+  margin: 0.5rem 1rem;
 }
 
 .welcome p {

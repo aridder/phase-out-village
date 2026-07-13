@@ -9,7 +9,12 @@ import { ProductionSummaryPage } from "../production/productionSummaryPage";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { decodePlan, planShareUrl } from "../../data/planShare";
 import { ProductionSummaryCard } from "../production/productionSummaryCard";
-import { gameData, oilEquivalentToBarrel, sumOverYears, totalProduction } from "../../data/gameData";
+import {
+  gameData,
+  oilEquivalentToBarrel,
+  sumOverYears,
+  totalProduction,
+} from "../../data/gameData";
 import { PlanProgressionBar } from "../ui/planProgressionBar";
 import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
 import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
@@ -19,7 +24,11 @@ import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
  * production reduction and emission over time based on the phase-out schedule.
  */
 export function PlanSummary() {
-  const { year, phaseOut: ownPlan, setPhaseOut } = useContext(ApplicationContext);
+  const {
+    year,
+    phaseOut: ownPlan,
+    setPhaseOut,
+  } = useContext(ApplicationContext);
   const navigate = useNavigate();
   const location = useLocation();
   const isSmall = useIsSmallScreen();
@@ -52,26 +61,46 @@ export function PlanSummary() {
   // Emission summary data
   const years = gameData.gameYears;
   const baselineEm = sumOverYears(totalProduction({}, years), "emission");
-  const baselineEmRounded = Math.round(baselineEm / 1_000_000); // In millions of tons 
+  const baselineEmRounded = Math.round(baselineEm / 1_000_000); // In millions of tons
   const currentEm = sumOverYears(totalProduction(phaseOut, years), "emission");
-  const currentEmRounded = Math.round(currentEm / 1_000_000); // In millions of tons  
+  const currentEmRounded = Math.round(currentEm / 1_000_000); // In millions of tons
   const reductionEm = Math.round(((currentEm - baselineEm) / baselineEm) * 100);
   const preventedEmRounded = Math.round((baselineEm - currentEm) / 1_000_000);
-  const reductionEmPositive = Math.round(((baselineEm - currentEm) / baselineEm) * 100);
+  const reductionEmPositive = Math.round(
+    ((baselineEm - currentEm) / baselineEm) * 100,
+  );
 
   // Production summary data
-  const baselinePr = sumOverYears(totalProduction({}, gameData.gameYears), "totalProduction",);
+  const baselinePr = sumOverYears(
+    totalProduction({}, gameData.gameYears),
+    "totalProduction",
+  );
   const baselinePrCalc = baselinePr * oilEquivalentToBarrel;
-  const baselinePrRounded = Math.round(((baselinePrCalc) / 1_000) * 10) / 10;
-  const currentPr = sumOverYears(totalProduction(phaseOut, gameData.gameYears), "totalProduction",);
+  const baselinePrRounded = Math.round((baselinePrCalc / 1_000) * 10) / 10;
+  const currentPr = sumOverYears(
+    totalProduction(phaseOut, gameData.gameYears),
+    "totalProduction",
+  );
   const currentPrCalc = currentPr * oilEquivalentToBarrel;
-  const currentPrRounded = Math.round(((currentPrCalc) / 1_000) * 10) / 10;
-  const reductionPr = Math.round(((currentPrCalc - baselinePrCalc) / baselinePrCalc) * 100);
-  const preventedPrRounded = Math.round(((baselinePrCalc - currentPrCalc) / 1_000) * 10) / 10;
-  const reductionPrPositive = Math.round(((baselinePrCalc - currentPrCalc) / baselinePrCalc) * 100);
+  const currentPrRounded = Math.round((currentPrCalc / 1_000) * 10) / 10;
+  const reductionPr = Math.round(
+    ((currentPrCalc - baselinePrCalc) / baselinePrCalc) * 100,
+  );
+  const preventedPrRounded =
+    Math.round(((baselinePrCalc - currentPrCalc) / 1_000) * 10) / 10;
+  const reductionPrPositive = Math.round(
+    ((baselinePrCalc - currentPrCalc) / baselinePrCalc) * 100,
+  );
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", padding: "2rem", }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "2rem",
+        padding: "2rem",
+      }}
+    >
       <div style={{ position: "absolute", placeSelf: "end", zIndex: "3" }}>
         <button
           onClick={() => navigate("/map", { state: { from: location } })}
@@ -81,12 +110,20 @@ export function PlanSummary() {
         </button>
       </div>
 
-      <h2>
-        {isSharedView ? "Delt plan" : "Din plan"}
-      </h2>
+      <h2>{isSharedView ? "Delt plan" : "Din plan"}</h2>
 
       {isSharedView ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", padding: "1rem", border: "2px dashed currentColor", borderRadius: "0.5rem" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
+            flexWrap: "wrap",
+            padding: "1rem",
+            border: "2px dashed currentColor",
+            borderRadius: "0.5rem",
+          }}
+        >
           <div style={{ flex: 1, minWidth: "220px" }}>
             📬 Noen har delt en utfasingsplan med deg! Den avvikler{" "}
             <strong>{Object.keys(sharedPlan!).length} felter</strong>. Du kan
@@ -98,30 +135,60 @@ export function PlanSummary() {
       ) : (
         Object.keys(ownPlan).length > 0 && (
           <div>
-            <button onClick={sharePlan} title="Kopier en delbar lenke til planen din">
+            <button
+              onClick={sharePlan}
+              title="Kopier en delbar lenke til planen din"
+            >
               {copied ? "✅ Lenke kopiert!" : "📤 Del planen din"}
             </button>
           </div>
         )
       )}
 
-      <div style={{ 
-        width: "100%", 
-        display: "flex", 
-        flexDirection: isSmall ? "column" : "row", 
-        gap: isSmall ? "1.5rem" : "2rem", 
-        marginTop: isSmall ? "1rem" : "1.5rem", 
-        marginBottom: isSmall ? "1rem" : "1.5rem",
-      }}>
-
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", padding: "1rem", border: "1px solid #e0ffb2", borderRadius: "0.5rem" }}>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: isSmall ? "column" : "row",
+          gap: isSmall ? "1.5rem" : "2rem",
+          marginTop: isSmall ? "1rem" : "1.5rem",
+          marginBottom: isSmall ? "1rem" : "1.5rem",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            padding: "1rem",
+            border: "1px solid #e0ffb2",
+            borderRadius: "0.5rem",
+          }}
+        >
           <div>
-            <div style={{ fontWeight: "bold", fontSize: "1.25em", marginBottom: "0.5rem" }}>Utslippsredusering</div>
+            <div
+              style={{
+                fontWeight: "bold",
+                fontSize: "1.25em",
+                marginBottom: "0.5rem",
+              }}
+            >
+              Utslippsredusering
+            </div>
             <div style={{ marginBottom: "1.5rem" }}>
-              Uten inngrep vil oljefeltene produsere <strong style={{ color: isDarkMode ? "white" : "black" }}>{baselineEmRounded} millioner tonn CO₂</strong> innen {gameData.allYears[gameData.allYears.length - 1]}.
+              Uten inngrep vil oljefeltene produsere{" "}
+              <strong style={{ color: isDarkMode ? "white" : "black" }}>
+                {baselineEmRounded} millioner tonn CO₂
+              </strong>{" "}
+              innen {gameData.allYears[gameData.allYears.length - 1]}.
             </div>
             <div style={{ marginBottom: "0.5rem" }}>
-              {isSharedView ? "Denne planen" : "Din plan"} har så langt redusert utslipp med <strong style={{ color: isDarkMode ? "white" : "black" }}>{preventedEmRounded} millioner tonn CO₂ ({reductionEmPositive}%)</strong>{parseInt(year) > 2025 ? '!' : '.'}
+              {isSharedView ? "Denne planen" : "Din plan"} har så langt redusert
+              utslipp med{" "}
+              <strong style={{ color: isDarkMode ? "white" : "black" }}>
+                {preventedEmRounded} millioner tonn CO₂ ({reductionEmPositive}%)
+              </strong>
+              {parseInt(year) > 2025 ? "!" : "."}
             </div>
             <div style={{ marginBottom: "0.25rem" }}>
               <PlanProgressionBar
@@ -140,14 +207,40 @@ export function PlanSummary() {
           </div>
         </div>
 
-        <div style={{ width: "100%", flexDirection: "column", padding: "1rem", border: "1px solid #e0ffb2", borderRadius: "0.5rem" }}>
+        <div
+          style={{
+            width: "100%",
+            flexDirection: "column",
+            padding: "1rem",
+            border: "1px solid #e0ffb2",
+            borderRadius: "0.5rem",
+          }}
+        >
           <div>
-            <div style={{ fontWeight: "bold", fontSize: "1.25em", marginBottom: "0.5rem" }}>Produksjonsredusering</div>
+            <div
+              style={{
+                fontWeight: "bold",
+                fontSize: "1.25em",
+                marginBottom: "0.5rem",
+              }}
+            >
+              Produksjonsredusering
+            </div>
             <div style={{ marginBottom: "1.5rem" }}>
-              Uten inngrep vil oljefeltene produsere <strong style={{ color: isDarkMode ? "white" : "black" }}>{baselinePrRounded} milliarder fat olje</strong> innen {gameData.allYears[gameData.allYears.length - 1]}.
+              Uten inngrep vil oljefeltene produsere{" "}
+              <strong style={{ color: isDarkMode ? "white" : "black" }}>
+                {baselinePrRounded} milliarder fat olje
+              </strong>{" "}
+              innen {gameData.allYears[gameData.allYears.length - 1]}.
             </div>
             <div style={{ marginBottom: "0.5rem" }}>
-              {isSharedView ? "Denne planen" : "Din plan"} har så langt redusert produksjonen med <strong style={{ color: isDarkMode ? "white" : "black" }}>{preventedPrRounded} milliarder fat olje ({reductionPrPositive}%)</strong>{parseInt(year) > 2025 ? '!' : '.'}
+              {isSharedView ? "Denne planen" : "Din plan"} har så langt redusert
+              produksjonen med{" "}
+              <strong style={{ color: isDarkMode ? "white" : "black" }}>
+                {preventedPrRounded} milliarder fat olje ({reductionPrPositive}
+                %)
+              </strong>
+              {parseInt(year) > 2025 ? "!" : "."}
             </div>
             <div style={{ marginBottom: "0.25rem" }}>
               <PlanProgressionBar
@@ -165,36 +258,44 @@ export function PlanSummary() {
             </div>
           </div>
         </div>
-
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-
-        <div className={"charts"} style={{ gap: "2rem", }}>
-          <div style={{ border: "1px solid rgba(255,255,255,0.0)", borderRadius: "0.5rem", padding: "1rem" }}>
+        <div className={"charts"} style={{ gap: "2rem" }}>
+          <div
+            style={{
+              border: "1px solid rgba(255,255,255,0.0)",
+              borderRadius: "0.5rem",
+              padding: "1rem",
+            }}
+          >
             <ProductionReductionChart phaseOut={phaseOut} />
           </div>
-          <div style={{ border: "1px solid rgba(255,255,255,0.0)", borderRadius: "0.5rem", padding: "1rem" }}>
+          <div
+            style={{
+              border: "1px solid rgba(255,255,255,0.0)",
+              borderRadius: "0.5rem",
+              padding: "1rem",
+            }}
+          >
             <EmissionStackedBarChart phaseOut={phaseOut} />
           </div>
         </div>
-        <div style={{ height: "1px", backgroundColor: "grey", opacity: "0.5" }}></div>
-        <h2>
-          Utslipp
-        </h2>
+        <div
+          style={{ height: "1px", backgroundColor: "grey", opacity: "0.5" }}
+        ></div>
+        <h2>Utslipp</h2>
         <div>
           <EmissionSummaryPage phaseOut={phaseOut} />
         </div>
-        <div style={{ height: "1px", backgroundColor: "grey", opacity: "0.5" }}></div>
-        <h2>
-          Produksjon
-        </h2>
+        <div
+          style={{ height: "1px", backgroundColor: "grey", opacity: "0.5" }}
+        ></div>
+        <h2>Produksjon</h2>
         <div>
           <ProductionSummaryPage />
         </div>
-
       </div>
-
     </div>
   );
 }

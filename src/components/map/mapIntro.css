@@ -1,0 +1,54 @@
+/* Introspanelet på kartsiden (/map): mål, verstingliste og hoved-CTA */
+
+.map-intro {
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.map-intro h2 {
+  margin: 0;
+}
+
+.map-intro .goal-box {
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.map-intro .worst-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+}
+
+.map-intro .worst-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.95em;
+}
+
+.map-intro .worst-row .figures {
+  white-space: nowrap;
+}
+
+.map-intro .cta {
+  font-size: 1.1em;
+}
+
+.map-intro .cta.primary {
+  background-color: var(--eple);
+}
+
+.map-intro .legend {
+  font-size: 0.9em;
+  opacity: 0.85;
+}
+
+.map-intro .legend .in-operation {
+  /* Samme rødtone som feltprikkene på kartet */
+  color: #c0392b;
+}

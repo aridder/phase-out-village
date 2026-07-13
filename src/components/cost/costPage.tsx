@@ -79,7 +79,7 @@ export function CostPage() {
           <div>
             <label htmlFor="front-endyear">
               <strong>Når stenges det siste feltet?</strong>{" "}
-              <span style={{ fontSize: "1.2em" }}>{endYear}</span>
+              <span className="endyear-value">{endYear}</span>
             </label>
             <input
               id="front-endyear"
@@ -162,7 +162,9 @@ export function CostPage() {
       <div className="front-prose">
         <p>
           Det viktigste først: klimaet. Planen unngår{" "}
-          <strong>{avoidedMt.toLocaleString("nb-NO")} millioner tonn CO₂</strong>{" "}
+          <strong>
+            {avoidedMt.toLocaleString("nb-NO")} millioner tonn CO₂
+          </strong>{" "}
           frem mot 2040 – som å ta{" "}
           {Math.round(avoidedMt / 2).toLocaleString("nb-NO")} millioner
           bensinbiler av veien i et helt år.
@@ -173,15 +175,15 @@ export function CostPage() {
             {energyData.electricity.oilGasConsumptionTwh} TWh strøm
           </strong>{" "}
           – nesten like mye som all norsk vindkraft produserer – og den
-          frigjøres når feltene stenges. Og å erstatte selve oljen krever
-          mindre enn man skulle tro:{" "}
+          frigjøres når feltene stenges. Og å erstatte selve oljen krever mindre
+          enn man skulle tro:{" "}
           <strong>
             {energy.replacementTwh.toLocaleString("nb-NO")} TWh ren strøm
           </strong>{" "}
-          gir samme nytte som all energien sokkelen ellers ville levert i
-          2040, fordi to tredjedeler av fossil energi uansett går tapt som
-          varme i eksos og kraftverk. Kraften og kompetansen fra sokkelen kan
-          i stedet bygge ny eksport: havvind, hydrogen og grønn industri.
+          gir samme nytte som all energien sokkelen ellers ville levert i 2040,
+          fordi to tredjedeler av fossil energi uansett går tapt som varme i
+          eksos og kraftverk. Kraften og kompetansen fra sokkelen kan i stedet
+          bygge ny eksport: havvind, hydrogen og grønn industri.
         </p>
       </div>
 
@@ -191,11 +193,10 @@ export function CostPage() {
           Oljefondet er verdt rundt{" "}
           <strong>{OIL_FUND_BN_NOK.toLocaleString("nb-NO")} milliarder</strong>{" "}
           – omtrent 30 år med dagens oljeinntekter står allerede i banken, og
-          det er akkurat denne overgangen fondet er til for. Vannmagasinene
-          våre kan lagre <strong>{RESERVOIR_CAPACITY_TWH} TWh</strong>,
-          omtrent halvparten av all magasinkapasitet i Europa – vi kan kjøpe
-          billig vindkraft når det blåser og selge vannkraft dyrt når det er
-          stille.
+          det er akkurat denne overgangen fondet er til for. Vannmagasinene våre
+          kan lagre <strong>{RESERVOIR_CAPACITY_TWH} TWh</strong>, omtrent
+          halvparten av all magasinkapasitet i Europa – vi kan kjøpe billig
+          vindkraft når det blåser og selge vannkraft dyrt når det er stille.
         </p>
         <p>
           <strong>98 %</strong> av strømmen vår er allerede fornybar, og vi

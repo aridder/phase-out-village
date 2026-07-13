@@ -63,7 +63,7 @@
   position: absolute;
   inset: 0;
   border-radius: 7px;
-  background: linear-gradient(to right, #79b83a, #a5e34d);
+  background: linear-gradient(to right, #79b83a, var(--eple));
   transform-origin: left;
   transform: scaleX(0);
   transition: transform 0.8s ease;
@@ -126,7 +126,7 @@
   padding: 0.35rem 0.8rem;
 }
 
-@media (width < 600px) {
+@media (width <= 600px) {
   .status-bar .status-story {
     display: none;
   }

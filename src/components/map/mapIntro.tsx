@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
 import { gameData } from "../../data/gameData";
 import { goalCutPercent } from "../../data/gameGoal";
+import "./mapIntro.css";
 
 /**
  * The panel leading the map page: the mission, the running tally, the three
@@ -43,26 +44,13 @@ export function MapIntro() {
   }, [phaseOut, year]);
 
   return (
-    <div
-      style={{
-        padding: "0.75rem 1.25rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.75rem",
-      }}
-    >
-      <h2 style={{ margin: 0 }}>Norsk sokkel – {total} felter</h2>
+    <div className="map-intro">
+      <h2>Norsk sokkel – {total} felter</h2>
 
-      <div
-        style={{
-          border: "1px solid currentColor",
-          borderRadius: "0.5rem",
-          padding: "0.5rem 0.75rem",
-        }}
-      >
-        🎯 <strong>Målet ditt:</strong> kutt utslippene minst{" "}
-        {goalCutPercent()} % innen 2040 – like mye som MDG-planen.{" "}
-        <strong>{retired}</strong> av {total} felter har fått sluttdato.
+      <div className="goal-box">
+        🎯 <strong>Målet ditt:</strong> kutt utslippene minst {goalCutPercent()}{" "}
+        % innen 2040 – like mye som MDG-planen. <strong>{retired}</strong> av{" "}
+        {total} felter har fått sluttdato.
       </div>
 
       {gameEnded ? (
@@ -72,10 +60,7 @@ export function MapIntro() {
             avviklet.
           </div>
           <div>
-            <button
-              style={{ fontSize: "1.1em" }}
-              onClick={() => navigate("/summary")}
-            >
+            <button className="cta" onClick={() => navigate("/summary")}>
               🏆 Se resultatet
             </button>
           </div>
@@ -85,31 +70,15 @@ export function MapIntro() {
           {worst.length > 0 && (
             <div>
               <strong>🔥 Verstingene som er igjen:</strong>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.25rem",
-                  marginTop: "0.35rem",
-                }}
-              >
+              <div className="worst-list">
                 {worst.map((row) => (
-                  <div
-                    key={row.field}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      gap: "0.75rem",
-                      fontSize: "0.95em",
-                    }}
-                  >
+                  <div key={row.field} className="worst-row">
                     <span>
                       <strong>{row.field}</strong>
                     </span>
-                    <span style={{ whiteSpace: "nowrap" }}>
-                      🌫️ {Math.round(row.emission / 1000).toLocaleString(
-                        "nb-NO",
-                      )}{" "}
+                    <span className="figures">
+                      🌫️{" "}
+                      {Math.round(row.emission / 1000).toLocaleString("nb-NO")}{" "}
                       kt/år · {Math.round(row.intensity)} kg/fat
                     </span>
                   </div>
@@ -120,7 +89,7 @@ export function MapIntro() {
 
           <div>
             <button
-              style={{ fontSize: "1.1em", backgroundColor: "#a5e34d" }}
+              className="cta primary"
               onClick={() => navigate("/phaseout")}
             >
               ✏️ Velg felter for {year}–{getEndOfTermYear()} (
@@ -128,9 +97,9 @@ export function MapIntro() {
             </button>
           </div>
 
-          <div style={{ fontSize: "0.9em", opacity: 0.85 }}>
-            Kartet: <span style={{ color: "#c0392b" }}>rødt</span> = i drift,
-            grått = avviklet. Trykk på et felt for nøkkeltall. Du styrer fire
+          <div className="legend">
+            Kartet: <span className="in-operation">rødt</span> = i drift, grått
+            = avviklet. Trykk på et felt for nøkkeltall. Du styrer fire
             stortingsperioder frem til 2040 – følg målet i statuslinjen øverst.
           </div>
         </>

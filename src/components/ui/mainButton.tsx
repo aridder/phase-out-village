@@ -15,10 +15,8 @@ interface MainButtonProps {
   /** Tooltip text; falls back to label */
   title?: string;
   disabled?: boolean;
-  /** Background when the current route matches `to` */
-  activeColor?: string;
-  /** Background otherwise */
-  defaultColor?: string;
+  /** Highlight as the primary action (--eple background) */
+  primary?: boolean;
   /** Badge number shown in the top-right corner */
   count?: number;
 }
@@ -27,11 +25,10 @@ interface MainButtonProps {
  * A main navigation/action button: icon + label, with an optional count
  * badge.
  *
- * All sizing and responsive behavior lives in CSS (.main-button in
- * application.css): the label/labelSmall swap and the icon size are pure
- * media queries, so this component needs no resize listeners. The only
- * inline style is the background color, because it is data (active state
- * and per-button color), not layout.
+ * All styling lives in CSS (.main-button in application.css): sizing and
+ * the label/labelSmall swap are pure media queries, the colors are the
+ * .primary and .active modifiers. The component only decides WHICH
+ * modifiers apply.
  */
 export const MainButton: React.FC<MainButtonProps> = ({
   icon,
@@ -41,8 +38,7 @@ export const MainButton: React.FC<MainButtonProps> = ({
   onClick,
   title = label,
   disabled = false,
-  activeColor = "cyan",
-  defaultColor = "#e0ffb2",
+  primary = false,
   count,
 }) => {
   const navigate = useNavigate();
@@ -56,12 +52,15 @@ export const MainButton: React.FC<MainButtonProps> = ({
     else if (to) navigate(to, { state: { from: location } });
   };
 
+  const className = ["main-button", primary && "primary", isActive && "active"]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <button
       onClick={handleClick}
       title={title}
-      className="main-button"
-      style={{ backgroundColor: isActive ? activeColor : defaultColor }}
+      className={className}
       disabled={disabled}
     >
       <span className="icon" aria-hidden="true">

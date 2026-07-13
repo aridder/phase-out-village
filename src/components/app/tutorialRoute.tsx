@@ -23,7 +23,7 @@ export function TutorialRoute() {
   if (typeof rawFrom === "string") {
     // Only accept paths starting with "/"
     if (rawFrom.startsWith("/")) from = rawFrom;
-  // If `rawFrom` is an object (likely a location object), check its pathname property
+    // If `rawFrom` is an object (likely a location object), check its pathname property
   } else if (rawFrom && typeof rawFrom.pathname === "string") {
     // Only accept pathname that starts with "/"
     if (rawFrom.pathname.startsWith("/")) from = rawFrom.pathname;
@@ -33,19 +33,21 @@ export function TutorialRoute() {
     <Dialog
       open={true}
       onClose={() => navigate(from)}
-      className={`${isSmall ? '' : 'tutorial-modal' }`}
+      className={`${isSmall ? "" : "tutorial-modal"}`}
     >
-      <div style={{ 
-        width: "100%", 
-        maxWidth: "100%", 
-        height: "100%", 
-        maxHeight: "100%", 
-        display: "flex", 
-        flex: 1, 
-        alignItems: "center", 
-        placeSelf: "center", 
-        padding: isSmall ? "1rem" : ''
-      }}>
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "100%",
+          height: "100%",
+          maxHeight: "100%",
+          display: "flex",
+          flex: 1,
+          alignItems: "center",
+          placeSelf: "center",
+          padding: isSmall ? "1rem" : "",
+        }}
+      >
         <TutorialDialog onClose={() => navigate(from)} />
       </div>
     </Dialog>

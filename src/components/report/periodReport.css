@@ -35,7 +35,7 @@
 
 .period-report .goal-meter .fill {
   height: 100%;
-  background-color: #a5e34d;
+  background-color: var(--eple);
   border-radius: 0.8rem;
   transition: width 0.6s ease-out;
 }
@@ -115,8 +115,8 @@
 }
 
 .period-report .cta-row .primary {
-  background-color: #a5e34d;
-  color: #133600;
+  background-color: var(--eple);
+  color: var(--skog);
   flex: 1;
   min-width: 240px;
 }
