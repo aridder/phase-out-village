@@ -193,7 +193,8 @@
   background: #c0392b;
 }
 
-/* Handlingsraden ligger klistret i bunnen mens listen scroller */
+/* Handlingsfeltet ligger klistret i bunnen mens listen scroller — egen
+   tonet flate med tydelig skille, samme «dokk»-språk som kartarket */
 .phaseout-actions {
   position: sticky;
   bottom: 0;
@@ -201,34 +202,65 @@
   right: 0;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 0.75rem 1rem 1rem;
   margin-top: 0.5rem;
-  border-top: 1px solid var(--lime);
-  background-color: var(--lime);
-  color: black;
+  border-top: 2px solid var(--skog);
+  background-color: color-mix(in srgb, var(--skog) 7%, var(--lime));
+  box-shadow: 0 -4px 12px rgb(0 0 0 / 0.1);
+  color: var(--skog);
 }
 
 @media (prefers-color-scheme: dark) {
   .phaseout-actions {
-    background-color: var(--skog);
+    border-top-color: var(--lime);
+    background-color: color-mix(in srgb, var(--lime) 8%, var(--skog));
     color: inherit;
+  }
+}
+
+/* Stabil bredde: dialogens bredde er ellers innholdsstyrt, og når
+   knappe- og effekttekstene skifter med valget, endret hele modalen
+   størrelse og hoppet på skjermen. display: block trengs fordi
+   all: unset øverst i fila gjør skjemaet inline — og inline-elementer
+   ignorerer width */
+.phaseout-form {
+  display: block;
+  width: min(860px, calc(100vw - 3rem));
+}
+
+@media (width <= 600px) {
+  .phaseout-form {
+    width: 100%;
   }
 }
 
 .phaseout-actions .selection-impact {
   margin-bottom: 0.5rem;
   font-size: 0.95em;
+  /* Plass til to linjer på smale skjermer, så høyden aldri endres når
+     teksten skifter mellom hint og effekt */
+  min-height: 2.6em;
+}
+
+.phaseout-actions .impact-hint {
+  opacity: 0.75;
 }
 
 .phaseout-actions .button-row button[type="submit"] {
   flex: 1;
 }
 
-/* Handlingsraden: vedtaket er primærhandlingen og skal stå øverst i full
-   bredde — før var «Hopp over perioden» den mest fremtredende knappen */
+/* Vedtaket er primærhandlingen: full bredde nederst, nærmest tommelen.
+   Hjelperne (Tøm / 5 verste / MDGs felter) deler raden over, likt
+   dimensjonert i en sekundær størrelse */
 .phaseout-actions .button-row button[type="submit"] {
-  order: -1;
+  order: 1;
   flex-basis: 100%;
+}
+
+.phaseout-actions .button-row button[type="button"] {
+  flex: 1 1 auto;
+  font-size: 0.9rem;
 }
 
 /* Valgte rader skal SE valgt ut — før endret bare 1,4rem-boksen seg */

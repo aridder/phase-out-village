@@ -415,24 +415,33 @@ export function PhaseOutDialog({
         </div>
 
         <div className="phaseout-actions">
-          {Object.keys(draft).length > 0 && (
-            <div className="selection-impact">
-              Valget fjerner{" "}
-              <strong>
-                ~{Math.round(totalEmission / 1000).toLocaleString("nb-NO")} kt
-                CO₂
-              </strong>{" "}
-              og{" "}
-              <strong>
-                {(
-                  Math.round((totalOilProduction + totalGasProduction) * 10) /
-                  10
-                ).toLocaleString("nb-NO")}{" "}
-                mill. Sm³
-              </strong>{" "}
-              produksjon per år.
-            </div>
-          )}
+          {/* Alltid rendret med stabil høyde: når linjen kom og gikk med
+              valget, endret hele modalen størrelse og hoppet på skjermen */}
+          <div className="selection-impact">
+            {Object.keys(draft).length > 0 ? (
+              <>
+                Valget fjerner{" "}
+                <strong>
+                  ~{Math.round(totalEmission / 1000).toLocaleString("nb-NO")} kt
+                  CO₂
+                </strong>{" "}
+                og{" "}
+                <strong>
+                  {(
+                    Math.round((totalOilProduction + totalGasProduction) * 10) /
+                    10
+                  ).toLocaleString("nb-NO")}{" "}
+                  mill. Sm³
+                </strong>{" "}
+                produksjon per år.
+              </>
+            ) : (
+              <span className="impact-hint">
+                Huk av felter for å se hva valget fjerner av utslipp og
+                produksjon.
+              </span>
+            )}
+          </div>
           <div className="button-row">
             {/* type="button" er viktig: uten den er knappene submit-knapper
                 i skjemaet, og «Tøm» ville tømt utvalget OG avsluttet
