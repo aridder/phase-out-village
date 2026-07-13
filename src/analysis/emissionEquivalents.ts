@@ -66,5 +66,7 @@ export function emissionEquivalents(tonnesCo2: number): EmissionEquivalent[] {
       amount: formatCompactNumber(tonnesCo2 / TONNES_PER_TREE_LIFETIME),
       label: "grantrær som vokser i 100 år",
     },
-  ];
+    // A small plan makes some quantities round to zero ("0 år med Norges
+    // totale utslipp") — an equivalent that shows nothing says nothing
+  ].filter((equivalent) => equivalent.amount !== "0");
 }

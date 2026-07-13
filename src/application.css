@@ -159,6 +159,54 @@ td {
   }
 }
 
+.header-bar {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  row-gap: 0.25rem;
+  padding: 0.2rem 0.75rem;
+}
+
+.header-nav {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  row-gap: 0.25rem;
+}
+
+/* Tablet range (601–960px): MainButton sizes its label and icon with inline
+   styles keyed to a ≤600px breakpoint, so this range would get the full
+   desktop size and the button row wrapped into a ragged, right-aligned
+   stack. Compact the buttons (the !importants must win over the inline
+   styles), drop the wide MDG logo but keep the Oljespillet home link, and
+   center whatever still wraps. */
+@media (601px <= width <= 960px) {
+  .header-bar,
+  .header-nav {
+    justify-content: center;
+  }
+  .brand-logo,
+  .brand-divider {
+    display: none;
+  }
+  #app header .main-button {
+    height: 48px;
+    padding: 0.25rem 0.6rem;
+  }
+  #app header .main-button > div {
+    font-size: 1.05em !important;
+  }
+  #app header .main-button > div:first-child {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
 #app footer {
   background-color: var(--skog);
   color: var(--lime);
@@ -306,6 +354,11 @@ dialog .button-row {
     left: 0;
     background-color: var(--lime);
     z-index: 1;
+    /* Without this the year column is lime-on-lime in dark mode —
+       completely invisible (thead th above has the same override) */
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--gran);
+    }
   }
   tr:nth-child(even) {
     background-color: rgb(253, 252, 236);
@@ -352,4 +405,13 @@ dialog .button-row {
 
 .sources-note li {
   list-style: disc;
+}
+
+.calculation-note {
+  margin-top: 0.75rem;
+}
+
+.calculation-note summary {
+  cursor: pointer;
+  font-weight: 600;
 }

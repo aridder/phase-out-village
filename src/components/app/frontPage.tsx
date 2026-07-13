@@ -14,7 +14,9 @@ export function FrontPage() {
 
   return (
     <>
-      <h1>Chill, baby! Chill!</h1>
+      {/* The global reset removes all margins, and main has no padding, so
+          the heading needs its own breathing room */}
+      <h1 style={{ margin: "0.5rem 1rem" }}>Chill, baby! Chill!</h1>
       <div className="welcome">
         <Dialog open={open} onClose={() => navigate("/map")}>
           <h1>Regjeringen trenger din hjelp!</h1>

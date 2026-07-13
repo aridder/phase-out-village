@@ -19,7 +19,11 @@ export function Brand() {
         alignItems: "center",
       }}
     >
-      <a href="https://mdg.no/politikk/utfasing" target="_blank">
+      <a
+        className="brand-logo"
+        href="https://mdg.no/politikk/utfasing"
+        target="_blank"
+      >
         <img
           style={{ maxWidth: "196px" }}
           src={
@@ -29,6 +33,7 @@ export function Brand() {
         />
       </a>
       <div
+        className="brand-divider"
         style={{
           height: "50%",
           width: "1px",

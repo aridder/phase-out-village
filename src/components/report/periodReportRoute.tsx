@@ -27,13 +27,12 @@ export function PeriodReportRoute() {
     useContext(ApplicationContext);
   const navigate = useNavigate();
 
-  // No decision recorded (deep link or restart) — nothing to report on
-  if (!lastDecision || year === "2040") return <Navigate to="/map" replace />;
-
-  const { round, fromYear, toYear, fields } = lastDecision;
-  const goal = goalCutPercent();
-  const cut = currentCutPercent(phaseOut);
-  const pace = paceVerdict(cut, round, 4);
+  // Hooks must run unconditionally on every render, so they come before the
+  // redirect guard below (fields/fromYear fall back to empty values)
+  const round = lastDecision?.round ?? 1;
+  const fromYear = lastDecision?.fromYear ?? year;
+  const toYear = lastDecision?.toYear ?? year;
+  const fields = lastDecision?.fields ?? [];
 
   const decision = useMemo(() => {
     const emissionKt = Math.round(
@@ -58,6 +57,13 @@ export function PeriodReportRoute() {
     return emissionEquivalents(avoided)[0];
   }, [phaseOut]);
 
+  // No decision recorded (deep link or restart) — nothing to report on
+  if (!lastDecision || year === "2040") return <Navigate to="/map" replace />;
+
+  const goal = goalCutPercent();
+  const cut = currentCutPercent(phaseOut);
+  const pace = paceVerdict(cut, round, 4);
+
   const paceText =
     pace === "ahead"
       ? `Du ligger foran skjema! Fortsetter du sånn, slår du målet på −${goal} % med god margin.`
@@ -78,8 +84,8 @@ export function PeriodReportRoute() {
       <div>
         {fields.length === 0 ? (
           <>
-            Stortinget vedtok <strong>ingen avviklinger</strong> denne
-            perioden. Feltene produserer videre – og slipper ut videre.
+            Stortinget vedtok <strong>ingen avviklinger</strong> denne perioden.
+            Feltene produserer videre – og slipper ut videre.
           </>
         ) : (
           <>
@@ -131,9 +137,7 @@ export function PeriodReportRoute() {
             {carEquivalent &&
               ` · som ${carEquivalent.amount} ${carEquivalent.label}`}
           </span>
-          <span>
-            🎯 Mål: −{goal} %
-          </span>
+          <span>🎯 Mål: −{goal} %</span>
         </div>
       </div>
 
