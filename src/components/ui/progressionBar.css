@@ -1,0 +1,72 @@
+/* Fremdriftsmeteret på plansiden: fylt andel + tre tekstetiketter.
+   Bredder, farger og fade-opacity er data og settes inline av komponenten —
+   alt av layout ligger her. */
+
+.progression-bar {
+  position: relative;
+  background-color: black;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  transition: background-color 0.5s ease;
+}
+
+.progression-bar.size-small {
+  height: 16px;
+}
+
+.progression-bar.size-medium {
+  height: 24px;
+}
+
+.progression-bar.size-large {
+  height: 32px;
+}
+
+.progression-bar .fill {
+  height: 100%;
+  transition:
+    width 0.5s ease,
+    background-color 0.5s ease;
+  z-index: 1;
+}
+
+.progression-bar .bar-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  color: #e6e6e6ff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+  /* Klikk skal gå gjennom etiketten til raden bak */
+  pointer-events: none;
+  z-index: 2;
+}
+
+.progression-bar .bar-label.middle {
+  transition:
+    left 0.5s ease,
+    opacity 0.5s ease;
+}
+
+.progression-bar .bar-label.right {
+  justify-content: right;
+  padding: 0 0.5em 0 0.5rem;
+}
+
+.progression-bar .remainder {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  transition:
+    opacity 0.5s ease,
+    left 0.5s ease;
+  z-index: 0;
+}

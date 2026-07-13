@@ -5,6 +5,7 @@ import { MapIntro } from "./mapIntro";
 import { OilfieldDetails } from "./oilfieldDetails";
 import { Slugify } from "../../data/slugify";
 import { OilfieldName } from "../../data/gameData";
+import "./map.css";
 
 /**
  * Main route for the oil field map.

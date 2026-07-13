@@ -1,0 +1,36 @@
+/* Datasidene (/data/*): tabeller med klistret topprad og årstall-kolonne */
+
+.data {
+  thead th {
+    position: sticky;
+    top: 0;
+    background-color: var(--lime);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--gran);
+    }
+  }
+  tr th.rowHeader {
+    position: sticky;
+    left: 0;
+    background-color: var(--lime);
+    z-index: 1;
+    /* Uten denne er årstall-kolonnen lime-på-lime i mørkt tema —
+       helt usynlig (thead th over har samme override) */
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--gran);
+    }
+  }
+  tr:nth-child(even) {
+    background-color: rgb(253, 252, 236);
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--gran);
+    }
+  }
+  td.estimate {
+    font-style: italic;
+    color: red;
+    @media (prefers-color-scheme: dark) {
+      color: hotpink;
+    }
+  }
+}

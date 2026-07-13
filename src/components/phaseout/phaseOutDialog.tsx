@@ -2,7 +2,6 @@ import { DataField, Year } from "../../data/types";
 
 import React, { FormEvent, useContext, useMemo, useState } from "react";
 import { ApplicationContext } from "../../applicationContext";
-import { EmissionIntensityBarChart } from "../charts/emissionIntensityBarChart";
 import { useNavigate } from "react-router-dom";
 import "./phaseOut.css";
 import { mdgPlan } from "../../generated/dataMdg";
@@ -13,9 +12,7 @@ import {
   OilfieldName,
   PhaseOutSchedule,
 } from "../../data/gameData";
-import { InfoTag } from "../ui/InfoTag";
 import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
-import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
 
 /** Keys that can be used to sort oil fields in PhaseOutDialog. */
 type SortKey =
@@ -75,31 +72,12 @@ export function PhaseOutDialog({
   } = useContext(ApplicationContext);
 
   // Draft selection state for the current period
-  // const [draft, setDraft] = useState<PhaseOutSchedule>({});
   const draft = phaseOutDraft;
   const setDraft = setPhaseOutDraft;
-  const [, setSelectedOrder] = useState<OilfieldName[]>([]);
   const navigate = useNavigate();
   const isSmall = useIsSmallScreen();
-  const isDarkMode = usePrefersDarkMode();
 
   const [sortKey, setSortKey] = useState<SortKey>("recommended");
-
-  // Latest selected field for displaying charts
-  const [latestSelectedField, setLatestSelectedField] =
-    useState<OilfieldName>();
-
-  // const [latestSelectedField, setLatestSelectedField] =
-  //   useState<OilfieldName|undefined>(Object.keys(phaseOutDraft).length > 0 ? phaseOutDraft[0] : undefined);
-
-  // Memoized data for the chart of the latest selected field
-  const fieldForChart = useMemo(
-    () =>
-      latestSelectedField
-        ? gameData.data[latestSelectedField][year]
-        : undefined,
-    [latestSelectedField],
-  );
 
   // Handles submission: commitDraft() retires the fields, records the
   // decision and navigates to the period report (or the final summary).
@@ -144,7 +122,6 @@ export function PhaseOutDialog({
       ...d,
       ...fromEntries(worst.map((r) => [r.field, year])),
     }));
-    setLatestSelectedField(worst[worst.length - 1]?.field);
   }
 
   // Removes a field from the draft plan
@@ -152,19 +129,11 @@ export function PhaseOutDialog({
     setDraft((d) =>
       fromEntries(Object.entries(d).filter(([f]) => f !== field)),
     );
-
-    setSelectedOrder((prev) => {
-      const updated = prev.filter((f) => f !== field);
-      setLatestSelectedField(updated[updated.length - 1] ?? null);
-      return updated;
-    });
   }
 
   // Adds a field to the draft plan
   function addField(field: OilfieldName) {
     setDraft((d) => ({ ...d, [field]: year }));
-    setSelectedOrder((prev) => [...prev.filter((f) => f !== field), field]);
-    setLatestSelectedField(field);
   }
 
   // Toggles a field on/off in the draft plan
@@ -175,40 +144,6 @@ export function PhaseOutDialog({
       removeField(field);
     }
   }
-
-  // // Sort oil fields based on sort key and whether already phased out
-  // const sortedFields = Object.keys(gameData.data)
-  //   .sort((a, b) => {
-  //     const aIsDisabled = a in phaseOut;
-  //     const bIsDisabled = b in phaseOut;
-
-  //     if (aIsDisabled && !bIsDisabled) return 1;
-  //     if (!aIsDisabled && bIsDisabled) return -1;
-  //     if (sortKey === "alphabetical") {
-  //       return a.localeCompare(b);
-  //     }
-
-  //     const aData = gameData.data[a]?.[year];
-  //     const bData = gameData.data[b]?.[year];
-
-  //     return (
-  //       // (aData?.[sortKey]?.value ?? -Infinity) -
-  //       // (bData?.[sortKey]?.value ?? -Infinity)
-  //       (bData?.[sortKey]?.value ?? -Infinity) -
-  //       (aData?.[sortKey]?.value ?? -Infinity)
-  //     );
-  //   });
-
-  // const sortedFields = Object.keys(gameData.data)
-  //   .filter((k) => !(k in phaseOut))  // only enabled keys
-  //   .sort((a, b) => {
-  //     const aData = gameData.data[a]?.[year];
-  //     const bData = gameData.data[b]?.[year];
-
-  //     if (sortKey === "alphabetical") return a.localeCompare(b);
-
-  //     return (bData?.[sortKey]?.value ?? -Infinity) - (aData?.[sortKey]?.value ?? -Infinity); // descending
-  //   });
 
   // Key figures per field for the current year, plus a "worst first" score
   // that combines size (emissions) and inefficiency (emissions per barrel)
@@ -338,34 +273,9 @@ export function PhaseOutDialog({
   }
 
   return (
-    <form
-      className=""
-      onSubmit={handleSubmit}
-      style={{ width: "100%", all: "unset" }}
-    >
-      <div
-        style={{
-          width: "100%",
-          minWidth: isSmall ? "" : "612px",
-          maxWidth: "1024px",
-          paddingTop: "1rem",
-          paddingLeft: "1rem",
-          paddingRight: "1rem",
-          backgroundColor: isDarkMode ? "#133600" : "#e0ffb2",
-          color: isDarkMode ? "inherit" : "black",
-          // color: "#e0ffb2",
-        }}
-      >
-        <div
-          className={``}
-          style={{
-            display: isSmall ? "block" : "none",
-            position: isSmall ? "fixed" : "sticky",
-            top: "1rem",
-            right: "1rem",
-            zIndex: "3",
-          }}
-        >
+    <form className="phaseout-form" onSubmit={handleSubmit}>
+      <div className="phaseout-panel">
+        <div className="close-corner-mobile">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -378,7 +288,7 @@ export function PhaseOutDialog({
           </button>
         </div>
 
-        <div className="phaseout-dialog-header" style={{ paddingLeft: "1rem" }}>
+        <div className="phaseout-dialog-header">
           <div className="phaseout-sort-wrapper">
             <label className="phaseout-sort-dropdown">
               Sorter etter:{" "}
@@ -398,15 +308,7 @@ export function PhaseOutDialog({
             </label>
           </div>
 
-          <div
-            style={{
-              display: isSmall ? "none" : "block",
-              position: isSmall ? "fixed" : "sticky",
-              top: "0.25rem",
-              right: "0.25rem",
-              zIndex: "3",
-            }}
-          >
+          <div className="close-corner-desktop">
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -420,20 +322,13 @@ export function PhaseOutDialog({
           </div>
         </div>
 
-        <div
-          className="phaseout-checkboxes"
-          style={{ marginTop: "1.5rem", paddingLeft: "1rem" }}
-        >
-          <h3 className="phaseout-header" style={{ marginBottom: "1.5rem" }}>
+        <div className="phaseout-checkboxes">
+          <h3 className="phaseout-header">
             Velg felter for avvikling {year}-{getEndOfTermYear()}
           </h3>
-          <ul style={{ marginTop: "0.5rem", marginLeft: 0, padding: 0 }}>
+          <ul className="phaseout-list">
             {sortedRows.map((row) => (
-              <li
-                key={row.field}
-                className="phaseout-row"
-                style={{ borderBottom: "1px solid #cccccc2e" }}
-              >
+              <li key={row.field} className="phaseout-row">
                 <label className="field-row-label">
                   <input
                     type="checkbox"
@@ -487,67 +382,9 @@ export function PhaseOutDialog({
           </ul>
         </div>
 
-        {/* <div className="dialog-information-container">
-
-          {latestSelectedField && fieldForChart && (
-            <div className="phaseout-latest-oilfield">
-              <h3>Sist valgt oljefelt: {latestSelectedField}</h3>
-              <p>
-                Olje/væskeproduksjon i {year}:{" "}
-                {fieldForChart.productionOil?.value ?? "0"} GSm3 olje{" "}
-                <InfoTag title="GSm3 = standard kubikkmeter ved standard trykk/temperatur. Brukes for å sammenligne volum.">
-                  ?
-                </InfoTag>
-              </p>
-              <p>
-                Gasseksport i {year}: {fieldForChart.productionGas?.value ?? "0"}{" "}
-                GSm3 gass{" "}
-                <InfoTag title="GSm3 = standard kubikkmeter ved standard trykk/temperatur.">
-                  ?
-                </InfoTag>
-              </p>
-              <p>
-                Utslipp i {year}:{" "}
-                {Math.round((fieldForChart.emission?.value ?? 0) / 1000)} tusen
-                tonn Co2{" "}
-                <InfoTag title="CO2e = CO2-ekvivalenter (inkluderer andre klimagasser omregnet til CO2). ‘Tusen tonn’ betyr at tallet er delt på 1000.">
-                  ?
-                </InfoTag>
-              </p>
-              <div className="phaseout-emission-chart">
-                {fieldForChart && (
-                  <EmissionIntensityBarChart
-                    year={year}
-                    field={latestSelectedField}
-                    emissionIntensity={fieldForChart.emissionIntensity?.value}
-                  />
-                )}
-              </div>
-            </div>
-          )}
-
-        </div> */}
-
-        <div
-          style={{
-            position: "sticky",
-            height: "auto",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0px",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            padding: "1rem",
-            marginTop: "0.5rem",
-            // backgroundColor: "#133600",
-            borderTop: "1px solid #e0ffb2",
-            backgroundColor: isDarkMode ? "#133600" : "#e0ffb2",
-            color: isDarkMode ? "inherit" : "black",
-          }}
-        >
+        <div className="phaseout-actions">
           {Object.keys(draft).length > 0 && (
-            <div style={{ marginBottom: "0.5rem", fontSize: "0.95em" }}>
+            <div className="selection-impact">
               Valget fjerner{" "}
               <strong>
                 ~{Math.round(totalEmission / 1000).toLocaleString("nb-NO")} kt
@@ -564,10 +401,7 @@ export function PhaseOutDialog({
               produksjon per år.
             </div>
           )}
-          <div
-            className={"button-row"}
-            style={{ width: "100%", flex: 1, marginTop: "0rem" }}
-          >
+          <div className="button-row">
             <button
               onClick={() => setPhaseOutDraft({})}
               disabled={Object.keys(phaseOutDraft).length < 1}
@@ -583,233 +417,13 @@ export function PhaseOutDialog({
             <button onClick={handleMdgPlanClick}>
               {isSmall ? `Velg MDGs felter` : `Velg felter fra MDGs plan`}
             </button>
-            <button
-              type="submit"
-              disabled={year === "2040"}
-              style={{ flex: 1 }}
-            >
+            <button type="submit" disabled={year === "2040"}>
               ♻ Avvikle {" " + Object.keys(phaseOutDraft).length + " "}{" "}
               {isSmall ? `felt` : `oljefelt`}
             </button>
           </div>
-
-          {/* <div style={{ height: "128px"}}>
-            <h4 style={{ marginBottom: "0.5rem" }}>Felter som avvikles innen {getEndOfTermYear()}:</h4>
-            <div style={{
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              overflowY: "auto",
-              overflowX: "hidden",
-            }}>
-              {Object.keys(draft).map((navn) => (
-                <div
-                  key={navn}
-                  style={{ border: "1px solid #e0ffb2", padding: "0.25rem", paddingLeft: "0.5rem", paddingRight: "0.5rem", borderRadius: "0.5rem" }}
-                >
-                  {navn}
-                </div>
-              ))}
-            </div>
-          </div> */}
-
-          {/* <div className={"button-row"} style={{ marginTop: "0rem", }}>
-            <button type="submit" disabled={year === "2040"}>
-              Fase ut valgte felter i {year}
-            </button>
-            <button onClick={handleMdgPlanClick}>Velg felter fra MDGs plan</button>
-          </div> */}
         </div>
       </div>
     </form>
-
-    // <form className="phaseout-dialog" onSubmit={handleSubmit}>
-
-    //   <div style={{ width: "100%", backgroundColor: "#313131ff" }}>
-
-    //     <div className={``} style={{
-    //       display: isSmall ? "block" : "none",
-    //       position: isSmall ? "fixed" : "sticky",
-    //       top: "1rem",
-    //       right: "1rem",
-    //       zIndex: "3"
-    //     }}>
-    //       <button
-    //         onClick={(e) => {
-    //           e.preventDefault();
-    //           e.stopPropagation();
-    //           navigate(from)
-    //         }}
-    //         title="Tilbake"
-    //       >
-    //         X
-    //       </button>
-    //     </div>
-
-    //     <div className="phaseout-dialog-header">
-    //       <div className="phaseout-sort-wrapper">
-    //         <label className="phaseout-sort-dropdown">
-    //           Sorter etter:{" "}
-    //           <select
-    //             value={sortKey}
-    //             onClick={(e) => e.stopPropagation()}
-    //             onChange={(e) => setSortKey(e.target.value as SortKey)}
-    //           >
-    //             <option value="alphabetical">Alfabetisk</option>
-    //             <option value="totalProduction">Total produksjon</option>
-    //             <option value="emission">Utslipp</option>
-    //             <option value="emissionIntensity">Utslippsintensitet</option>
-    //           </select>
-    //         </label>
-    //       </div>
-
-    //       <div style={{ display: isSmall ? "none" : "block", position: isSmall ? "fixed" : "sticky", top: "0.25rem", right: "0.25rem", zIndex: "3" }}>
-    //         <button
-    //           onClick={(e) => {
-    //             e.preventDefault();
-    //             e.stopPropagation();
-    //             navigate(from)
-    //           }}
-    //           title="Tilbake"
-    //         >
-    //           X
-    //         </button>
-    //       </div>
-
-    //     </div>
-
-    //     <div className="phaseout-checkboxes">
-    //       <h3 className="phaseout-header">
-    //         Velg felter for avvikling {year}-{getEndOfTermYear()}
-    //       </h3>
-    //       <ul>
-    //         {sortedFields.map((k) => {
-    //           const isDisabled = k in phaseOut;
-    //           return (
-    //             <li
-    //               key={k}
-    //               className={isDisabled ? "grayed-out-oilfield-checklist" : ""}
-    //             >
-    //               <label>
-    //                 <input
-    //                   disabled={isDisabled}
-    //                   type="checkbox"
-    //                   onChange={(e) => {
-    //                     toggle(k, e.target.checked);
-    //                   }}
-    //                   checked={!!draft[k]}
-    //                 />
-    //                 {` `}{k}
-    //               </label>
-    //             </li>
-    //           );
-    //         })}
-    //       </ul>
-    //     </div>
-
-    //     <div className="dialog-information-container">
-
-    //       {Object.keys(draft).length > 0 && (
-    //         <div
-    //           className="phaseout-fieldnames-selected"
-    //           style={{ marginBottom: "2rem" }}
-    //         >
-
-    //           <h4 style={{ marginBottom: "0.5rem" }}>Felter som avvikles innen {getEndOfTermYear()}:</h4>
-    //           <div style={{ width: "100%", display: "flex", flex: 0, flexWrap: "wrap", alignItems: "center", gap: "0.5rem", }}>
-    //             {Object.keys(draft).map((navn) => (
-    //               <div
-    //                 key={navn}
-    //                 style={{ border: "1px solid #e0ffb2", padding: "0.25rem", paddingLeft: "0.5rem", paddingRight: "0.5rem", borderRadius: "0.5rem" }}
-    //               >
-    //                 {navn}
-    //               </div>
-    //             ))}
-    //           </div>
-    //           {/* <ul>
-    //           {Object.keys(draft).map((k) => (
-    //             <li key={k}>
-    //               <label>{k}</label>
-    //             </li>
-    //           ))}
-    //         </ul> */}
-    //         </div>
-    //       )}
-
-    //       {latestSelectedField && fieldForChart && (
-    //         <div className="phaseout-latest-oilfield">
-    //           <h3>Sist valgt oljefelt: {latestSelectedField}</h3>
-    //           <p>
-    //             Olje/væskeproduksjon i {year}:{" "}
-    //             {fieldForChart.productionOil?.value ?? "0"} GSm3 olje{" "}
-    //             <InfoTag title="GSm3 = standard kubikkmeter ved standard trykk/temperatur. Brukes for å sammenligne volum.">
-    //               ?
-    //             </InfoTag>
-    //           </p>
-    //           <p>
-    //             Gasseksport i {year}: {fieldForChart.productionGas?.value ?? "0"}{" "}
-    //             GSm3 gass{" "}
-    //             <InfoTag title="GSm3 = standard kubikkmeter ved standard trykk/temperatur.">
-    //               ?
-    //             </InfoTag>
-    //           </p>
-    //           <p>
-    //             Utslipp i {year}:{" "}
-    //             {Math.round((fieldForChart.emission?.value ?? 0) / 1000)} tusen
-    //             tonn Co2{" "}
-    //             <InfoTag title="CO2e = CO2-ekvivalenter (inkluderer andre klimagasser omregnet til CO2). ‘Tusen tonn’ betyr at tallet er delt på 1000.">
-    //               ?
-    //             </InfoTag>
-    //           </p>
-    //           <div className="phaseout-emission-chart">
-    //             {fieldForChart && (
-    //               <EmissionIntensityBarChart
-    //                 year={year}
-    //                 field={latestSelectedField}
-    //                 emissionIntensity={fieldForChart.emissionIntensity?.value}
-    //               />
-    //             )}
-    //           </div>
-    //         </div>
-    //       )}
-
-    //       {/* {Object.keys(draft).length > 0 && (
-    //       <div className="phaseout-total-production">
-    //         <strong>Produksjon som reduseres innen {periodEnd}:</strong>
-    //         <p>
-    //           {totalOilProduction} GSm3 olje{" "}
-    //           <InfoTag title="GSm3 = standard kubikkmeter. Viser volum ved standard forhold.">
-    //             ?
-    //           </InfoTag>
-    //         </p>
-    //         <p>
-    //           {totalGasProduction} GSm3 gass{" "}
-    //           <InfoTag title="GSm3 = standard kubikkmeter. Viser volum ved standard forhold.">
-    //             ?
-    //           </InfoTag>
-    //         </p>
-    //         <strong>Utslipp som reduseres innen {periodEnd}:</strong>{" "}
-    //         <p>
-    //           {Math.round(totalEmission / 1_000)} tusen tonn CO2e{" "}
-    //           <InfoTag title="CO2e = CO2-ekvivalenter. ‘Tusen tonn’ = delt på 1000.">
-    //             ?
-    //           </InfoTag>
-    //         </p>
-    //       </div>
-    //     )} */}
-
-    //     </div>
-
-    //     <div className={"button-row"}>
-    //       <button type="submit" disabled={year === "2040"}>
-    //         Fase ut valgte felter i {year}
-    //       </button>
-    //       <button onClick={handleMdgPlanClick}>Velg felter fra MDGs plan</button>
-    //     </div>
-
-    //   </div>
-
-    // </form>
   );
 }

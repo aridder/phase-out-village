@@ -17,7 +17,6 @@ export function useSessionState<T>(
   key: string,
   defaultValue: T,
 ): [T, Dispatch<SetStateAction<T>>] {
-
   // Load the initial value once:
   // - If a value exists in sessionStorage, parse and use it.
   // - Otherwise, fall back to the provided defaultValue.
@@ -32,6 +31,6 @@ export function useSessionState<T>(
   // - If you call setValue({}) or setValue(null), that new value overwrites
   //   the previous one in sessionStorage (effectively "clearing" it).
   useEffect(() => sessionStorage.setItem(key, JSON.stringify(value)), [value]);
-  
+
   return [value, setValue];
 }

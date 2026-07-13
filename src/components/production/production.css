@@ -1,0 +1,12 @@
+/* Produksjonssidene (/production/*): diagramcontainere */
+
+.production-chart {
+  height: min(80vh, 600px);
+}
+
+/* Kombinasjonsdiagrammet for ett felt (kartdetaljene) */
+.field-production-chart {
+  height: 290px;
+  max-height: 300px;
+  position: relative;
+}

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { ApplicationContext } from "../../applicationContext";
 import { Link } from "react-router-dom";
 import { EmissionIntensityChart } from "./emissionIntensityChart";
+import "./emissions.css";
 
 /** Page showing the emission intensity chart and navigation links. */
 export function EmissionIntensityPage() {

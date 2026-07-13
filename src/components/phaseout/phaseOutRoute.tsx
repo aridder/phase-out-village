@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog } from "../ui/dialog";
 import { PhaseOutDialog } from "./phaseOutDialog";
+import "../map/map.css";
 
 /**
  * Route component for the phase-out map and dialog.

@@ -1,0 +1,92 @@
+/* Plansiden (/plan): oppsummeringskort, delt-plan-banner og diagrammer */
+
+.plan-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.plan-summary .close-corner {
+  position: absolute;
+  place-self: end;
+  z-index: 3;
+}
+
+.plan-summary .shared-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem;
+  border: 2px dashed currentColor;
+  border-radius: 0.5rem;
+}
+
+.plan-summary .shared-banner .message {
+  flex: 1;
+  min-width: 220px;
+}
+
+.plan-summary .summary-cards {
+  width: 100%;
+  display: flex;
+  gap: 2rem;
+  margin: 1.5rem 0;
+}
+
+@media (width <= 600px) {
+  .plan-summary .summary-cards {
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 1rem 0;
+  }
+}
+
+.plan-summary .summary-card {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--lime);
+  border-radius: 0.5rem;
+}
+
+.plan-summary .summary-card .card-title {
+  font-weight: bold;
+  font-size: 1.25em;
+  margin-bottom: 0.5rem;
+}
+
+.plan-summary .summary-card .card-lead {
+  margin-bottom: 1.5rem;
+}
+
+.plan-summary .summary-card .card-result {
+  margin-bottom: 0.5rem;
+}
+
+.plan-summary .summary-card .card-meter {
+  margin-bottom: 0.25rem;
+}
+
+/* Nøkkeltallene i kortene skal stå i maks kontrast, ikke temaets grønne */
+.plan-summary .summary-card strong {
+  color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  .plan-summary .summary-card strong {
+    color: white;
+  }
+}
+
+.plan-summary .charts-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.plan-summary .divider {
+  height: 1px;
+  background-color: grey;
+  opacity: 0.5;
+}

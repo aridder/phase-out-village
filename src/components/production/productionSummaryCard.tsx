@@ -27,7 +27,7 @@ export function ProductionSummaryCard() {
 
   const reduction = Math.round(((baseline - result) / baseline) * 100);
   return (
-    <div style={{ padding: "0.5rem", paddingTop: "0.25rem" }}>
+    <div className="summary-link-card">
       <Link to="/production">
         Produksjon {gameData.gameYears[0]}-
         {gameData.gameYears[gameData.gameYears.length - 1]}:

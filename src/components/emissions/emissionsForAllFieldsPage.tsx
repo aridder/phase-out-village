@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { EmissionForAllFieldsChart } from "./emissionsForAllFieldsChart";
 
 import { PhaseOutSchedule } from "../../data/gameData";
+import "./emissions.css";
 
 /**
  * Page showing line chart for total annual emissions.

@@ -1,96 +1,67 @@
 /* Feltvelger-dialogen (/phaseout): liste, nøkkeltall og handlingsrad */
 
-.phaseout-dialog {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: flex-start;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-
-  @media (width <= 600px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5em;
-    font-size: 90%;
-  }
-
-  .phaseout-checkboxes {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    ul {
-      padding: 0;
-      margin: 0;
-    }
-
-    li {
-      margin-bottom: 0.5rem;
-    }
-  }
-
-  .phaseout-header {
-    margin-bottom: 0.5rem;
-  }
-
-  .dialog-information-container {
-  }
-
-  .phaseout-latest-oilfield {
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .phaseout-total-production {
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .grayed-out-oilfield-checklist {
-    opacity: 0.5;
-    text-decoration: line-through;
-    cursor: not-allowed;
-  }
-
-  .button-row {
-    grid-column: 1 / -1;
-  }
-}
-
-.phaseout-emission-chart {
+/* Skjemaet skal ikke arve dialogens knappestiler — det er sin egen flate */
+.phaseout-form {
+  all: unset;
   width: 100%;
-  max-width: 100%;
-  padding: 1rem;
-  box-sizing: border-box;
 }
 
-.phaseout-emission-chart canvas {
-  width: 100% !important;
+.phaseout-panel {
+  width: 100%;
+  max-width: 1024px;
+  padding: 1rem 1rem 0;
+  background-color: var(--lime);
+  color: black;
+}
+
+@media (width > 600px) {
+  .phaseout-panel {
+    min-width: 612px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .phaseout-panel {
+    background-color: var(--skog);
+    color: inherit;
+  }
+}
+
+/* Lukkekrysset: fast oppe i hjørnet på mobil (dialogen dekker alt),
+   klistret i headerraden på desktop */
+.phaseout-panel .close-corner-mobile {
+  display: none;
+}
+
+.phaseout-panel .close-corner-desktop {
+  position: sticky;
+  top: 0.25rem;
+  right: 0.25rem;
+  z-index: 3;
 }
 
 @media (width <= 600px) {
-  .phaseout-emission-chart {
-    padding: 0.5rem;
+  .phaseout-panel .close-corner-mobile {
+    display: block;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 3;
+  }
+  .phaseout-panel .close-corner-desktop {
+    display: none;
   }
 }
 
 .phaseout-dialog-header {
-  grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-left: 1rem;
 }
 
 @media (width <= 600px) {
   .phaseout-dialog-header {
-    flex-direction: row;
     align-items: flex-start;
     gap: 0.5rem;
   }
@@ -116,7 +87,26 @@
   border: 1px solid #ccc;
 }
 
-/* --- Field rows with key data (phase-out selector) --- */
+.phaseout-checkboxes {
+  margin-top: 1.5rem;
+  padding-left: 1rem;
+}
+
+.phaseout-header {
+  margin-bottom: 1.5rem;
+}
+
+.phaseout-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+}
+
+.phaseout-row {
+  border-bottom: 1px solid #cccccc2e;
+}
+
+/* --- Field rows with key data --- */
 .field-row-label {
   display: flex;
   align-items: flex-start;
@@ -182,13 +172,37 @@
   display: block;
   height: 100%;
   border-radius: 4px;
+  /* Samme rødtone som feltprikkene på kartet */
   background: #c0392b;
 }
 
-.phaseout-checkboxes ul {
-  list-style: none;
+/* Handlingsraden ligger klistret i bunnen mens listen scroller */
+.phaseout-actions {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--lime);
+  background-color: var(--lime);
+  color: black;
 }
 
-.phaseout-checkboxes li::marker {
-  content: "";
+@media (prefers-color-scheme: dark) {
+  .phaseout-actions {
+    background-color: var(--skog);
+    color: inherit;
+  }
+}
+
+.phaseout-actions .selection-impact {
+  margin-bottom: 0.5rem;
+  font-size: 0.95em;
+}
+
+.phaseout-actions .button-row button[type="submit"] {
+  flex: 1;
 }

@@ -1,14 +1,12 @@
 import React from "react";
-import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
+import "./progressionBar.css";
 
 type RightLabelType = "baseline" | "prevented";
 
 interface PlanProgressionBarProps {
   current: number; // Current value (e.g. current emissions or production)
   baseline: number; // Baseline value representing 100%
-  // startColor: string; // Starting color at 100% (e.g. red or gray)
   endColor: string; // Ending color at 0% (e.g. green or blue)
-  // height?: string; // Optional height of the bar (default: 16px)
   size?: "small" | "medium" | "large";
   showLabel?: boolean;
   mode: "emission" | "production";
@@ -24,208 +22,97 @@ interface PlanProgressionBarProps {
  *
  * Displays a horizontal progress bar where:
  * - 100% = baseline
- * - color transitions smoothly from startColor to endColor
- *   as the current value decreases
- *
- * The component is purely visual and does not render any text labels.
+ * - the filled width, the fade of the middle label and the remainder
+ *   overlay are data and set inline; everything static lives in
+ *   progressionBar.css
  */
 export const PlanProgressionBar: React.FC<PlanProgressionBarProps> = ({
   current,
   baseline,
-  // startColor,
   endColor,
-  // height = "16px",
   size = "small",
   showLabel = true,
   mode,
   includeDecimal = false,
-  metricLabel,
   barColor = "#000",
   showMiddlePercentage = false,
   rightLabelType = "baseline",
 }) => {
-  const isSmall = useIsSmallScreen();
-
-  let heightPixels = "16px";
-  switch (size) {
-    case "small":
-      heightPixels = "16px";
-      break;
-    case "medium":
-      heightPixels = "24px";
-      break;
-    case "large":
-      heightPixels = "32px";
-      break;
-    default:
-      heightPixels = "16px";
-      break;
-  }
-
   const progress = Math.min(current / baseline, 1); // clamp between 0–1
 
-  const baselineRounded = Math.round(
-    baseline / (mode == "emission" ? 1_000_000 : 1_000),
-  );
-  const baselineRoundedWithDecimal =
-    Math.round((baseline / (mode == "emission" ? 1_000_000 : 1_000)) * 10) / 10;
-  const currentRounded = Math.round(
-    current / (mode == "emission" ? 1_000_000 : 1_000),
-  );
-  const currentRoundedWithDecimal =
-    Math.round((current / (mode == "emission" ? 1_000_000 : 1_000)) * 10) / 10;
+  const unit = mode == "emission" ? 1_000_000 : 1_000;
+  const currentRounded = Math.round(current / unit);
+  const currentRoundedWithDecimal = Math.round((current / unit) * 10) / 10;
   const reductionPercent = Math.round(((current - baseline) / baseline) * 100);
-  const preventedRounded = Math.round(
-    (baseline - current) / (mode == "emission" ? 1_000_000 : 1_000),
-  );
-  const preventedRoundedWithDecimal =
-    Math.round(
-      ((baseline - current) / (mode == "emission" ? 1_000_000 : 1_000)) * 10,
-    ) / 10;
 
-  const rightLabelValueRounded =
-    rightLabelType == "baseline" ? baselineRounded : preventedRounded;
+  const rightLabelBase =
+    rightLabelType == "baseline" ? baseline : baseline - current;
+  const rightLabelValueRounded = Math.round(rightLabelBase / unit);
   const rightLabelValueRoundedWithDecimal =
-    rightLabelType == "baseline"
-      ? baselineRoundedWithDecimal
-      : preventedRoundedWithDecimal;
+    Math.round((rightLabelBase / unit) * 10) / 10;
 
   // Opacity increases as progress decreases (so more color shows as we reduce)
   const opacity = 1 - progress;
 
-  // Compute fade-in/out opacity for middle label
+  // The middle label fades in between 10–20% progress and out between 80–90%
   let labelOpacity = 1;
   const percent = progress * 100;
-
-  // Fade in between 5–15%
   if (percent < 10) {
     labelOpacity = 0;
   } else if (percent < 20) {
-    labelOpacity = (percent - 10) / 10; // 0 → 1 between 5–15
-  }
-
-  // Fade out between 85–95%
-  else if (percent > 90) {
+    labelOpacity = (percent - 10) / 10;
+  } else if (percent > 90) {
     labelOpacity = 0;
   } else if (percent > 80) {
-    labelOpacity = 1 - (percent - 80) / 10; // 1 → 0 between 85–95
+    labelOpacity = 1 - (percent - 80) / 10;
   }
-
   labelOpacity = Math.max(0, Math.min(labelOpacity, 1));
 
   return (
-    <div
-      style={{
-        position: "relative",
-        backgroundColor: "black",
-        borderRadius: "8px",
-        height: heightPixels,
-        overflow: "hidden",
-        width: "100%",
-        transition: "background-color 0.5s ease",
-      }}
-    >
+    <div className={`progression-bar size-${size}`}>
       {/* Filled portion */}
       <div
-        style={{
-          width: `${progress * 100}%`,
-          height: "100%",
-          backgroundColor: barColor,
-          transition: "width 0.5s ease, background-color 0.5s ease",
-          zIndex: 1,
-        }}
+        className="fill"
+        style={{ width: `${progress * 100}%`, backgroundColor: barColor }}
       />
 
-      {/* Centered label */}
+      {/* Current value, pinned left */}
       {showLabel && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "left",
-            color: "#e6e6e6ff",
-            fontWeight: 600,
-            fontSize: "1rem",
-            paddingLeft: "0.25rem",
-            paddingRight: "0.25rem",
-            pointerEvents: "none", // allows clicks through the label
-            zIndex: "2",
-          }}
-        >
+        <div className="bar-label">
           {`${progress * 100 >= 100 ? "" : includeDecimal ? currentRoundedWithDecimal : currentRounded}`}
         </div>
       )}
 
-      {/* Middle label */}
-      {showLabel && !isSmall && showMiddlePercentage && (
+      {/* Reduction percent, riding the fill edge (not worth the space on
+          mobile) */}
+      {showLabel && showMiddlePercentage && (
         <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: `${progress * 100}%`,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "left",
-            color: "#e6e6e6ff",
-            fontWeight: 600,
-            fontSize: "1rem",
-            paddingLeft: "0.25rem",
-            paddingRight: "0.25rem",
-            pointerEvents: "none", // allows clicks through the label
-            zIndex: "2",
-            opacity: labelOpacity,
-            transition: "left 0.5s ease, opacity 0.5s ease",
-          }}
+          className="bar-label middle hide-small"
+          style={{ left: `${progress * 100}%`, opacity: labelOpacity }}
         >
           {`${progress * 100 >= 100 ? "" : reductionPercent}%`}
         </div>
       )}
 
-      {/* Right label */}
+      {/* Baseline or prevented amount, pinned right */}
       {showLabel && (
         <div
+          className="bar-label right"
           style={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "right",
             color: progress * 100 >= 100 ? "white" : "#ffffff88",
-            fontWeight: 600,
-            fontSize: "1rem",
-            paddingLeft: "0.5rem",
-            paddingRight: "0.5em",
-            pointerEvents: "none", // allows clicks through the label
-            zIndex: "2",
           }}
         >
-          {/* {`${includeDecimal ? baselineRoundedWithDecimal : baselineRounded}`} */}
           {`${includeDecimal ? rightLabelValueRoundedWithDecimal : rightLabelValueRounded}`}
         </div>
       )}
 
       {/* Unfilled colored overlay (only the remaining part) */}
       <div
+        className="remainder"
         style={{
-          position: "absolute",
           left: `${progress * 100}%`,
-          right: 0,
-          top: 0,
-          bottom: 0,
           backgroundColor: endColor,
           opacity,
-          transition: "opacity 0.5s ease, left 0.5s ease",
-          zIndex: 0,
         }}
       />
     </div>

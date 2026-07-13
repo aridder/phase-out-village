@@ -24,6 +24,7 @@ import {
   xyDataSeries,
 } from "../../data/gameData";
 import { ProductionTable } from "./productionTable";
+import "./production.css";
 
 ChartJS.register(
   CategoryScale,
