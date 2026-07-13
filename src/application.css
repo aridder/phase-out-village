@@ -465,6 +465,15 @@
     margin: 0.5rem 1rem;
   }
 
+  /* Basestilene setter dialog { padding: 0 } — uten denne ligger
+     forsideteksten helt inntil dialogkanten */
+  .welcome dialog {
+    padding: 1.5rem 2rem;
+    @media (width <= 600px) {
+      padding: 1.25rem 1rem;
+    }
+  }
+
   .welcome p {
     max-width: 60ch;
     margin-bottom: 1em;
