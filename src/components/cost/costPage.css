@@ -3,8 +3,17 @@
   flex-direction: column;
   gap: 1.5rem;
   padding: 1.5rem;
-  max-width: 1100px;
+  /* One shared measure for the whole page: the prose sets the width, and
+     the controls/answer boxes align to the same edges — mixed widths made
+     the page look broken on desktop */
+  max-width: 46rem;
   margin: 0 auto;
+}
+
+/* The page itself is capped at a readable measure, so inner blocks should
+   fill it edge to edge rather than re-cap themselves */
+.front-page .sources-note {
+  max-width: none;
 }
 
 .front-hero h1 {
@@ -14,7 +23,6 @@
 
 .front-hero .subtitle {
   font-size: 1.15em;
-  max-width: 60ch;
 }
 
 .front-controls {
@@ -92,7 +100,6 @@
 .front-note {
   font-size: 0.95em;
   opacity: 0.85;
-  max-width: 70ch;
 }
 
 .front-cta {
@@ -118,10 +125,6 @@
 
 /* Prose sections replacing the old tile grids — reads like an article,
    with the numbers bold inside running text */
-.front-prose {
-  max-width: 68ch;
-}
-
 .front-prose p {
   margin-bottom: 0.9em;
   line-height: 1.55;
