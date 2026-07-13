@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { ApplicationContext } from "../../applicationContext";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { EmissionIntensityChart } from "./emissionIntensityChart";
 import "./emissions.css";
 
@@ -10,9 +10,11 @@ export function EmissionIntensityPage() {
   return (
     <>
       <nav className="emission-nav">
-        <Link to={"./"}>Linjediagram</Link>
-        <Link to={"/emissions/bar"}>Søylediagram</Link>
-        <Link to={"/emissions/intensity"}>Utslippsintensitet</Link>
+        <NavLink end to={"/emissions/line"}>
+          Linjediagram
+        </NavLink>
+        <NavLink to={"/emissions/bar"}>Søylediagram</NavLink>
+        <NavLink to={"/emissions/intensity"}>Utslippsintensitet</NavLink>
       </nav>
       <div className="emission-chart">
         <EmissionIntensityChart year={year} phaseOut={phaseOut} />

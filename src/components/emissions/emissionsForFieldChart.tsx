@@ -39,10 +39,9 @@ export function EmissionsForFieldChart({ field }: { field: string }) {
     <div className="field-emission-chart">
       <LineChart
         title={`Årlig utslipp fra ${field}`}
-        yLabel="Tonn Co2"
-        legend={false}
-        tooltipLabel={(_, point) =>
-          `Utslipp: ${point.y.toLocaleString("nb-NO")} tonn Co2`
+        yLabel="Tonn CO₂"
+        tooltipLabel={(series, point) =>
+          `${series.label}: ${point.y.toLocaleString("nb-NO")} tonn CO₂`
         }
         series={[
           {

@@ -67,7 +67,11 @@ export const MainButton: React.FC<MainButtonProps> = ({
         {icon}
       </span>
       <span className="label-large">{label}</span>
-      <span className="label-small">{labelSmall ?? label}</span>
+      {/* Skjules for skjermlesere: uten dette blir tilgjengelig navn
+          «Velg felter for 2025–2028Velg» (begge etikettene i DOM) */}
+      <span className="label-small" aria-hidden="true">
+        {labelSmall ?? label}
+      </span>
       {typeof count === "number" && (
         <span className="count">{count > 99 ? "99+" : count}</span>
       )}

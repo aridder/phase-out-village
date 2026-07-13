@@ -164,24 +164,22 @@ export function GameOverDialog() {
         </div>
 
         <div className="button-row">
-          <div>
-            <button onClick={() => navigate("/advisor")}>
-              💡 Få rådgiverens dom
-            </button>
-          </div>
-          <div>
-            <button onClick={() => navigate("/map")}>
-              🔍 Se planen på kartet
-            </button>
-          </div>
-          <div>
-            <button onClick={() => navigate("/transition")}>
-              🔋 Se hva som erstatter oljen
-            </button>
-          </div>
-          <div>
-            <button onClick={restart}>↺ Prøv på nytt</button>
-          </div>
+          {/* autoFocus: uten den lander dialogfokuset på første fokuserbare
+              element — en legend-knapp midt i diagrammet */}
+          <button
+            className="primary"
+            autoFocus
+            onClick={() => navigate("/advisor")}
+          >
+            💡 Få rådgiverens dom
+          </button>
+          <button onClick={() => navigate("/map")}>
+            🔍 Se planen på kartet
+          </button>
+          <button onClick={() => navigate("/transition")}>
+            🔋 Se hva som erstatter oljen
+          </button>
+          <button onClick={restart}>↺ Prøv på nytt</button>
         </div>
 
         <SourcesNote />

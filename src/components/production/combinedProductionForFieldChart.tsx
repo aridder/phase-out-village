@@ -64,10 +64,12 @@ export function CombinedProductionForFieldChart({ field }: { field: string }) {
       <BarChart
         title={`Årlig totalproduksjon fra ${field}`}
         categories={years}
-        legend={false}
-        formatY={(value) => `${value.toFixed(1)}M SM3`}
+        formatY={(value) =>
+          value.toLocaleString("nb-NO", { maximumFractionDigits: 1 })
+        }
+        yLabel="Mill. Sm³"
         tooltipLabel={(series, value) =>
-          `${series.label}: ${value.toLocaleString("nb-NO")} millioner SM3`
+          `${series.label}: ${value.toLocaleString("nb-NO", { maximumFractionDigits: 1 })} mill. Sm³`
         }
         series={[
           {

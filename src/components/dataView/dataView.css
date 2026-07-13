@@ -1,6 +1,9 @@
 /* Datasidene (/data/*): tabeller med klistret topprad og årstall-kolonne */
 
 .data {
+  /* Samme luft som de andre sidene — innholdet lå helt inntil kanten */
+  padding: 0.5rem 1rem;
+
   thead th {
     position: sticky;
     top: 0;

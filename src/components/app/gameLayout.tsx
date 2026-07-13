@@ -8,6 +8,7 @@ import { FcViewDetails } from "react-icons/fc";
 import { ApplicationContext } from "../../applicationContext";
 import { MainButton } from "../ui/mainButton";
 import { StatusBar } from "../ui/statusBar";
+import { periodLabel } from "../../data/gameData";
 import { Brand } from "./brand";
 
 /**
@@ -108,7 +109,6 @@ function GameFooter() {
     setPhaseOutDraft,
     getCurrentRound,
     getTotalRounds,
-    getEndOfTermYear,
   } = useContext(ApplicationContext);
   const gameEnded = year === "2040";
   const draftCount = Object.keys(phaseOutDraft).length;
@@ -144,11 +144,11 @@ function GameFooter() {
               </span>
               :
             </strong>{" "}
-            velg feltene som skal stenges i {year}–{getEndOfTermYear()}
+            velg feltene som skal stenges i {periodLabel(getCurrentRound())}
           </div>
           <MainButton
             icon={<MdEdit />}
-            label={`Velg felter for ${year}–${getEndOfTermYear()}`}
+            label={`Velg felter for ${periodLabel(getCurrentRound())}`}
             labelSmall={"Velg"}
             title="Velg felter for avvikling"
             to={"/phaseout"}

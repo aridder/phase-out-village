@@ -1,6 +1,6 @@
 import React from "react";
 import { EmissionStackedBarChart } from "./emissionStackedBarChart";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { PhaseOutSchedule } from "../../data/gameData";
 import "./emissions.css";
 
@@ -17,9 +17,11 @@ export function EmissionStackedBarRoute({
   return (
     <>
       <nav className="emission-nav">
-        <Link to={"/emissions/line"}>Linjediagram</Link>
-        <Link to={"./"}>Søylediagram</Link>
-        <Link to={"/emissions/intensity"}>Utslippsintensitet</Link>
+        <NavLink end to={"/emissions/line"}>
+          Linjediagram
+        </NavLink>
+        <NavLink to={"/emissions/bar"}>Søylediagram</NavLink>
+        <NavLink to={"/emissions/intensity"}>Utslippsintensitet</NavLink>
       </nav>
       <div className="emission-chart">
         <EmissionStackedBarChart phaseOut={phaseOut} />

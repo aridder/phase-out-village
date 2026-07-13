@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
-import { gameData } from "../../data/gameData";
+import { gameData, periodLabel } from "../../data/gameData";
 import { goalCutPercent } from "../../data/gameGoal";
 import "./mapIntro.css";
 
@@ -12,8 +12,7 @@ import "./mapIntro.css";
  * supporting visual.
  */
 export function MapIntro() {
-  const { year, phaseOut, getCurrentRound, getEndOfTermYear } =
-    useContext(ApplicationContext);
+  const { year, phaseOut, getCurrentRound } = useContext(ApplicationContext);
   const navigate = useNavigate();
   const gameEnded = year === "2040";
   const retired = Object.keys(phaseOut).length;
@@ -77,7 +76,7 @@ export function MapIntro() {
                       <strong>{row.field}</strong>
                     </span>
                     <span className="figures">
-                      🌫️{" "}
+                      🏭{" "}
                       {Math.round(row.emission / 1000).toLocaleString("nb-NO")}{" "}
                       kt/år · {Math.round(row.intensity)} kg/fat
                     </span>
@@ -92,14 +91,15 @@ export function MapIntro() {
               className="cta primary"
               onClick={() => navigate("/phaseout")}
             >
-              ✏️ Velg felter for {year}–{getEndOfTermYear()} (
+              ✏️ Velg felter for {periodLabel(getCurrentRound())} (
               {getCurrentRound()}. periode)
             </button>
           </div>
 
           <div className="legend">
-            Kartet: <span className="in-operation">rødt</span> = i drift, grått
-            = avviklet. Trykk på et felt for nøkkeltall. Du styrer fire
+            Kartet: <span className="in-operation">rødt</span> = i drift,{" "}
+            <span className="selected-field">blått</span> = valgt felt, grått =
+            avviklet. Trykk på et felt for nøkkeltall. Du styrer fire
             stortingsperioder frem til 2040 – følg målet i statuslinjen øverst.
           </div>
         </>

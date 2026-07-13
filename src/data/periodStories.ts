@@ -35,7 +35,7 @@ export type PeriodStory = {
 export const periodStories: PeriodStory[] = [
   {
     round: 2,
-    period: "2028–2032",
+    period: "2029–2032",
     headline: "Verden strammer til rundt fossil energi",
     events: [
       {
@@ -54,7 +54,7 @@ export const periodStories: PeriodStory[] = [
   },
   {
     round: 3,
-    period: "2032–2036",
+    period: "2033–2036",
     headline: "Etterspørselen etter olje og gass faller",
     events: [
       {
@@ -73,7 +73,7 @@ export const periodStories: PeriodStory[] = [
   },
   {
     round: 4,
-    period: "2036–2040",
+    period: "2037–2040",
     headline: "Siste etappe mot 2040",
     events: [
       {

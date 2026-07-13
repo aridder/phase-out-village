@@ -33,6 +33,7 @@ export function ScatterChart({
   formatY = formatNumberNb,
   tooltipLabel,
   annotation,
+  legend,
 }: {
   title?: string;
   points: ScatterPoint[];
@@ -43,6 +44,8 @@ export function ScatterChart({
   formatY?: (y: number) => string;
   tooltipLabel?: (point: ScatterPoint & { y: number }) => string;
   annotation?: BoxAnnotation;
+  /** Static legend explaining the point colors (e.g. active vs retired) */
+  legend?: { label: string; color: string }[];
 }) {
   const [plotRef, size] = useElementSize();
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
@@ -99,7 +102,13 @@ export function ScatterChart({
   }
 
   return (
-    <ChartShell title={title} tooltip={tooltip} plotRef={plotRef} size={size}>
+    <ChartShell
+      title={title}
+      legend={legend}
+      tooltip={tooltip}
+      plotRef={plotRef}
+      size={size}
+    >
       {geometry && (
         <svg role="img" aria-label={title}>
           <Axes
@@ -124,15 +133,12 @@ export function ScatterChart({
                 style={{ fill: annotation.fill, stroke: annotation.stroke }}
                 strokeWidth={1}
               />
+              {/* Etiketten står over båndet i høyre kant, så den aldri
+                  ligger oppå datapunkter eller drukner i båndfargen */}
               <text
-                x={geometry.plot.left + geometry.plot.width / 2}
-                y={
-                  (geometry.yScale.toPx(annotation.yMin) +
-                    geometry.yScale.toPx(annotation.yMax)) /
-                    2 +
-                  4
-                }
-                textAnchor="middle"
+                x={geometry.plot.left + geometry.plot.width - 6}
+                y={geometry.yScale.toPx(annotation.yMax) - 5}
+                textAnchor="end"
                 fontSize={11}
                 fontWeight="bold"
                 fill="currentColor"

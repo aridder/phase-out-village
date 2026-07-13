@@ -79,7 +79,12 @@ export const PlanProgressionBar: React.FC<PlanProgressionBarProps> = ({
       {/* Current value, pinned left */}
       {showLabel && (
         <div className="bar-label">
-          {`${progress * 100 >= 100 ? "" : includeDecimal ? currentRoundedWithDecimal : currentRounded}`}
+          {progress * 100 >= 100
+            ? ""
+            : (includeDecimal
+                ? currentRoundedWithDecimal
+                : currentRounded
+              ).toLocaleString("nb-NO")}
         </div>
       )}
 
@@ -88,9 +93,12 @@ export const PlanProgressionBar: React.FC<PlanProgressionBarProps> = ({
       {showLabel && showMiddlePercentage && (
         <div
           className="bar-label middle"
-          style={{ left: `${progress * 100}%`, opacity: labelOpacity }}
+          style={{
+            left: `min(${progress * 100}%, calc(100% - 7rem))`,
+            opacity: labelOpacity,
+          }}
         >
-          {`${progress * 100 >= 100 ? "" : reductionPercent}%`}
+          {progress * 100 >= 100 ? "" : `−${Math.abs(reductionPercent)} %`}
         </div>
       )}
 
@@ -102,7 +110,10 @@ export const PlanProgressionBar: React.FC<PlanProgressionBarProps> = ({
             color: progress * 100 >= 100 ? "white" : "#ffffff88",
           }}
         >
-          {`${includeDecimal ? rightLabelValueRoundedWithDecimal : rightLabelValueRounded}`}
+          {(includeDecimal
+            ? rightLabelValueRoundedWithDecimal
+            : rightLabelValueRounded
+          ).toLocaleString("nb-NO")}
         </div>
       )}
 

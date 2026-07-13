@@ -5,14 +5,14 @@ type Digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
 export type Year = `19${Digit}${Digit}` | `20${Digit}${Digit}`;
 
 /** Represents a numeric data value, optionally flagged as an estimate. */
-export type DataValue = { 
+export type DataValue = {
   value: number;
-  estimate?: boolean 
+  estimate?: boolean;
 };
 
 /**
  * Represents yearly production and emission metrics for an oil or gas field.
- * 
+ *
  * Each property contains a {@link DataValue} object, which may include metadata
  * such as whether the number is estimated. This type is intended for **rich or
  * detailed data**, usually used for storage or API communication.
@@ -40,7 +40,7 @@ export type FieldDataValues = {
    * @example 8.75 — representing 8.75 billion Sm³ of gas produced in a given year.
    */
   productionGas: DataValue | undefined;
-  
+
   /**
    * Total greenhouse gas emissions from the field in the given year.
    * Typically includes direct CO₂ emissions from combustion, flaring, and venting.
@@ -73,7 +73,7 @@ export type DataField = keyof FieldDataValues;
 
 /**
  * Represents a dataset indexed by year, where each year maps to one or more {@link FieldDataValues}.
- * 
+ *
  * Despite its name, this type is **not restricted to a single field** — it can technically contain
  * multiple fields per year (e.g., both oil and gas production), because each entry stores a full
  * {@link FieldDataValues} object.
@@ -99,7 +99,7 @@ export type DatasetForSingleField = Partial<Record<Year, FieldDataValues>>;
 
 /**
  * Represents a simplified data point for a single year, containing only **numeric values**.
- * 
+ *
  * Unlike {@link FieldDataValues}, which includes full {@link DataValue} objects (with metadata),
  * this type only keeps the raw numbers. It’s often used in UI layers, calculations, or visualizations
  * where metadata like "estimate" is not needed.
@@ -121,10 +121,10 @@ export type DataPoint = Partial<Record<DataField, number | undefined>>;
 /**
  * Represents time series data across multiple years,
  * where each year maps to a {@link DataPoint} containing numeric values for multiple fields.
- * 
+ *
  * In contrast to {@link DatasetForSingleField}, which stores full {@link DataValue} objects
  * (with metadata like `estimate`), this type stores only the numeric values for simplicity.
- * 
+ *
  * @example
  * {
  *   "2020": { productionOil: 1500, productionGas: 200, emission: 75 },
@@ -137,7 +137,7 @@ export type YearlyDataSeries = Partial<Record<Year, DataPoint>>;
 /**
  * Represents a full dataset across multiple oil fields,
  * where each field has its own yearly data series.
- * 
+ *
  * @example
  * {
  *   "Troll": {

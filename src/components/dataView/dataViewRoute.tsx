@@ -108,7 +108,7 @@ function FieldOverview() {
           <Link to={"/data/emission"}>Utslippsoversikt</Link>
         </li>
       </ul>
-      <h2>Oil fields</h2>
+      <h2>Oljefelt</h2>
       <button onClick={handleClickAllOilFieldsToExcel}>
         Eksporter alle til Excel
       </button>

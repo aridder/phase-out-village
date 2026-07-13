@@ -109,6 +109,17 @@ export const gameData: GameData = calculateGameData(data);
  * yearsInRange(2025, 2028);
  * // → ["2025", "2026", "2027", "2028"]
  */
+/**
+ * Display label for a parliamentary-term period, e.g. `periodLabel(2)` →
+ * "2029–2032". One source of truth so the status bar, the report and the
+ * field selector never disagree about which years a period covers.
+ */
+export function periodLabel(round: number): string {
+  const clamped = Math.min(Math.max(round, 1), gameData.gamePeriods.length);
+  const years = gameData.gamePeriods[clamped - 1].years;
+  return `${years[0]}–${years[years.length - 1]}`;
+}
+
 export function yearsInRange(first: number, last: number) {
   // Create an array of specified length: e.g. 2028 - 2025 + 1 = 4 years
   // The `+1` is because both endpoints are included.

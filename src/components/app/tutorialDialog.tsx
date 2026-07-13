@@ -54,23 +54,24 @@ const steps = [
             (standardkubikkmeter) for volum av gass/olje.
           </li>
           <li>
+            Utslipp måles i tonn{" "}
             <a
               href={`https://no.wikipedia.org/wiki/CO2-ekvivalent`}
               target="_blank"
             >
-              CO2e
+              CO₂e
             </a>{" "}
-            (CO2-ekvivalent) per tusen tonn for måling av utslipp.
+            (CO₂-ekvivalenter).
           </li>
           <li>
-            CO2e /{" "}
+            Utslippsintensitet måles i kg CO₂e per{" "}
             <a
               href="https://en.wikipedia.org/wiki/Barrel_of_oil_equivalent"
               target="_blank"
             >
-              BOE
+              fat olje
             </a>{" "}
-            (barrel of oil equivalent) i kg for måling av utslippsintensitet.
+            – hvor «skitten» produksjonen på et felt er.
           </li>
         </ul>
       </>
@@ -82,10 +83,11 @@ const steps = [
       <>
         <ul>
           <li>
-            Trykk <strong>«Velg felter å stenge»</strong> nede til høyre.
+            Trykk <strong>«Velg felter»</strong>-knappen nede til høyre.
           </li>
           <li>
-            Trykk <strong>«Avvikle»</strong> for å gå til neste periode.
+            Huk av feltene du vil stenge, og trykk <strong>«Avvikle»</strong>{" "}
+            for å vedta og gå til neste stortingsperiode.
           </li>
         </ul>
       </>
@@ -97,11 +99,12 @@ const steps = [
       <>
         <ul>
           <li>
-            Under <b>Emissioner og Produksjon</b> ser du grafer som oppdateres
-            med din plan.
+            Under <strong>«Plan»</strong> i toppmenyen ser du utslipps- og
+            produksjonsgrafer som oppdateres med planen din.
           </li>
           <li>
-            <strong>«Plan»</strong> viser hvilke felt du allerede har avviklet.
+            Etter hver periode får du en <b>perioderapport</b> som viser om du
+            ligger foran eller bak skjema mot målet.
           </li>
         </ul>
       </>

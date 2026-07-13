@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
-import { gameData } from "../../data/gameData";
+import { gameData, periodLabel } from "../../data/gameData";
 import {
   currentCutPercent,
   goalCutPercent,
@@ -77,9 +77,7 @@ export function PeriodReportRoute() {
 
   return (
     <div className="period-report">
-      <h1>
-        📋 Perioderapport {fromYear}–{toYear}
-      </h1>
+      <h1>📋 Perioderapport {periodLabel(round)}</h1>
 
       <div>
         {fields.length === 0 ? (
@@ -157,8 +155,8 @@ export function PeriodReportRoute() {
 
       <div className="cta-row">
         <button className="primary" onClick={() => navigate("/phaseout")}>
-          ✏️ Velg felter for {year}–{getEndOfTermYear()} ({getCurrentRound()}.
-          periode)
+          ✏️ Velg felter for {periodLabel(getCurrentRound())} (
+          {getCurrentRound()}. periode)
         </button>
         <button onClick={() => navigate("/map")}>🗺️ Se kartet først</button>
       </div>

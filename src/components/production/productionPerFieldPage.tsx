@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { ApplicationContext } from "../../applicationContext";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { LineChart, LineSeries } from "../charts/lineChart";
 import { gameData, truncatedDataset, xyDataSeries } from "../../data/gameData";
 import { ProductionTable } from "./productionTable";
@@ -37,20 +37,22 @@ export function ProductionPerFieldPage() {
   return (
     <>
       <nav className="production-nav">
-        <Link to={"/production/"}>Din plan</Link>
-        <Link to={"/production/composition"}>Inndeling produksjon</Link>
-        <Link to={"/production/oilPerField"}>Produksjon per felt</Link>
+        <NavLink end to={"/production/"}>
+          Din plan
+        </NavLink>
+        <NavLink to={"/production/composition"}>Inndeling produksjon</NavLink>
+        <NavLink to={"/production/oilPerField"}>Produksjon per felt</NavLink>
       </nav>
       <div className="production-chart">
         <LineChart
           title="Produksjon per oljefelt"
           xLabel="År"
-          yLabel="Produksjon (BOE)"
+          yLabel="Produksjon (mill. Sm³)"
           xMin={2000}
           xMax={2040}
           tooltipMode="point"
           tooltipLabel={(s, point) =>
-            `${s.label} – ${point.x}: ${point.y.toLocaleString("nb-NO")} BOE (${point.estimated ? "Estimert" : "Målt"})`
+            `${s.label} – ${point.x}: ${point.y.toLocaleString("nb-NO", { maximumFractionDigits: 1 })} mill. Sm³ (${point.estimated ? "Estimert" : "Målt"})`
           }
           // Clicking a field focuses it; clicking the focused field shows all
           onLegendClick={(label) =>

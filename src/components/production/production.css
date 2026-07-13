@@ -6,7 +6,21 @@
 
 /* Kombinasjonsdiagrammet for ett felt (kartdetaljene) */
 .field-production-chart {
-  height: 290px;
-  max-height: 300px;
+  /* Høyde nok til diagram + legend (fire serier over to rader) */
+  height: 340px;
   position: relative;
+}
+
+/* Undernavigasjonen: aktiv fane markeres som chip, ikke bare understreket
+   lenke — før kunne man ikke se hvilken visning man sto i */
+.production-nav a {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.production-nav a.active {
+  background-color: var(--gran);
+  color: var(--lime);
+  text-decoration: none;
+  font-weight: bold;
 }
