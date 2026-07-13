@@ -1,10 +1,22 @@
 import React from "react";
-import { Line } from "react-chartjs-2";
+import { LineChart, LinePoint } from "../charts/lineChart";
 import {
   PhaseOutSchedule,
   totalProduction,
   xyDataSeries,
 } from "../../data/gameData";
+import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
+
+/** Years after the last measured data are projections and drawn dashed. */
+const LAST_MEASURED_YEAR = 2022;
+
+function toPoints(schedule?: PhaseOutSchedule): LinePoint[] {
+  return xyDataSeries(totalProduction(schedule), "emission").map((point) => ({
+    x: Number(point.x),
+    y: point.y,
+    estimated: Number(point.x) > LAST_MEASURED_YEAR,
+  }));
+}
 
 /**
  * Line chart showing total annual emissions for all fields.
@@ -16,99 +28,38 @@ export function EmissionForAllFieldsChart({
 }: {
   phaseOut: PhaseOutSchedule;
 }) {
+  const isSmallScreen = useIsSmallScreen();
+  const formatY = (value: number) => {
+    if (isSmallScreen) {
+      if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(0)} M`;
+      if (value >= 1_000) return `${(value / 1_000).toFixed(0)} K`;
+    }
+    return value.toLocaleString("nb-NO");
+  };
+
   return (
-    <Line
-      options={{
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: false,
-        plugins: {
-          legend: { display: true },
-          title: {
-            display: true,
-            text: "Totalt årlig utslipp fra alle oljefelt",
-            padding: {
-              bottom: 20,
-            },
-          },
-          tooltip: {
-            callbacks: {
-              label: function (context: any) {
-                const value = context.parsed.y;
-                return `Utslipp: ${value.toLocaleString("nb-NO")} tonn`;
-              },
-            },
-          },
+    <LineChart
+      title="Totalt årlig utslipp fra alle oljefelt"
+      xLabel="År"
+      yLabel="Tonn Co2"
+      formatY={formatY}
+      tooltipLabel={(series, point) =>
+        `${series.label}: ${point.y.toLocaleString("nb-NO")} tonn`
+      }
+      series={[
+        {
+          label: "Din plan",
+          color: "var(--chart-plan)",
+          fill: "var(--chart-plan)",
+          points: toPoints(phaseOut),
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: "Tonn Co2",
-            },
-            ticks: {
-              callback: function (value: any) {
-                const num = Number(value);
-                if (window.innerWidth < 600) {
-                  if (num >= 1_000_000)
-                    return `${(num / 1_000_000).toFixed(0)} M`;
-                  if (num >= 1_000) return `${(num / 1_000).toFixed(0)} K`;
-                }
-                return num.toLocaleString("nb-NO");
-              },
-            },
-          },
-          x: {
-            title: {
-              display: true,
-              text: "År",
-            },
-          },
+        {
+          label: "Referanse (uten tiltak)",
+          color: "var(--chart-referanse)",
+          fill: "var(--chart-referanse)",
+          points: toPoints(),
         },
-      }}
-      data={{
-        datasets: [
-          {
-            label: "Din plan",
-            data: xyDataSeries(totalProduction(phaseOut), "emission"),
-            borderColor: "#4a90e2",
-            segment: {
-              borderDash: (ctx) => {
-                const point = ctx.p1 as { raw?: { x: number | string } };
-                const year = Number(point.raw?.x);
-                return year > 2022 ? [5, 5] : undefined;
-              },
-            },
-            pointStyle: (ctx) => {
-              const point = ctx.raw as { x: number | string };
-              return Number(point.x) > 2022 ? "star" : "circle";
-            },
-            backgroundColor: "rgba(74, 144, 226, 0.2)",
-            tension: 0.3,
-            fill: true,
-          },
-          {
-            label: "Referanse (uten tiltak)",
-            data: xyDataSeries(totalProduction(), "emission"),
-            borderColor: "orange",
-            segment: {
-              borderDash: (ctx) => {
-                const point = ctx.p1 as { raw?: { x: number | string } };
-                const year = Number(point.raw?.x);
-                return year > 2022 ? [5, 5] : undefined;
-              },
-            },
-            pointStyle: (ctx) => {
-              const point = ctx.raw as { x: number | string };
-              return Number(point.x) > 2022 ? "star" : "circle";
-            },
-            backgroundColor: "rgba(255, 165, 0, 0.2)",
-            tension: 0.3,
-            fill: true,
-          },
-        ],
-      }}
+      ]}
     />
   );
 }

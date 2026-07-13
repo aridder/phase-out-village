@@ -14,7 +14,7 @@ import { fromEntries } from "./fromEntries";
 
 /**
  * Conversion factor between oil equivalent and barrels.
- * 
+ *
  * 1 Sm³ of oil equivalent ≈ 6.2898 barrels of oil.
  * Used to convert total energy production to barrels for emission intensity calculations.
  */
@@ -22,14 +22,14 @@ export const oilEquivalentToBarrel = 6.2898;
 
 /**
  * Name of a registered oil or gas field.
- * 
+ *
  * Derived from the keys of the imported `data` object.
  */
 export type OilfieldName = keyof typeof data;
 
 /**
  * A mapping of oilfield names to the year they are phased out.
- * 
+ *
  * Fields not present in the record are considered active.
  * Example:
  * ```ts
@@ -43,7 +43,7 @@ export type PhaseOutSchedule = Partial<Record<OilfieldName, Year>>;
 
 /**
  * Complete dataset for all oilfields.
- * 
+ *
  * Each field’s data is represented as a `DatasetForSingleField`,
  * which contains production, emission, and derived values per year.
  */
@@ -67,7 +67,7 @@ export type GameData = {
 
 /**
  * Builds a comprehensive `GameData` object from raw field data.
- * 
+ *
  * It:
  * - Generates all year ranges used in the game (2000–2040)
  * - Defines game periods (2025–2040, divided into 4 intervals)
@@ -135,16 +135,15 @@ export function isPhasedOut(
 ) {
   // Returns true if the given field has been phased out by (or before) the given year.
   return (
-    (
-      phaseOut[fieldName] // Quick-check whether field name is defined in phase-out map
-      && parseInt(phaseOut[fieldName]) <= parseInt(year))  // True if phase-out year is less than input year
-      || false // Fallback, if no phase-out year is defined
+    (phaseOut[fieldName] && // Quick-check whether field name is defined in phase-out map
+      parseInt(phaseOut[fieldName]) <= parseInt(year)) || // True if phase-out year is less than input year
+    false // Fallback, if no phase-out year is defined
   );
 }
 
 /**
  * Calculates total production and emissions across all fields per year.
- * 
+ *
  * Optionally accounts for field phase-outs (using `PhaseOutSchedule`).
  *
  * @param phaseOut - Optional map of fields phased out by year.
@@ -164,22 +163,24 @@ export function totalProduction(
     dataField: DataField,
     year: Year,
   ): DataValue | undefined {
-    return Object.entries(dataSeries)
-      // For each field, include its value only if it's not phased out
-      .map(([name, v]) => {
-        return isPhasedOut(name, phaseOut, year)
-          ? undefined
-          : v[year]?.[dataField];
-      })
-      // Combine all field values for that year
-      .reduce((a, b) => {
-        if (!a && !b) return undefined;
-        // Otherwise sum the numeric values and flag estimates
-        return {
-          value: (a?.value || 0) + (b?.value || 0),
-          estimate: a?.estimate || false || b?.estimate || false,
-        };
-      });
+    return (
+      Object.entries(dataSeries)
+        // For each field, include its value only if it's not phased out
+        .map(([name, v]) => {
+          return isPhasedOut(name, phaseOut, year)
+            ? undefined
+            : v[year]?.[dataField];
+        })
+        // Combine all field values for that year
+        .reduce((a, b) => {
+          if (!a && !b) return undefined;
+          // Otherwise sum the numeric values and flag estimates
+          return {
+            value: (a?.value || 0) + (b?.value || 0),
+            estimate: a?.estimate || false || b?.estimate || false,
+          };
+        })
+    );
   }
 
   // Build a per-year summary object
@@ -247,20 +248,22 @@ export function xyDataSeries<T extends string>(
   y: number | undefined;
   estimated?: boolean;
 }[] {
-  return Object.entries(dataset)
-    // Only include years where the given field has data
-    .filter(([, dataPoint]) => !!dataPoint?.[dataField])
-    // Transform each valid entry into an (x, y) object
-    .map(([year, dataPoint]) => ({
-      x: year as Year,
-      y: dataPoint?.[dataField]?.value,
-      estimate: dataPoint?.[dataField]?.estimate,
-    }));
+  return (
+    Object.entries(dataset)
+      // Only include years where the given field has data
+      .filter(([, dataPoint]) => !!dataPoint?.[dataField])
+      // Transform each valid entry into an (x, y) object
+      .map(([year, dataPoint]) => ({
+        x: year as Year,
+        y: dataPoint?.[dataField]?.value,
+        estimated: dataPoint?.[dataField]?.estimate,
+      }))
+  );
 }
 
 /**
  * Converts yearly data for a specific field into a timeseries array.
- * 
+ *
  * Suitable for line charts or year-based analytics.
  *
  * @param dataset - Dataset for a single field.
@@ -285,7 +288,7 @@ export function toTimeseries(
 
 /**
  * Extracts a simple number array from a dataset for a specific field.
- * 
+ *
  * @param dataset - Partial dataset.
  * @param field - Field name to extract (e.g., `"productionOil"`).
  * @returns Array of numeric values or `undefined` where missing.
@@ -309,9 +312,11 @@ export function sumOverYears<T extends string>(
   result: Partial<Record<Year, Record<T, DataValue | undefined>>>,
   datafield: T,
 ) {
-  return Object.values(result)
-    // Extract the numeric value for each year, fallback to 0 if missing
-    .map((value) => (value ? value[datafield]?.value || 0 : 0))
-    // Sum all yearly values
-    .reduce((a, b) => a + b, 0);
+  return (
+    Object.values(result)
+      // Extract the numeric value for each year, fallback to 0 if missing
+      .map((value) => (value ? value[datafield]?.value || 0 : 0))
+      // Sum all yearly values
+      .reduce((a, b) => a + b, 0)
+  );
 }

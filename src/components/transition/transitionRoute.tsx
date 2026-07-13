@@ -1,16 +1,5 @@
 import React, { useContext, useMemo, useState } from "react";
-import { Line } from "react-chartjs-2";
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Filler,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-} from "chart.js";
+import { LineChart } from "../charts/lineChart";
 import { ApplicationContext } from "../../applicationContext";
 import { PhaseOutSchedule } from "../../data/gameData";
 import { mdgPlan } from "../../generated/dataMdg";
@@ -20,7 +9,6 @@ import {
   transitionSummary,
   USEFUL_ENERGY_FACTOR,
 } from "../../data/energyTransition";
-import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
 import { energyData } from "../../generated/energyData";
 import {
   DEFENSE_BUDGET_BN_NOK,
@@ -32,17 +20,6 @@ import {
 } from "../../data/petroleumEconomy";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./transition.css";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Title,
-  Tooltip,
-  Legend,
-);
 
 type ScenarioKey = "mine" | "mdg" | "full";
 
@@ -404,84 +381,45 @@ function TransitionChart({
 }: {
   series: ReturnType<typeof transitionSeries>;
 }) {
-  const isDarkMode = usePrefersDarkMode();
-  const textColor = isDarkMode ? "#fff" : "#000";
   // Palette validated for CVD and contrast against the app's light (#e0ffb2)
-  // and dark (#133600) surfaces
-  const fossilColor = isDarkMode ? "#4a8fd6" : "#2e6bc4";
-  const renewableColor = isDarkMode ? "#6aa832" : "#347103";
-  const referenceColor = isDarkMode ? "#bbb" : "#666";
-
+  // and dark (#133600) surfaces; the colors live as CSS variables on
+  // .transition-chart so light/dark switching stays in CSS
   return (
-    <Line
-      options={{
-        maintainAspectRatio: false,
-        interaction: { mode: "index", intersect: false },
-        plugins: {
-          legend: { display: true, labels: { color: textColor } },
-          title: {
-            display: true,
-            text: "Fossil energi ut – fornybar erstatning inn (TWh per år)",
-            color: textColor,
-            padding: { bottom: 20 },
-          },
-          tooltip: {
-            callbacks: {
-              label: (context) =>
-                `${context.dataset.label}: ${Math.round(context.parsed.y ?? 0).toLocaleString("nb-NO")} TWh`,
-            },
-          },
+    <LineChart
+      title="Fossil energi ut – fornybar erstatning inn (TWh per år)"
+      xLabel="År"
+      yLabel="TWh per år"
+      tooltipLabel={(s, point) =>
+        `${s.label}: ${Math.round(point.y).toLocaleString("nb-NO")} TWh`
+      }
+      series={[
+        {
+          label: "Fossil energi med planen",
+          color: "var(--transition-fossil)",
+          fill: "var(--transition-fossil)",
+          fillOpacity: 0.4,
+          showPoints: false,
+          points: series.map((s) => ({ x: Number(s.year), y: s.planTwh })),
         },
-        scales: {
-          x: {
-            title: { display: true, text: "År", color: textColor },
-            ticks: { color: textColor },
-          },
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: "TWh per år", color: textColor },
-            ticks: {
-              color: textColor,
-              callback: (value) => Number(value).toLocaleString("nb-NO"),
-            },
-          },
+        {
+          label: "Uten tiltak",
+          color: "var(--transition-referanse)",
+          dashed: true,
+          showPoints: false,
+          points: series.map((s) => ({ x: Number(s.year), y: s.baselineTwh })),
         },
-      }}
-      data={{
-        labels: series.map((s) => s.year),
-        datasets: [
-          {
-            label: "Fossil energi med planen",
-            data: series.map((s) => s.planTwh),
-            borderColor: fossilColor,
-            backgroundColor: `${fossilColor}66`,
-            fill: true,
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHitRadius: 12,
-          },
-          {
-            label: "Uten tiltak",
-            data: series.map((s) => s.baselineTwh),
-            borderColor: referenceColor,
-            borderDash: [6, 6],
-            borderWidth: 2,
-            fill: false,
-            pointRadius: 0,
-            pointHitRadius: 12,
-          },
-          {
-            label: "Fornybar strøm som gir samme nytte",
-            data: series.map((s) => s.replacementTwh),
-            borderColor: renewableColor,
-            backgroundColor: `${renewableColor}99`,
-            fill: true,
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHitRadius: 12,
-          },
-        ],
-      }}
+        {
+          label: "Fornybar strøm som gir samme nytte",
+          color: "var(--transition-fornybar)",
+          fill: "var(--transition-fornybar)",
+          fillOpacity: 0.6,
+          showPoints: false,
+          points: series.map((s) => ({
+            x: Number(s.year),
+            y: s.replacementTwh,
+          })),
+        },
+      ]}
     />
   );
 }

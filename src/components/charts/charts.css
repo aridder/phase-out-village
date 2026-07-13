@@ -1,0 +1,121 @@
+/* Det interne SVG-diagrambiblioteket (lineChart, barChart, scatterChart).
+   Delt av alle sider som viser diagrammer — bevisst ulagdelt, så det vinner
+   over de globale lagene uten spesifisitetsduell. */
+
+:root {
+  /* Seriefarger som skifter med fargeskjema. Diagramkomponentene refererer
+     til disse med var(), så mørkt tema ikke trenger JS. */
+  --chart-plan: #4a90e2; /* «din plan»-blå */
+  --chart-referanse: #e8920c; /* referanselinjer */
+  --chart-olje: #4da3ff;
+  --chart-gass: #e02d2d;
+  --chart-reduksjon: #c00000;
+  --chart-avviklet: #9aa0a2; /* nedstengte felt i scatter */
+  --chart-grid-styrke: 12%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --chart-plan: #6aa5e8;
+    --chart-referanse: #ffa726;
+    --chart-olje: #2a5d8f;
+    --chart-gass: #d64545;
+    --chart-reduksjon: #ff8080;
+    --chart-avviklet: #7d8486;
+    --chart-grid-styrke: 18%;
+  }
+}
+
+.svg-chart {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+}
+
+.svg-chart-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.svg-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.15rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.svg-chart-legend button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.svg-chart-legend button.hidden {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.svg-chart-swatch {
+  width: 1.6em;
+  height: 0.9em;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.svg-chart-plot {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.svg-chart-plot svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Hindre tekstmarkering og touch-scroll-krangel under peking i plottet */
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.svg-chart-tooltip {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  max-width: 270px;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
+.svg-chart-tooltip .tooltip-title {
+  font-weight: bold;
+}
+
+.svg-chart-tooltip .tooltip-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.svg-chart-tooltip .svg-chart-swatch {
+  width: 0.9em;
+  height: 0.9em;
+}

@@ -53,4 +53,16 @@
 
 .transition-chart {
   height: 380px;
+  /* Diagramfargene, validert mot lys (#e0ffb2) og mørk (#133600) flate */
+  --transition-fossil: #2e6bc4;
+  --transition-fornybar: #347103;
+  --transition-referanse: #666;
+}
+
+@media (prefers-color-scheme: dark) {
+  .transition-chart {
+    --transition-fossil: #4a8fd6;
+    --transition-fornybar: #6aa832;
+    --transition-referanse: #bbb;
+  }
 }
