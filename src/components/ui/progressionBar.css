@@ -4,7 +4,12 @@
 
 .progression-bar {
   position: relative;
-  background-color: black;
+  /* Mørkegrønt spor i stedet for svart, så tomrommet følger paletten (fyllet
+     er --gran, reduksjonen --eple). I mørkt tema er sidens flate også --skog,
+     så en tynn innvendig ramme skiller meteret fra bakgrunnen. Hvit
+     etikettekst leser fint på --skog. */
+  background-color: var(--skog);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   overflow: hidden;
   width: 100%;
