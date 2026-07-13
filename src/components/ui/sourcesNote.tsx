@@ -51,33 +51,51 @@ export function SourcesNote() {
           .
         </li>
         <li>
-          Statens netto kontantstrøm fra petroleum (~661 mrd kr, 2024):{" "}
+          Statens netto kontantstrøm fra petroleum (664 mrd kr i 2025, anslått
+          til 686 mrd i 2026):{" "}
           <a href="https://www.norskpetroleum.no/okonomi/statens-inntekter/">
             Norsk Petroleum
-          </a>
-          . Tapte inntekter er skalert med planens andel av produksjonen, til
-          dagens priser.
+          </a>{" "}
+          og nasjonalbudsjettet 2026. Tapte inntekter er skalert med planens
+          andel av produksjonen, til dagens priser.
         </li>
         <li>
-          Statsbudsjettets utgifter (~2 900 mrd kr) og fondsuttaket (~460 mrd
-          kr):{" "}
-          <a href="https://www.regjeringen.no/no/statsbudsjett/">
-            statsbudsjettet 2025
+          Statsbudsjettets samlede utgifter (2 201 mrd kr i 2026 – vi runder til
+          2 200), fondsuttaket (det strukturelle oljekorrigerte underskuddet,
+          579 mrd kr) og forsvarsbudsjettet (112 mrd kr utenom Ukraina-støtten):{" "}
+          <a href="https://www.regjeringen.no/no/statsbudsjett/2026/id3118616/">
+            statsbudsjettet 2026
           </a>
-          . Oljefondets verdi (~20 000 mrd kr):{" "}
+          . Oljefondets verdi (over 22 000 mrd kr, juli 2026):{" "}
           <a href="https://www.nbim.no/">Norges Bank Investment Management</a>.
         </li>
         <li>
           Vannmagasinenes kapasitet (~87 TWh, om lag halvparten av Europas):{" "}
           <a href="https://www.nve.no/energi/energisystem/vannkraft/">NVE</a>.
-          Sjømateksport (~175 mrd kr, 2024):{" "}
-          <a href="https://seafood.no/">Norges sjømatråd</a>.
+          Sjømateksport (181,5 mrd kr i 2025):{" "}
+          <a href="https://www.seafood.no/aktuelt/nyheter/slik-gikk-det-med-sjomateksporten-i-2025/">
+            Norges sjømatråd
+          </a>
+          . Fastlandseksport av varer (765,6 mrd kr i 2025):{" "}
+          <a href="https://www.ssb.no/utenriksokonomi/utenrikshandel/statistikk/utenrikshandel-med-varer">
+            SSB utenrikshandel
+          </a>
+          .
         </li>
         <li>
           Nytteenergi: ~35 % av fossil energi blir nyttig arbeid (
           <a href="https://www.iea.org/">IEA</a>-anslag 30–40 %). En 15 MW
-          havvindturbin ≈ 60 GWh/år; en husholdning ≈ 20 000 kWh/år; en
-          bensinbil ≈ 2 tonn CO₂/år.
+          havvindturbin ≈ 60 GWh/år. En gjennomsnittlig norsk husholdning brukte
+          ~14 700 kWh strøm i 2024 (
+          <a href="https://www.ssb.no/energi-og-industri/energi/artikler/hva-er-gjennomsnittlig-stromforbruk-i-husholdningene">
+            SSB
+          </a>
+          ) – vi runder til 15 000. En bensinbil ≈ 2 tonn CO₂/år. Norges
+          utslipp: 44,6 mill. tonn CO₂e i 2024 (
+          <a href="https://www.ssb.no/natur-og-miljo/forurensning-og-klima/statistikk/utslipp-til-luft">
+            SSB, endelige tall
+          </a>
+          ).
         </li>
         <li>
           Verdenshendelsene i perioderapportene:{" "}
@@ -128,10 +146,10 @@ export function SourcesNote() {
           </li>
           <li>
             <strong>Husholdninger:</strong> erstatnings-TWh ×{" "}
-            {HOUSEHOLDS_PER_TWH.toLocaleString("nb-NO")}. Regnet med ≈ 20 000
-            kWh per husholdning per år (NVE-anslag for en gjennomsnittlig norsk
-            husholdning – europeiske husholdninger bruker mindre, så antallet er
-            i underkant).
+            {HOUSEHOLDS_PER_TWH.toLocaleString("nb-NO")} husholdninger per TWh
+            (≈ 15 000 kWh per husholdning per år; SSB-snittet for 2024 er 14 700
+            – europeiske husholdninger bruker mindre, så antallet er i
+            underkant).
           </li>
           <li>
             <strong>Utslippsintensitet (kg CO₂ per fat):</strong> årsutslipp i
@@ -150,9 +168,9 @@ export function SourcesNote() {
           </li>
           <li>
             <strong>Bensinbiler:</strong> unngåtte tonn CO₂ ÷ 2 (en
-            gjennomsnittlig bensinbil slipper ut ≈ 2 tonn i året). Flyreiser: ÷
-            1 tonn per tur/retur Oslo–New York. År med Norges utslipp: ÷ 47
-            millioner tonn.
+            gjennomsnittlig bensinbil slipper ut ≈ 2 tonn i året: ~12 000 km ×
+            ~0,16 kg/km). Flyreiser: ÷ 1 tonn per tur/retur Oslo–New York. År
+            med Norges utslipp: ÷ 44,6 millioner tonn (SSB, 2024).
           </li>
         </ul>
       </details>

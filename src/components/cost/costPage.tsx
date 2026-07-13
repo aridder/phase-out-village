@@ -174,9 +174,9 @@ export function CostPage() {
           <strong>
             {energyData.electricity.oilGasConsumptionTwh} TWh strøm
           </strong>{" "}
-          – nesten like mye som all norsk vindkraft produserer – og den
-          frigjøres når feltene stenges. Og å erstatte selve oljen krever mindre
-          enn man skulle tro:{" "}
+          – mot {energyData.electricity.windProductionTwh} TWh fra all norsk
+          vindkraft – og den frigjøres når feltene stenges. Og å erstatte selve
+          oljen krever mindre enn man skulle tro:{" "}
           <strong>
             {energy.replacementTwh.toLocaleString("nb-NO")} TWh ren strøm
           </strong>{" "}
@@ -192,9 +192,9 @@ export function CostPage() {
         <p>
           Oljefondet er verdt rundt{" "}
           <strong>{OIL_FUND_BN_NOK.toLocaleString("nb-NO")} milliarder</strong>{" "}
-          – omtrent 30 år med dagens oljeinntekter står allerede i banken, og
-          det er akkurat denne overgangen fondet er til for. Vannmagasinene våre
-          kan lagre <strong>{RESERVOIR_CAPACITY_TWH} TWh</strong>, omtrent
+          – over 30 år med dagens oljeinntekter står allerede i banken, og det
+          er akkurat denne overgangen fondet er til for. Vannmagasinene våre kan
+          lagre <strong>{RESERVOIR_CAPACITY_TWH} TWh</strong>, omtrent
           halvparten av all magasinkapasitet i Europa – vi kan kjøpe billig
           vindkraft når det blåser og selge vannkraft dyrt når det er stille.
         </p>
@@ -203,12 +203,13 @@ export function CostPage() {
           produserer mer enn vi bruker (
           {energyData.electricity.productionTwh.toLocaleString("nb-NO")} mot{" "}
           {energyData.electricity.consumptionTwh.toLocaleString("nb-NO")} TWh).
-          Og fastlandet eksporterer allerede for rundt{" "}
+          Og fastlandet eksporterte varer for{" "}
           <strong>
             {MAINLAND_EXPORT_BN_NOK.toLocaleString("nb-NO")} milliarder
           </strong>{" "}
-          i året – sjømat, industri, kraft og teknologi. Omstillingen bygger
-          videre på noe som finnes. Få land er bedre rustet.
+          i 2025 – sjømat, industri, kraft og teknologi, uten å regne med
+          tjenestene. Omstillingen bygger videre på noe som finnes. Få land er
+          bedre rustet.
         </p>
       </div>
 
