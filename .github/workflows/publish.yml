@@ -1,7 +1,10 @@
 name: Deploy
 
 on:
-  workflow_run:
+  # workflow_dispatch enables the manual "Run workflow" button that the
+  # README's fork instructions rely on. (A bare `workflow_run:` is not a
+  # valid trigger and made the whole workflow fail at startup.)
+  workflow_dispatch:
   push:
     branches: [main]
 
