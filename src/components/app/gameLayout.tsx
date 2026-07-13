@@ -45,30 +45,9 @@ function GameHeader() {
           flexDirection: "column",
         }}
       >
-        {/* flexWrap keeps the button row from forcing horizontal page
-            scroll on narrow screens — buttons flow to a second line */}
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-            alignItems: "center",
-            rowGap: "0.25rem",
-            padding: "0.2rem 0.75rem",
-          }}
-        >
+        <div className="header-bar">
           <Brand />
-          <div
-            style={{
-              display: "flex",
-              flex: 1,
-              flexWrap: "wrap",
-              justifyContent: "end",
-              alignItems: "center",
-              gap: "0.5rem",
-              rowGap: "0.25rem",
-            }}
-          >
+          <div className="header-nav">
             <MainButton
               icon={<FaMap />}
               label={"Kart"}

@@ -16,29 +16,9 @@ export function SiteLayout() {
   return (
     <>
       <header>
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-            alignItems: "center",
-            rowGap: "0.25rem",
-            padding: "0.2rem 0.75rem",
-          }}
-        >
+        <div className="header-bar">
           <Brand />
-          <div
-            style={{
-              display: "flex",
-              flex: 1,
-              flexWrap: "wrap",
-              justifyContent: "end",
-              alignItems: "center",
-              gap: "0.5rem",
-              rowGap: "0.25rem",
-            }}
-          >
+          <div className="header-nav">
             <MainButton
               icon={<FaCoins />}
               label={"Hva koster det?"}
