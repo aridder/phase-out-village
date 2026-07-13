@@ -46,10 +46,12 @@ export function EmissionStackedBarChart({
           values: userData,
         },
         {
-          label: "Reduksjon",
-          color: "var(--chart-reduksjon)",
-          fillOpacity: 0.3,
-          stroke: "var(--chart-reduksjon)",
+          // Striped = avoided, same visual language as the production
+          // chart's reduction segments; a solid fill here read as "more
+          // emissions" when it means the opposite
+          label: "Unngått utslipp",
+          color: "var(--chart-plan)",
+          striped: true,
           values: reductionData,
         },
       ]}

@@ -164,24 +164,16 @@ export function GameOverDialog() {
         </div>
 
         <div className="button-row">
-          <div>
-            <button onClick={() => navigate("/advisor")}>
-              💡 Få rådgiverens dom
-            </button>
-          </div>
-          <div>
-            <button onClick={() => navigate("/map")}>
-              🔍 Se planen på kartet
-            </button>
-          </div>
-          <div>
-            <button onClick={() => navigate("/transition")}>
-              🔋 Se hva som erstatter oljen
-            </button>
-          </div>
-          <div>
-            <button onClick={restart}>↺ Prøv på nytt</button>
-          </div>
+          <button className="primary" onClick={() => navigate("/advisor")}>
+            💡 Få rådgiverens dom
+          </button>
+          <button onClick={() => navigate("/map")}>
+            🔍 Se planen på kartet
+          </button>
+          <button onClick={() => navigate("/transition")}>
+            🔋 Se hva som erstatter oljen
+          </button>
+          <button onClick={restart}>↺ Prøv på nytt</button>
         </div>
 
         <SourcesNote />

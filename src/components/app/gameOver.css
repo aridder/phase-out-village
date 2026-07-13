@@ -31,7 +31,9 @@
 }
 
 .game-over .button-row button {
-  font-size: 1.25em;
+  /* Fyll raden jevnt, men aldri brekk teksten ord for ord */
+  flex: 1 1 auto;
+  font-size: 1.1em;
 }
 
 .game-over .verdict {
