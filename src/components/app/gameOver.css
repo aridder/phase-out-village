@@ -119,3 +119,62 @@
     gap: 0.5rem;
   }
 }
+
+/* Finalen skal kjennes: karakter-badge ved tittelen og nøkkeltall som
+   lander ett og ett */
+.game-over .grade-badge {
+  display: inline-block;
+  min-width: 2.2rem;
+  padding: 0.1rem 0.5rem;
+  border: 2px solid currentColor;
+  border-radius: 0.5rem;
+  text-align: center;
+  animation: grade-pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) 0.2s backwards;
+}
+
+.game-over .grade-badge[data-grade^="A"],
+.game-over .grade-badge[data-grade^="B"] {
+  background-color: var(--eple);
+  color: var(--skog);
+  border-color: var(--skog);
+}
+
+.game-over .grade-badge[data-grade^="C"],
+.game-over .grade-badge[data-grade^="D"] {
+  border-color: var(--rav);
+}
+
+.game-over .grade-badge[data-grade^="E"],
+.game-over .grade-badge[data-grade^="F"] {
+  border-color: #c0392b;
+}
+
+.game-over .stat-tile {
+  animation: tile-pop 0.4s ease backwards;
+}
+
+.game-over .stat-tile:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.game-over .stat-tile:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.game-over .stat-tile:nth-child(4) {
+  animation-delay: 0.36s;
+}
+
+@keyframes tile-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+}
+
+@keyframes grade-pop {
+  from {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}

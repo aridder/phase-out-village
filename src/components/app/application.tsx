@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { MapRoute } from "../map/mapRoute";
 import { ApplicationContext, PeriodDecision } from "../../applicationContext";
 import { PeriodReportRoute } from "../report/periodReportRoute";
@@ -31,28 +31,46 @@ import { TransitionRoute } from "../transition/transitionRoute";
  * Moving a page between the worlds — or giving one page its own frame —
  * is a one-line change here, with no hidden route lists anywhere else.
  */
+/**
+ * Resets the main scroll position on navigation: #app main is the app's
+ * single scroller and never remounts, so without this the scroll position
+ * leaks between pages and users land mid-page.
+ */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    document.querySelector("#app main")?.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 function ApplicationRoutes() {
   return (
-    <Routes>
-      <Route element={<SiteLayout />}>
-        <Route path={"/"} element={<FrontPage />} />
-        <Route path={"/kostnad"} element={<CostPage />} />
-        <Route path={"/transition"} element={<TransitionRoute />} />
-        <Route path={"/advisor"} element={<AdvisorRoute />} />
-        <Route path={"/tutorial"} element={<TutorialRoute />} />
-        <Route path={"*"} element={<h2>Not Found</h2>} />
-      </Route>
-      <Route element={<GameLayout />}>
-        <Route path={"/map/*"} element={<MapRoute />} />
-        <Route path={"/phaseout"} element={<PhaseOutRoute />} />
-        <Route path={"/plan/*"} element={<PlanRoute />} />
-        <Route path={"/emissions/*"} element={<EmissionRoute />} />
-        <Route path={"/production/*"} element={<ProductionRoute />} />
-        <Route path={"/data/*"} element={<DataViewRoute />} />
-        <Route path={"/report"} element={<PeriodReportRoute />} />
-        <Route path={"/summary"} element={<GameOverDialog />} />
-      </Route>
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route element={<SiteLayout />}>
+          <Route path={"/"} element={<FrontPage />} />
+          <Route path={"/kostnad"} element={<CostPage />} />
+          <Route path={"/tutorial"} element={<TutorialRoute />} />
+          <Route path={"*"} element={<h2>Not Found</h2>} />
+        </Route>
+        <Route element={<GameLayout />}>
+          {/* Råd og Grønt nås fra spillnavigasjonen midt i en runde —
+            spillerne skal beholde statuslinjen og neste-steg-footeren */}
+          <Route path={"/transition"} element={<TransitionRoute />} />
+          <Route path={"/advisor"} element={<AdvisorRoute />} />
+          <Route path={"/map/*"} element={<MapRoute />} />
+          <Route path={"/phaseout"} element={<PhaseOutRoute />} />
+          <Route path={"/plan/*"} element={<PlanRoute />} />
+          <Route path={"/emissions/*"} element={<EmissionRoute />} />
+          <Route path={"/production/*"} element={<ProductionRoute />} />
+          <Route path={"/data/*"} element={<DataViewRoute />} />
+          <Route path={"/report"} element={<PeriodReportRoute />} />
+          <Route path={"/summary"} element={<GameOverDialog />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 

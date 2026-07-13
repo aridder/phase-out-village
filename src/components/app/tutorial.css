@@ -3,11 +3,9 @@
 .tutorial-frame {
   width: 100%;
   max-width: 100%;
-  height: 100%;
-  max-height: 100%;
   display: flex;
   flex: 1;
-  align-items: center;
+  align-items: flex-start;
   place-self: center;
 }
 
@@ -18,13 +16,32 @@
 }
 
 .tutorial-steps {
-  height: 100%;
   width: 100%;
-  max-width: 100%;
+  max-width: 44rem;
+  margin: 0 auto;
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+/* Innholdskort i samme stil som spillets goal-box — ikke en tom slide */
+.tutorial-card {
+  border: 1px solid currentColor;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.tutorial-card h3 {
+  margin: 0.75rem 0 0.25rem;
+}
+
+.tutorial-card h3:first-child {
+  margin-top: 0;
+}
+
+.tutorial-card ul {
+  gap: 0.35rem;
 }
 
 /* Tittelen står i topplinjen på desktop og over innholdet på mobil —

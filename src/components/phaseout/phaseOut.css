@@ -217,3 +217,26 @@
 .phaseout-actions .button-row button[type="submit"] {
   flex: 1;
 }
+
+/* Handlingsraden: vedtaket er primærhandlingen og skal stå øverst i full
+   bredde — før var «Hopp over perioden» den mest fremtredende knappen */
+.phaseout-actions .button-row button[type="submit"] {
+  order: -1;
+  flex-basis: 100%;
+}
+
+/* Valgte rader skal SE valgt ut — før endret bare 1,4rem-boksen seg */
+.phaseout-row:has(input:checked) {
+  background: color-mix(in srgb, var(--eple) 25%, transparent);
+  border-radius: 0.5rem;
+}
+
+.phaseout-search {
+  font: inherit;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid currentColor;
+  border-radius: 1rem;
+  background: transparent;
+  color: inherit;
+  max-width: 12rem;
+}

@@ -1,5 +1,17 @@
 /* Perioderapporten (/report): vedtak, tempo-meter og verdenshendelser */
 
+/* Vedtaket fortjener en ankomst — ikke et hardt klipp fra feltvelgeren */
+.period-report {
+  animation: report-in 300ms ease-out backwards;
+}
+
+@keyframes report-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
 .period-report {
   max-width: 720px;
   margin: 0 auto;
