@@ -4,25 +4,35 @@ import { transitionSeries } from "./energyTransition";
 
 /**
  * Anchors for the money story that are not available through open APIs.
- * All figures are rounded approximations for communicating magnitude:
+ * Every figure carries the year it belongs to, and the sources block in the
+ * UI (sourcesNote.tsx) cites where each one comes from:
  *
  * - The state's net cash flow from petroleum (taxes, SDFI, dividends) was
- *   ~661 bn NOK in 2024 (Norsk Petroleum / the national budget).
- * - Norwegian seafood exports were ~175 bn NOK in 2024 (Norges sjømatråd) —
- *   the largest export industry after oil, gas and electricity-intensive
- *   goods, used as a "how much new industry is that?" yardstick.
- * - The structural withdrawal from the sovereign wealth fund in the state
- *   budget is ~460 bn NOK (2025).
- * - Norway has ~5.6 million inhabitants.
+ *   ~664 bn NOK in 2025; the 2026 national budget estimates ~686 bn
+ *   (regjeringen.no / Norsk Petroleum).
+ * - Norwegian seafood exports set a record of 181.5 bn NOK in 2025
+ *   (Norges sjømatråd) — used as a "how much new industry is that?"
+ *   yardstick.
+ * - The structural non-oil deficit (the fund withdrawal) in the 2026
+ *   national budget is 579.4 bn NOK.
+ * - Norway has ~5.6 million inhabitants (SSB, 2026).
  */
-export const STATE_NET_CASH_FLOW_BN_NOK = 661;
-export const SEAFOOD_EXPORT_BN_NOK = 175;
-export const FUND_WITHDRAWAL_BN_NOK = 460;
+export const STATE_NET_CASH_FLOW_BN_NOK = 664;
+export const SEAFOOD_EXPORT_BN_NOK = 181.5;
+export const FUND_WITHDRAWAL_BN_NOK = 579;
 export const POPULATION_MILLIONS = 5.6;
-/** Total expenses in the national budget, ~2 900 bn NOK (2025) */
-export const STATE_BUDGET_BN_NOK = 2900;
-/** The defence budget, ~110 bn NOK (2025) */
-export const DEFENSE_BUDGET_BN_NOK = 110;
+/**
+ * Total expenses in the national budget for 2026: 2 201 bn NOK including
+ * the petroleum sector's expenses (2 164 bn without), rounded to 2 200.
+ * (This constant used to say 2 900 — that figure was simply wrong, and it
+ * made the headline "X statsbudsjett" undercount by a third.)
+ */
+export const STATE_BUDGET_BN_NOK = 2200;
+/**
+ * The defence budget 2026: ~112 bn NOK excluding the Ukraine support
+ * (~180 bn including the Nansen programme)
+ */
+export const DEFENSE_BUDGET_BN_NOK = 112;
 
 export type EconomySummary = {
   /** Today's petroleum export value @unit bn NOK/year */
@@ -54,9 +64,9 @@ export type EconomySummary = {
    * 2025–2040, at today's prices @unit bn NOK
    */
   cumulativeLostStateRevenueBnNok: number;
-  /** The cumulative loss measured in national budgets (~2 900 bn) */
+  /** The cumulative loss measured in national budgets (~2 200 bn) */
   stateBudgetMultiple: number;
-  /** The 2040 annual loss measured in defence budgets (~110 bn/year) */
+  /** The 2040 annual loss measured in defence budgets (~112 bn/year) */
   defenseBudgetMultiple: number;
 };
 

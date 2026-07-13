@@ -17,13 +17,18 @@ import { Year } from "./types";
  *   (IEA and others use 30–40% for the fossil-to-useful-energy ratio.)
  * - A modern 15 MW offshore wind turbine produces ~60 GWh per year
  *   (≈45% capacity factor).
- * - An average Norwegian household uses ~20 000 kWh per year, so
- *   1 TWh powers ~50 000 households.
+ * - An average Norwegian household used ~14 700 kWh of electricity in 2024
+ *   (SSB) — we round to 15 000, so 1 TWh powers ~66 000 households.
+ *   (An earlier version used 20 000 kWh, which is SSB's figure for a
+ *   detached house, not the average household.)
  */
 export const TWH_PER_MILL_SM3_OE = 10;
 export const USEFUL_ENERGY_FACTOR = 0.35;
 export const TWH_PER_TURBINE_YEAR = 0.06;
-export const HOUSEHOLDS_PER_TWH = 50_000;
+export const KWH_PER_HOUSEHOLD_YEAR = 15_000;
+export const HOUSEHOLDS_PER_TWH = Math.round(
+  1_000_000_000 / KWH_PER_HOUSEHOLD_YEAR,
+);
 
 /** One year in the energy transition series. */
 export type TransitionYear = {

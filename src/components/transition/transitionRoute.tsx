@@ -242,8 +242,10 @@ export function TransitionRoute() {
               )}{" "}
               TWh strøm
             </strong>{" "}
-            i året – nesten like mye som all norsk vindkraft produserer. Den
-            strømmen frigjøres når feltene stenges.
+            i året – mot{" "}
+            {energyData.electricity.windProductionTwh.toLocaleString("nb-NO")}{" "}
+            TWh fra all norsk vindkraft. Den strømmen frigjøres når feltene
+            stenges.
           </div>
         </div>
       </div>

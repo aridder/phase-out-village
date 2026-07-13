@@ -325,9 +325,10 @@ async function fetchTradeValues() {
   });
   const data = await queryStatbank(table, query);
 
-  // Use the second most recent year: the newest one is usually incomplete
+  // The table is yearly, so the newest year is the last complete calendar
+  // year — using it keeps the trade figures the same vintage as the rest
   const years = Object.keys(data.dimension["Tid"].category.index).sort();
-  const tradeYear = years.length > 1 ? years[years.length - 2] : years[0];
+  const tradeYear = years[years.length - 1];
 
   const strides: number[] = new Array(data.size.length).fill(1);
   for (let i = data.size.length - 2; i >= 0; i--)
