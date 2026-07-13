@@ -1,5 +1,6 @@
 import React from "react";
-import { LinearScale } from "./scale";
+import { LinearScale, linearScale } from "./scale";
+import { ElementSize } from "./useElementSize";
 
 /** Pixel rectangle of the data area inside the SVG. */
 export type PlotArea = {
@@ -40,6 +41,73 @@ export function computePlotArea(
     width: Math.max(10, width - left - right),
     height: Math.max(10, height - top - bottom),
   };
+}
+
+/**
+ * Builds the value (y) axis every chart shares. The plot area can't be known
+ * until the y tick labels are, and the labels can't be known without a scale —
+ * so a provisional scale learns the labels, the plot area is measured from
+ * them, and the real scale is built to fit. All three charts need exactly this
+ * dance; keeping it in one place stops them from drifting apart.
+ *
+ * @param yMax - Top of the value domain (0 is always the bottom).
+ */
+export function buildValueAxis(
+  size: ElementSize,
+  yMax: number,
+  formatY: (value: number) => string,
+  options: { xLabel?: string; yLabel?: string },
+): { plot: PlotArea; yScale: LinearScale } {
+  const maxYTicks = Math.min(8, Math.max(3, Math.floor(size.height / 55)));
+  const provisional = linearScale(0, yMax, [0, 1], maxYTicks);
+  const plot = computePlotArea(
+    size.width,
+    size.height,
+    provisional.ticks.map(formatY),
+    options,
+  );
+  const yScale = linearScale(
+    0,
+    yMax,
+    [plot.top + plot.height, plot.top],
+    maxYTicks,
+  );
+  return { plot, yScale };
+}
+
+/**
+ * The transparent rectangle over the plot area that captures pointer events.
+ * Translates screen coordinates into the SVG's own coordinate space (the SVG
+ * has no viewBox, so one user unit is one CSS pixel) and hands back local
+ * (x, y). Identical in all three charts, so it lives here.
+ */
+export function CaptureArea({
+  plot,
+  onMove,
+  onLeave,
+}: {
+  plot: PlotArea;
+  onMove: (x: number, y: number) => void;
+  onLeave: () => void;
+}) {
+  function handle(event: React.PointerEvent<SVGRectElement>) {
+    const svg = event.currentTarget.ownerSVGElement;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    onMove(event.clientX - rect.left, event.clientY - rect.top);
+  }
+  return (
+    <rect
+      x={plot.left}
+      y={plot.top}
+      width={plot.width}
+      height={plot.height}
+      fill="transparent"
+      onPointerMove={handle}
+      onPointerDown={handle}
+      onPointerLeave={onLeave}
+    />
+  );
 }
 
 /**
