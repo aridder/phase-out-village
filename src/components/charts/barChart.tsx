@@ -1,8 +1,8 @@
-import React, { useId, useMemo, useRef, useState } from "react";
-import { Axes, computePlotArea, PlotArea } from "./axes";
-import { linearScale } from "./scale";
+import React, { useId, useMemo, useState } from "react";
+import { Axes, buildValueAxis, CaptureArea } from "./axes";
 import { ChartShell, formatNumberNb, TooltipState } from "./chartShell";
 import { useElementSize } from "./useElementSize";
+import { useHiddenLabels } from "./useHiddenLabels";
 
 export type BarSeries = {
   label: string;
@@ -44,11 +44,8 @@ export function BarChart({
   legend?: boolean;
 }) {
   const [plotRef, size] = useElementSize();
-  const svgRef = useRef<SVGSVGElement>(null);
   const patternIdBase = useId();
-  const [hiddenLabels, setHiddenLabels] = useState<ReadonlySet<string>>(
-    new Set(),
-  );
+  const { hidden: hiddenLabels, toggle } = useHiddenLabels();
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [hoverY, setHoverY] = useState(0);
 
@@ -60,24 +57,11 @@ export function BarChart({
     const stackTotals = categories.map((_, i) =>
       visibleSeries.reduce((sum, s) => sum + Math.max(0, s.values[i] ?? 0), 0),
     );
-    const maxYTicks = Math.min(8, Math.max(3, Math.floor(size.height / 55)));
-    const provisional = linearScale(
-      0,
+    const { plot, yScale } = buildValueAxis(
+      size,
       Math.max(...stackTotals, 0),
-      [0, 1],
-      maxYTicks,
-    );
-    const plot: PlotArea = computePlotArea(
-      size.width,
-      size.height,
-      provisional.ticks.map(formatY),
+      formatY,
       { xLabel, yLabel },
-    );
-    const yScale = linearScale(
-      0,
-      Math.max(...stackTotals, 0),
-      [plot.top + plot.height, plot.top],
-      maxYTicks,
     );
 
     const band = plot.width / Math.max(1, categories.length);
@@ -108,16 +92,14 @@ export function BarChart({
     yLabel,
   ]);
 
-  function handlePointer(event: React.PointerEvent<SVGRectElement>) {
-    if (!geometry || !svgRef.current) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const px = event.clientX - rect.left;
+  function handlePointer(px: number, py: number) {
+    if (!geometry) return;
     const index = Math.min(
       categories.length - 1,
       Math.max(0, Math.floor((px - geometry.plot.left) / geometry.band)),
     );
     setHoverIndex(index);
-    setHoverY(event.clientY - rect.top);
+    setHoverY(py);
   }
 
   const tooltip: TooltipState | null =
@@ -156,19 +138,13 @@ export function BarChart({
             }))
           : undefined
       }
-      onLegendClick={(label) =>
-        setHiddenLabels((previous) => {
-          const next = new Set(previous);
-          next.has(label) ? next.delete(label) : next.add(label);
-          return next;
-        })
-      }
+      onLegendClick={toggle}
       tooltip={tooltip}
       plotRef={plotRef}
       size={size}
     >
       {geometry && (
-        <svg ref={svgRef} role="img" aria-label={title}>
+        <svg role="img" aria-label={title}>
           <defs>
             {series.map(
               (s, i) =>
@@ -219,6 +195,10 @@ export function BarChart({
                   if (height <= 0) return null;
                   const y = stackTop - height;
                   stackTop = y;
+                  // A hairline of surface between stacked segments, and softly
+                  // rounded corners — reads cleaner than hard-butted blocks
+                  const gap = 1.5;
+                  const drawnHeight = Math.max(1, height - gap);
                   // Colors go through style so var(--chart-…) references work;
                   // striped series fill from the SVG pattern instead
                   const style: React.CSSProperties = {};
@@ -230,7 +210,9 @@ export function BarChart({
                       x={geometry.barX(categoryIndex)}
                       y={y}
                       width={geometry.barWidth}
-                      height={height}
+                      height={drawnHeight}
+                      rx={2}
+                      ry={2}
                       fill={
                         s.striped
                           ? `url(#${patternIdBase}-${seriesIndex})`
@@ -245,15 +227,10 @@ export function BarChart({
               </g>
             );
           })}
-          <rect
-            x={geometry.plot.left}
-            y={geometry.plot.top}
-            width={geometry.plot.width}
-            height={geometry.plot.height}
-            fill="transparent"
-            onPointerMove={handlePointer}
-            onPointerDown={handlePointer}
-            onPointerLeave={() => setHoverIndex(null)}
+          <CaptureArea
+            plot={geometry.plot}
+            onMove={handlePointer}
+            onLeave={() => setHoverIndex(null)}
           />
         </svg>
       )}

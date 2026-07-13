@@ -1,9 +1,10 @@
-import React, { useId, useMemo, useRef, useState } from "react";
-import { Axes, computePlotArea, PlotArea } from "./axes";
+import React, { useId, useMemo, useState } from "react";
+import { Axes, buildValueAxis, CaptureArea } from "./axes";
 import { curvePath, monotoneSegments, segmentToPath } from "./curve";
-import { linearScale, yearTicks } from "./scale";
+import { yearTicks } from "./scale";
 import { ChartShell, formatNumberNb, TooltipState } from "./chartShell";
 import { useElementSize } from "./useElementSize";
+import { useHiddenLabels } from "./useHiddenLabels";
 
 export type LinePoint = {
   /** Numeric x value (a year in every current chart) */
@@ -115,11 +116,8 @@ export function LineChart({
   onLegendClick?: (label: string) => void;
 }) {
   const [plotRef, size] = useElementSize();
-  const svgRef = useRef<SVGSVGElement>(null);
   const clipId = useId();
-  const [hiddenLabels, setHiddenLabels] = useState<ReadonlySet<string>>(
-    new Set(),
-  );
+  const { hidden: hiddenLabels, toggle } = useHiddenLabels();
   const [hover, setHover] = useState<HoverState | null>(null);
 
   const isHidden = (s: LineSeries) =>
@@ -141,21 +139,10 @@ export function LineChart({
       (definedPoints.length ? Math.max(...definedPoints.map((p) => p.x)) : 1);
     const yHigh = yMax ?? Math.max(0, ...definedPoints.map((p) => p.y));
 
-    // Provisional scale to learn the tick labels, then the real plot area
-    const maxYTicks = Math.min(8, Math.max(3, Math.floor(size.height / 55)));
-    const provisional = linearScale(0, yHigh, [0, 1], maxYTicks);
-    const plot: PlotArea = computePlotArea(
-      size.width,
-      size.height,
-      provisional.ticks.map(formatY),
-      { xLabel, yLabel },
-    );
-    const yScale = linearScale(
-      0,
-      yHigh,
-      [plot.top + plot.height, plot.top],
-      maxYTicks,
-    );
+    const { plot, yScale } = buildValueAxis(size, yHigh, formatY, {
+      xLabel,
+      yLabel,
+    });
     const xSpan = Math.max(1e-9, xHigh - xLow);
     const xToPx = (x: number) => plot.left + ((x - xLow) / xSpan) * plot.width;
     const xTicks = yearTicks(xLow, xHigh, Math.floor(plot.width / 55)).map(
@@ -181,11 +168,8 @@ export function LineChart({
     return `${s.label}: ${formatNumberNb(point.y)}`;
   }
 
-  function handlePointer(event: React.PointerEvent<SVGRectElement>) {
-    if (!geometry || !svgRef.current) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const px = event.clientX - rect.left;
-    const py = event.clientY - rect.top;
+  function handlePointer(px: number, py: number) {
+    if (!geometry) return;
 
     if (tooltipMode === "point") {
       let best: { s: LineSeries; p: DefinedPoint; d: number } | null = null;
@@ -276,21 +260,13 @@ export function LineChart({
             }))
           : undefined
       }
-      onLegendClick={
-        onLegendClick ??
-        ((label) =>
-          setHiddenLabels((previous) => {
-            const next = new Set(previous);
-            next.has(label) ? next.delete(label) : next.add(label);
-            return next;
-          }))
-      }
+      onLegendClick={onLegendClick ?? toggle}
       tooltip={hover?.tooltip}
       plotRef={plotRef}
       size={size}
     >
       {geometry && (
-        <svg ref={svgRef} role="img" aria-label={title}>
+        <svg role="img" aria-label={title}>
           <defs>
             <clipPath id={clipId}>
               <rect
@@ -300,6 +276,32 @@ export function LineChart({
                 height={geometry.plot.height + 5}
               />
             </clipPath>
+            {/* Én vertikal gradient per fylt serie: sterk ved linjen, ut mot
+                null. Gir flatene dybde uten å skjule det som ligger bak. */}
+            {visibleSeries.map((s, i) =>
+              s.fill ? (
+                <linearGradient
+                  key={s.label}
+                  id={`${clipId}-fill-${i}`}
+                  gradientUnits="userSpaceOnUse"
+                  x1={0}
+                  y1={geometry.plot.top}
+                  x2={0}
+                  y2={geometry.yScale.toPx(0)}
+                >
+                  <stop
+                    offset="0%"
+                    style={{ stopColor: s.fill }}
+                    stopOpacity={s.fillOpacity ?? 0.32}
+                  />
+                  <stop
+                    offset="100%"
+                    style={{ stopColor: s.fill }}
+                    stopOpacity={0}
+                  />
+                </linearGradient>
+              ) : null,
+            )}
           </defs>
           <Axes
             plot={geometry.plot}
@@ -343,8 +345,7 @@ export function LineChart({
                         {area && (
                           <path
                             d={area}
-                            style={{ fill: s.fill }}
-                            fillOpacity={s.fillOpacity ?? 0.2}
+                            fill={`url(#${clipId}-fill-${seriesIndex})`}
                           />
                         )}
                         {solid && (
@@ -415,15 +416,10 @@ export function LineChart({
               />
             ))}
           </g>
-          <rect
-            x={geometry.plot.left}
-            y={geometry.plot.top}
-            width={geometry.plot.width}
-            height={geometry.plot.height}
-            fill="transparent"
-            onPointerMove={handlePointer}
-            onPointerDown={handlePointer}
-            onPointerLeave={() => setHover(null)}
+          <CaptureArea
+            plot={geometry.plot}
+            onMove={handlePointer}
+            onLeave={() => setHover(null)}
           />
         </svg>
       )}

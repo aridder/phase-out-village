@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from "react";
-import { Axes, computePlotArea, PlotArea } from "./axes";
+import React, { useMemo, useState } from "react";
+import { Axes, buildValueAxis, CaptureArea } from "./axes";
 import { linearScale } from "./scale";
 import { ChartShell, formatNumberNb, TooltipState } from "./chartShell";
 import { useElementSize } from "./useElementSize";
@@ -45,7 +45,6 @@ export function ScatterChart({
   annotation?: BoxAnnotation;
 }) {
   const [plotRef, size] = useElementSize();
-  const svgRef = useRef<SVGSVGElement>(null);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const definedPoints = points.filter(
@@ -54,20 +53,10 @@ export function ScatterChart({
 
   const geometry = useMemo(() => {
     if (size.width < 60 || size.height < 60) return null;
-    const maxYTicks = Math.min(8, Math.max(3, Math.floor(size.height / 55)));
-    const provisional = linearScale(0, yMax, [0, 1], maxYTicks);
-    const plot: PlotArea = computePlotArea(
-      size.width,
-      size.height,
-      provisional.ticks.map(formatY),
-      { xLabel, yLabel },
-    );
-    const yScale = linearScale(
-      0,
-      yMax,
-      [plot.top + plot.height, plot.top],
-      maxYTicks,
-    );
+    const { plot, yScale } = buildValueAxis(size, yMax, formatY, {
+      xLabel,
+      yLabel,
+    });
     const xScale = linearScale(
       0,
       xMax,
@@ -81,11 +70,8 @@ export function ScatterChart({
     return { plot, xScale, yScale, xTicks };
   }, [size.width, size.height, xMax, yMax, formatY, xLabel, yLabel]);
 
-  function handlePointer(event: React.PointerEvent<SVGRectElement>) {
-    if (!geometry || !svgRef.current) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const px = event.clientX - rect.left;
-    const py = event.clientY - rect.top;
+  function handlePointer(px: number, py: number) {
+    if (!geometry) return;
 
     let best: { point: ScatterPoint & { y: number }; d: number } | null = null;
     for (const point of definedPoints) {
@@ -115,7 +101,7 @@ export function ScatterChart({
   return (
     <ChartShell title={title} tooltip={tooltip} plotRef={plotRef} size={size}>
       {geometry && (
-        <svg ref={svgRef} role="img" aria-label={title}>
+        <svg role="img" aria-label={title}>
           <Axes
             plot={geometry.plot}
             yScale={geometry.yScale}
@@ -169,15 +155,10 @@ export function ScatterChart({
                 fillOpacity={0.85}
               />
             ))}
-          <rect
-            x={geometry.plot.left}
-            y={geometry.plot.top}
-            width={geometry.plot.width}
-            height={geometry.plot.height}
-            fill="transparent"
-            onPointerMove={handlePointer}
-            onPointerDown={handlePointer}
-            onPointerLeave={() => setTooltip(null)}
+          <CaptureArea
+            plot={geometry.plot}
+            onMove={handlePointer}
+            onLeave={() => setTooltip(null)}
           />
         </svg>
       )}

@@ -4,25 +4,40 @@
 
 :root {
   /* Seriefarger som skifter med fargeskjema. Diagramkomponentene refererer
-     til disse med var(), så mørkt tema ikke trenger JS. */
-  --chart-plan: #4a90e2; /* «din plan»-blå */
-  --chart-referanse: #e8920c; /* referanselinjer */
-  --chart-olje: #4da3ff;
-  --chart-gass: #e02d2d;
-  --chart-reduksjon: #c00000;
-  --chart-avviklet: #9aa0a2; /* nedstengte felt i scatter */
-  --chart-grid-styrke: 12%;
+     til disse med var(), så mørkt tema ikke trenger JS.
+
+     Paletten er MDG-forankret: «din plan» er alltid grønn (heltefargen), det
+     å ikke gjøre noe («referanse») og det som kuttes er ravgult, og olje/gass
+     får hver sin egen farge så produksjonsdiagrammene kan skille dem. Hvert
+     par som faktisk møtes i samme diagram er validert fargeblind-trygt
+     (Machado-2009 ΔE) mot flaten det tegnes på — lys #e0ffb2, mørk #133600. */
+  --chart-plan: #2b8a3e; /* «din plan» — MDG-grønn, helten */
+  --chart-referanse: #c77400; /* uten tiltak — ravgul */
+  --chart-reduksjon: #c77400; /* det kuttet fjerner — ravgul */
+  --chart-olje: #1a66a8; /* oljeproduksjon — blå (væske) */
+  --chart-gass: #c0392b; /* gasseksport — varm rød */
+  --chart-avviklet: #6b7280; /* nedstengte felt — bevisst nøytral grå */
+
+  /* Tooltip-kort: lys flate med mørk skrift i lyst tema. */
+  --chart-tooltip-bg: rgba(255, 255, 255, 0.97);
+  --chart-tooltip-fg: #133600;
+  --chart-tooltip-kant: rgba(19, 54, 0, 0.12);
+  --chart-tooltip-skygge: 0 6px 20px rgba(19, 54, 0, 0.18);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --chart-plan: #6aa5e8;
-    --chart-referanse: #ffa726;
-    --chart-olje: #2a5d8f;
-    --chart-gass: #d64545;
-    --chart-reduksjon: #ff8080;
-    --chart-avviklet: #7d8486;
-    --chart-grid-styrke: 18%;
+    --chart-plan: #4fa348;
+    --chart-referanse: #c67f1f;
+    --chart-reduksjon: #c67f1f;
+    --chart-olje: #3d97d0;
+    --chart-gass: #db5a44;
+    --chart-avviklet: #6f7d84;
+
+    --chart-tooltip-bg: rgba(9, 26, 2, 0.95);
+    --chart-tooltip-fg: #e0ffb2;
+    --chart-tooltip-kant: rgba(224, 255, 178, 0.18);
+    --chart-tooltip-skygge: 0 6px 20px rgba(0, 0, 0, 0.45);
   }
 }
 
@@ -91,18 +106,29 @@
   touch-action: pan-y;
 }
 
+/* Akse- og etikett-tekst arver sidens skrift, med tabellsifre så tallene
+   står i kolonne (moderne, rolig akse). */
+.svg-chart-plot svg text {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
 .svg-chart-tooltip {
   position: absolute;
   z-index: 2;
   pointer-events: none;
   max-width: 270px;
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.82);
-  color: #fff;
+  padding: 0.5rem 0.7rem;
+  border-radius: 10px;
+  background: var(--chart-tooltip-bg);
+  color: var(--chart-tooltip-fg);
+  border: 1px solid var(--chart-tooltip-kant);
+  box-shadow: var(--chart-tooltip-skygge);
   font-size: 0.78rem;
-  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
   white-space: nowrap;
+  backdrop-filter: blur(3px);
 }
 
 .svg-chart-tooltip .tooltip-title {
