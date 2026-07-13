@@ -307,34 +307,12 @@ export function PhaseOutDialog({
           </button>
         </div>
 
+        {/* Tittel og lukkekryss først — verktøyene under, ikke over,
+            overskriften de gjelder for */}
         <div className="phaseout-dialog-header">
-          <div className="phaseout-sort-wrapper">
-            <input
-              type="search"
-              className="phaseout-search"
-              placeholder="🔎 Finn felt …"
-              aria-label="Søk etter oljefelt"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-            />
-            <label className="phaseout-sort-dropdown">
-              Sorter etter:{" "}
-              <select
-                value={sortKey}
-                onClick={(e) => e.stopPropagation()}
-                onChange={(e) => setSortKey(e.target.value as SortKey)}
-              >
-                <option value="recommended">
-                  Størst og mest ineffektiv først (anbefalt)
-                </option>
-                <option value="emission">Størst utslipp</option>
-                <option value="emissionIntensity">Mest utslipp per fat</option>
-                <option value="totalProduction">Størst produksjon</option>
-                <option value="alphabetical">Alfabetisk</option>
-              </select>
-            </label>
-          </div>
+          <h3 className="phaseout-header">
+            Velg felter for avvikling {periodLabel(getCurrentRound())}
+          </h3>
 
           <div className="close-corner-desktop">
             <button
@@ -351,10 +329,35 @@ export function PhaseOutDialog({
           </div>
         </div>
 
+        <div className="phaseout-toolbar">
+          <input
+            type="search"
+            className="phaseout-search"
+            placeholder="🔎 Finn felt …"
+            aria-label="Søk etter oljefelt"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <label className="phaseout-sort-dropdown">
+            Sorter etter:{" "}
+            <select
+              value={sortKey}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => setSortKey(e.target.value as SortKey)}
+            >
+              <option value="recommended">
+                Størst og mest ineffektiv først (anbefalt)
+              </option>
+              <option value="emission">Størst utslipp</option>
+              <option value="emissionIntensity">Mest utslipp per fat</option>
+              <option value="totalProduction">Størst produksjon</option>
+              <option value="alphabetical">Alfabetisk</option>
+            </select>
+          </label>
+        </div>
+
         <div className="phaseout-checkboxes">
-          <h3 className="phaseout-header">
-            Velg felter for avvikling {periodLabel(getCurrentRound())}
-          </h3>
           <ul className="phaseout-list">
             {sortedRows.map((row) => (
               <li key={row.field} className="phaseout-row">
