@@ -105,9 +105,7 @@ export function CombinedProductionForFieldChart({ field }: { field: string }) {
   }
 
   return (
-    <div
-      className="field-production-chart"
-    >
+    <div className="field-production-chart">
       <Bar
         options={{
           responsive: true,

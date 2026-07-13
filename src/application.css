@@ -487,20 +487,61 @@
     font-weight: 600;
   }
 
-  /* To diagrammer side om side på desktop, under hverandre på mobil */
+  /* Primærhandlingen på en side: eplegrønn bakgrunn (teksten er allerede
+     --skog fra button-basen). Sider med egen mening — kostnadssidens
+     mørke variant — overstyrer i sin egen fil og vinner som ulagdelt. */
+  button.primary {
+    background-color: var(--eple);
+  }
+
+  /* Nøkkeltall-fliser: rutenett av tall med emoji og forklaring. Vokste
+     frem på omstillingssiden og het lenge .transition-stats, men brukes
+     også av resultatdialogen — nå heter de det de er. */
+  .stat-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .stat-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.25rem;
+    border: 1px solid currentColor;
+    border-radius: 0.75rem;
+    padding: 1rem;
+  }
+
+  .stat-tile .emoji {
+    font-size: 2em;
+  }
+
+  .stat-tile .value {
+    font-size: 1.6em;
+    font-weight: bold;
+  }
+
+  .stat-tile.highlight {
+    border: 2px solid var(--gran);
+  }
+
+  /* To diagrammer side om side på desktop, under hverandre på mobil.
+     minmax(0, 1fr) og min-width: 0 lar cellene krympe forbi canvasens
+     innholdsbredde — uten dem presser Chart.js sporet bredere enn
+     containeren. (Erstattet en gammel width: 90vw-nødløsning.) */
   .charts {
     display: grid;
     gap: 1.5rem;
-    @media (width <= 600px) {
-      width: 90vw;
-    }
 
     @media (width > 600px) {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
 
     > div {
       height: 250px;
+      min-width: 0;
     }
   }
 

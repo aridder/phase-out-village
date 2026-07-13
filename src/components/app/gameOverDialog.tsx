@@ -11,7 +11,6 @@ import { economySummary } from "../../data/petroleumEconomy";
 import { transitionSummary } from "../../data/energyTransition";
 import { emissionEquivalents } from "../../analysis/emissionEquivalents";
 import { SourcesNote } from "../ui/sourcesNote";
-import "../transition/transition.css";
 import "./gameOver.css";
 
 /**
@@ -76,8 +75,8 @@ export function GameOverDialog() {
         <h2>🏁 2040 – slik gikk det</h2>
         <p className="verdict">{verdict}</p>
 
-        <div className="transition-stats">
-          <div className="transition-stat highlight">
+        <div className="stat-tiles">
+          <div className="stat-tile highlight">
             <div className="emoji">🌍</div>
             <div className="value">−{result.cutPercent} %</div>
             <div>
@@ -85,14 +84,14 @@ export function GameOverDialog() {
               millioner tonn CO₂ unngått
             </div>
           </div>
-          <div className="transition-stat">
+          <div className="stat-tile">
             <div className="emoji">🛢️</div>
             <div className="value">
               {fieldsClosed} av {fieldsTotal}
             </div>
             <div>felter fikk en sluttdato i planen din</div>
           </div>
-          <div className="transition-stat">
+          <div className="stat-tile">
             <div className="emoji">⚡</div>
             <div className="value">{energy.phasedOutTwh} TWh</div>
             <div>
@@ -101,7 +100,7 @@ export function GameOverDialog() {
               kraftverk
             </div>
           </div>
-          <div className="transition-stat">
+          <div className="stat-tile">
             <div className="emoji">💰</div>
             <div className="value">
               ~{economy.cumulativeLostStateRevenueBnNok.toLocaleString("nb-NO")}{" "}
