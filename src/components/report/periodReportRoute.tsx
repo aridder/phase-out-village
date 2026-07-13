@@ -8,8 +8,8 @@ import {
   paceVerdict,
 } from "../../data/gameGoal";
 import { storyForRound } from "../../data/periodStories";
-import { cumulativeEmissions } from "../../ai/fieldStats";
-import { emissionEquivalents } from "../../ai/emissionEquivalents";
+import { cumulativeEmissions } from "../../analysis/fieldStats";
+import { emissionEquivalents } from "../../analysis/emissionEquivalents";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./periodReport.css";
 

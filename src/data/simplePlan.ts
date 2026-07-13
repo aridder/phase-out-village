@@ -1,5 +1,5 @@
 import { gameData, PhaseOutSchedule } from "./gameData";
-import { computeFieldStats } from "../ai/fieldStats";
+import { computeFieldStats } from "../analysis/fieldStats";
 import { Year } from "./types";
 
 /**

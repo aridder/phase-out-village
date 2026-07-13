@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { FaLightbulb } from "react-icons/fa";
 import { ApplicationContext } from "../../applicationContext";
-import { analyzePlan } from "../../ai/advisorEngine";
-import { emissionEquivalents } from "../../ai/emissionEquivalents";
-import { optimizePlan, OptimizerStrategy } from "../../ai/planOptimizer";
+import { analyzePlan } from "../../analysis/advisorEngine";
+import { emissionEquivalents } from "../../analysis/emissionEquivalents";
+import { optimizePlan, OptimizerStrategy } from "../../analysis/planOptimizer";
 import { Year } from "../../data/types";
 import { EmissionStackedBarChart } from "../emissions/emissionStackedBarChart";
 import { ProductionReductionChart } from "../production/productionReductionChart";

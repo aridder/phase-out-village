@@ -6,7 +6,7 @@ import {
   STATE_BUDGET_BN_NOK,
 } from "../../data/petroleumEconomy";
 import { transitionSummary } from "../../data/energyTransition";
-import { cumulativeEmissions } from "../../ai/fieldStats";
+import { cumulativeEmissions } from "../../analysis/fieldStats";
 import { energyData } from "../../generated/energyData";
 import {
   MAINLAND_EXPORT_BN_NOK,

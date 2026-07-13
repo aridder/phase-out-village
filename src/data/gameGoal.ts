@@ -1,4 +1,4 @@
-import { cumulativeEmissions } from "../ai/fieldStats";
+import { cumulativeEmissions } from "../analysis/fieldStats";
 import { mdgPlan } from "../generated/dataMdg";
 import { PhaseOutSchedule } from "./gameData";
 
