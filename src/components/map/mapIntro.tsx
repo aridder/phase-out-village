@@ -58,7 +58,8 @@ export function MapIntro() {
             🏁 Reisen er fullført. Kartet viser sluttresultatet – grå felter er
             avviklet.
           </div>
-          <div>
+          {/* cta-row skjules på mobil — footeren har samme handling */}
+          <div className="cta-row">
             <button className="cta" onClick={() => navigate("/summary")}>
               🏆 Se resultatet
             </button>
@@ -86,7 +87,8 @@ export function MapIntro() {
             </div>
           )}
 
-          <div>
+          {/* cta-row skjules på mobil — footerens primærknapp gjør jobben */}
+          <div className="cta-row">
             <button
               className="cta primary"
               onClick={() => navigate("/phaseout")}

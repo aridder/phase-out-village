@@ -4,9 +4,10 @@ import { ProductionReductionChart } from "../production/productionReductionChart
 import { ApplicationContext } from "../../applicationContext";
 import { mdgPlan } from "../../generated/dataMdg";
 import { EmissionStackedBarChart } from "../emissions/emissionStackedBarChart";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { gameData } from "../../data/gameData";
 import { cumulativeEmissions } from "../../analysis/fieldStats";
+import { analyzePlan } from "../../analysis/advisorEngine";
 import { economySummary } from "../../data/petroleumEconomy";
 import { transitionSummary } from "../../data/energyTransition";
 import { emissionEquivalents } from "../../analysis/emissionEquivalents";
@@ -24,13 +25,17 @@ import "./gameOver.css";
  * them.
  */
 export function GameOverDialog() {
-  const { phaseOut, restart } = useContext(ApplicationContext);
+  const { phaseOut, restart, year } = useContext(ApplicationContext);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/map";
 
   const fieldsClosed = Object.keys(phaseOut).length;
   const fieldsTotal = gameData.allFields.length;
+  const grade = useMemo(
+    () => analyzePlan(phaseOut, year).grade,
+    [phaseOut, year],
+  );
 
   const result = useMemo(() => {
     const baseline = cumulativeEmissions({});
@@ -50,6 +55,10 @@ export function GameOverDialog() {
     () => emissionEquivalents(result.avoidedTonnes),
     [result.avoidedTonnes],
   );
+
+  // The finale is only a finale in 2040 — reached mid-game (deep link,
+  // curiosity) it read as if the game was over
+  if (year !== "2040") return <Navigate to="/map" replace />;
 
   const verdict =
     fieldsClosed === 0
@@ -72,7 +81,16 @@ export function GameOverDialog() {
           </button>
         </div>
 
-        <h2>🏁 2040 – slik gikk det</h2>
+        <h2>
+          🏁 2040 – slik gikk det{" "}
+          <span
+            className="grade-badge"
+            data-grade={grade}
+            title="Klimakarakteren din — rådgiveren forklarer den"
+          >
+            {grade}
+          </span>
+        </h2>
         <p className="verdict">{verdict}</p>
 
         <div className="stat-tiles">
@@ -164,13 +182,7 @@ export function GameOverDialog() {
         </div>
 
         <div className="button-row">
-          {/* autoFocus: uten den lander dialogfokuset på første fokuserbare
-              element — en legend-knapp midt i diagrammet */}
-          <button
-            className="primary"
-            autoFocus
-            onClick={() => navigate("/advisor")}
-          >
+          <button className="primary" onClick={() => navigate("/advisor")}>
             💡 Få rådgiverens dom
           </button>
           <button onClick={() => navigate("/map")}>

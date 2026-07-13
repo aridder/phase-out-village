@@ -138,3 +138,14 @@
     font-size: 0.95em;
   }
 }
+
+/* Én puls når vedtaket endrer tallene — remount via key i statusBar.tsx */
+.status-bar .status-stats {
+  animation: stats-pop 0.6s ease;
+}
+
+@keyframes stats-pop {
+  30% {
+    transform: scale(1.08);
+  }
+}

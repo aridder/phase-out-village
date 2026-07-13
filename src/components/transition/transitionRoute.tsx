@@ -1,4 +1,5 @@
 import React, { useContext, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { LineChart } from "../charts/lineChart";
 import { ApplicationContext } from "../../applicationContext";
 import { PhaseOutSchedule } from "../../data/gameData";
@@ -10,14 +11,6 @@ import {
   USEFUL_ENERGY_FACTOR,
 } from "../../data/energyTransition";
 import { energyData } from "../../generated/energyData";
-import {
-  DEFENSE_BUDGET_BN_NOK,
-  economySummary,
-  FUND_WITHDRAWAL_BN_NOK,
-  SEAFOOD_EXPORT_BN_NOK,
-  STATE_BUDGET_BN_NOK,
-  STATE_NET_CASH_FLOW_BN_NOK,
-} from "../../data/petroleumEconomy";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./transition.css";
 
@@ -227,147 +220,15 @@ export function TransitionRoute() {
         </div>
       </div>
 
-      <EconomySection schedule={schedule} />
+      {/* Pengespørsmålet eies av /kostnad — her lenker vi dit i stedet for
+          å gjenta hele regnestykket (siden var 7 skjermer lang) */}
+      <div className="transition-economy-link">
+        💰 <strong>Hva med pengene?</strong> Tapte inntekter, fondet og hva
+        omstillingen koster – <Link to="/kostnad">se hele regnestykket</Link>.
+      </div>
 
       <SourcesNote />
     </div>
-  );
-}
-
-/**
- * The money story for the chosen scenario: what the plan costs in annual
- * export value and state petroleum revenue by 2040 (at today's prices), what
- * that means per inhabitant, and how much of it disappears from natural
- * decline regardless of any plan.
- */
-function EconomySection({ schedule }: { schedule: PhaseOutSchedule }) {
-  const economy = useMemo(() => economySummary(schedule), [schedule]);
-  const naturalPercent = Math.round(economy.naturalDeclineShare * 100);
-  const planPercent = Math.round(economy.planShare * 100);
-
-  return (
-    <>
-      <h3>💰 Hva med pengene?</h3>
-      <div className="transition-steps">
-        <div className="transition-step">
-          <div className="step-emoji">🛢️</div>
-          <h4>Dette tjener Norge i dag</h4>
-          <div>
-            Olje- og gasseksporten var verdt{" "}
-            <strong>
-              {economy.petroleumExportValueBnNok.toLocaleString("nb-NO")}{" "}
-              milliarder kroner
-            </strong>{" "}
-            i {energyData.trade.year}. Av dette fikk staten{" "}
-            <strong>
-              {economy.stateRevenueBnNok.toLocaleString("nb-NO")} milliarder
-            </strong>{" "}
-            gjennom skatter, eierandeler og utbytte.
-          </div>
-        </div>
-        <div className="transition-step">
-          <div className="step-emoji">📉</div>
-          <h4>Det meste forsvinner uansett</h4>
-          <div>
-            Feltene tømmes: uten noen plan faller produksjonen med{" "}
-            <strong>~{naturalPercent} %</strong> innen 2040 i spillets
-            fremskrivning. Den inntekten må erstattes uansett hva vi mener om
-            utfasing – spørsmålet er om vi begynner å bygge nytt nå eller
-            venter.
-          </div>
-        </div>
-        <div className="transition-step">
-          <div className="step-emoji">🏦</div>
-          <h4>Pengene går i fondet – ikke rett i lommeboka</h4>
-          <div>
-            Statens oljeinntekter settes i Oljefondet, og budsjettet bruker bare
-            avkastningen (~
-            {FUND_WITHDRAWAL_BN_NOK.toLocaleString("nb-NO")} mrd i året).
-            Utfasing bremser altså sparingen – dagens velferd betales i økende
-            grad av fondet som allerede er spart opp.
-          </div>
-        </div>
-      </div>
-
-      {planPercent > 0 && (
-        <>
-          <h3>Regningen for planen i dette scenarioet</h3>
-          <div className="stat-tiles">
-            <div className="stat-tile">
-              <div className="emoji">📤</div>
-              <div className="value">
-                {economy.lostExportValueBnNok.toLocaleString("nb-NO")} mrd
-              </div>
-              <div>
-                kroner i årlige eksportinntekter borte i 2040 (utover naturlig
-                nedgang, dagens priser)
-              </div>
-            </div>
-            <div className="stat-tile highlight">
-              <div className="emoji">🏛️</div>
-              <div className="value">
-                {economy.lostStateRevenueBnNok.toLocaleString("nb-NO")} mrd
-              </div>
-              <div>
-                kroner mindre i sparing til Oljefondet per år – ca.{" "}
-                {economy.perCapitaKr.toLocaleString("nb-NO")} kr per innbygger
-              </div>
-            </div>
-            <div className="stat-tile">
-              <div className="emoji">🐟</div>
-              <div className="value">
-                {economy.seafoodMultiple.toLocaleString("nb-NO")} ×
-              </div>
-              <div>
-                sjømateksporten ({SEAFOOD_EXPORT_BN_NOK} mrd) – så mye nytt
-                eksportnæringsliv trengs for samme kjøpekraft
-              </div>
-            </div>
-            <div className="stat-tile">
-              <div className="emoji">🏦</div>
-              <div className="value">{economy.fundWithdrawalPercent} %</div>
-              <div>
-                av dagens årlige uttak fra Oljefondet – fondet er bufferen som
-                gjør omstillingen mulig
-              </div>
-            </div>
-            <div className="stat-tile">
-              <div className="emoji">🧾</div>
-              <div className="value">
-                {economy.cumulativeLostStateRevenueBnNok.toLocaleString(
-                  "nb-NO",
-                )}{" "}
-                mrd
-              </div>
-              <div>
-                samlet for hele perioden 2025–2040 – det tilsvarer{" "}
-                {economy.stateBudgetMultiple.toLocaleString("nb-NO")}{" "}
-                statsbudsjett ({STATE_BUDGET_BN_NOK.toLocaleString("nb-NO")}{" "}
-                mrd)
-              </div>
-            </div>
-            <div className="stat-tile">
-              <div className="emoji">🎖️</div>
-              <div className="value">
-                {economy.defenseBudgetMultiple.toLocaleString("nb-NO")} ×
-              </div>
-              <div>
-                forsvarsbudsjettet ({DEFENSE_BUDGET_BN_NOK} mrd) – årstapet i
-                2040 målt i noe staten faktisk bruker penger på
-              </div>
-            </div>
-          </div>
-          <div>
-            Dette er innsatsen omstillingen krever: planen i dette scenarioet
-            fjerner de siste <strong>{planPercent} %</strong> av dagens
-            produksjon innen 2040. Erstatningen finnes i det grønne feltet i
-            grafen over – kraft til nye eksportnæringer som havvind, hydrogen,
-            batterier og prosessindustri – og i fondet som er bygget opp nettopp
-            for denne overgangen.
-          </div>
-        </>
-      )}
-    </>
   );
 }
 

@@ -90,3 +90,17 @@
   background-color: grey;
   opacity: 0.5;
 }
+
+/* Mobil: én graf per spørsmål. Intensitets-scatteret (analyseverktøy) og
+   «Inndeling»-grafen (overlapper totalgrafen) vises på store skjermer og
+   på sine egne sider — planen svarer på «hvor mye kutter jeg?» */
+@media (width <= 600px) {
+  .plan-emissions .charts > .chart-frame:nth-child(2),
+  .plan-production .charts > .chart-frame:nth-child(1) {
+    display: none;
+  }
+}
+
+.plan-summary .share-row {
+  margin: 1rem 0;
+}

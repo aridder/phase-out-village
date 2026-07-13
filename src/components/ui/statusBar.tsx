@@ -53,7 +53,12 @@ export function StatusBar() {
             </button>
           </span>
         ) : (
-          <span className="status-stats">
+          <span
+            className="status-stats"
+            /* key: nytt vedtak → elementet remountes → puls-animasjonen
+               spilles én gang, så spranget i tallene får et blink */
+            key={`${fieldsClosed}-${cutPercent}`}
+          >
             <span title="Felter med vedtatt sluttdato">
               🛢️{" "}
               <strong>

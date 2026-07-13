@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
 import { gameData, periodLabel } from "../../data/gameData";
 import {
@@ -23,15 +23,13 @@ import "./periodReport.css";
  * world during the period they are about to steer.
  */
 export function PeriodReportRoute() {
-  const { year, phaseOut, lastDecision, getCurrentRound, getEndOfTermYear } =
+  const { year, phaseOut, lastDecision, getCurrentRound } =
     useContext(ApplicationContext);
-  const navigate = useNavigate();
 
   // Hooks must run unconditionally on every render, so they come before the
   // redirect guard below (fields/fromYear fall back to empty values)
   const round = lastDecision?.round ?? 1;
   const fromYear = lastDecision?.fromYear ?? year;
-  const toYear = lastDecision?.toYear ?? year;
   const fields = lastDecision?.fields ?? [];
 
   const decision = useMemo(() => {
@@ -153,14 +151,8 @@ export function PeriodReportRoute() {
         </div>
       )}
 
-      <div className="cta-row">
-        <button className="primary" onClick={() => navigate("/phaseout")}>
-          ✏️ Velg felter for {periodLabel(getCurrentRound())} (
-          {getCurrentRound()}. periode)
-        </button>
-        <button onClick={() => navigate("/map")}>🗺️ Se kartet først</button>
-      </div>
-
+      {/* CTA-raden er kuttet: footeren har «Neste steg … Velg» og
+          nav-en har Kart — rapporten skal være ett pusterom, én skjerm */}
       <SourcesNote />
     </div>
   );

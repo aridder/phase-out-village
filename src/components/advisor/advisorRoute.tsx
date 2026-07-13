@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { FaLightbulb } from "react-icons/fa";
 import { ApplicationContext } from "../../applicationContext";
 import { analyzePlan } from "../../analysis/advisorEngine";
-import { emissionEquivalents } from "../../analysis/emissionEquivalents";
 import { optimizePlan, OptimizerStrategy } from "../../analysis/planOptimizer";
 import { Year } from "../../data/types";
 import { EmissionStackedBarChart } from "../emissions/emissionStackedBarChart";
@@ -72,7 +71,8 @@ export function AdvisorRoute() {
 
   const report = useMemo(() => analyzePlan(phaseOut, year), [phaseOut, year]);
   const summary = useTypewriter(thinking ? "" : report.summary);
-  const equivalents = emissionEquivalents(report.avoidedEmission);
+  const [skipped, setSkipped] = useState(false);
+  const summaryDone = summary.done || skipped;
 
   return (
     <div className="advisor-page">
@@ -85,17 +85,23 @@ export function AdvisorRoute() {
       ) : (
         <>
           <div className="advisor-hero">
-            <div className="advisor-grade-card">
+            <div className="advisor-grade-card" data-grade={report.grade}>
               <div className="advisor-grade">{report.grade}</div>
               <div className="advisor-grade-label">Klimakarakter</div>
             </div>
-            <div className="advisor-summary">
-              {summary.visible}
-              {!summary.done && <span className="cursor">▋</span>}
+            {/* Tap-to-skip: skrivemaskinen skal aldri holde innholdet
+                gissel for den utålmodige */}
+            <div
+              className="advisor-summary"
+              onClick={() => setSkipped(true)}
+              title={summaryDone ? undefined : "Trykk for å vise alt"}
+            >
+              {skipped ? report.summary : summary.visible}
+              {!summaryDone && <span className="cursor">▋</span>}
             </div>
           </div>
 
-          {summary.done && report.insights.length > 0 && (
+          {report.insights.length > 0 && (
             <>
               <h3>Innsikt fra rådgiveren</h3>
               <div className="advisor-insights">
@@ -114,22 +120,7 @@ export function AdvisorRoute() {
             </>
           )}
 
-          {summary.done && equivalents.length > 0 && (
-            <>
-              <h3>Hva tilsvarer kuttene dine?</h3>
-              <div className="advisor-equivalents">
-                {equivalents.map((eq) => (
-                  <div key={eq.label} className="advisor-equivalent">
-                    <div className="emoji">{eq.emoji}</div>
-                    <div className="amount">{eq.amount}</div>
-                    <div>{eq.label}</div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {summary.done && <PlanOptimizer />}
+          <PlanOptimizer />
 
           <div className="advisor-disclaimer">
             Analysen genereres automatisk fra spillets åpne datasett

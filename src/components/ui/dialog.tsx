@@ -56,6 +56,10 @@ export function Dialog({
 
     window.addEventListener("click", handleClick); // Attach listeners for close and click events.
     dialogRef.current?.showModal(); // Show the dialog when mounted.
+    // Focus the dialog itself: the browser default (first focusable child)
+    // both scrolls long dialogs past their heading and paints a focus ring
+    // on an arbitrary link or button
+    dialogRef.current?.focus({ preventScroll: true });
     if (onClose) dialogRef.current?.addEventListener("close", onClose);
 
     // Cleanup: remove all listeners on unmount.
@@ -67,12 +71,16 @@ export function Dialog({
 
   // Sync the dialog's open state with the boolean 'open'.
   useEffect(() => {
-    if (open) dialogRef.current?.showModal();
-    else dialogRef.current?.close();
+    if (open) {
+      dialogRef.current?.showModal();
+      dialogRef.current?.focus({ preventScroll: true });
+    } else {
+      dialogRef.current?.close();
+    }
   }, [open]);
 
   return (
-    <dialog ref={dialogRef} className={className}>
+    <dialog ref={dialogRef} className={className} tabIndex={-1}>
       {children}
     </dialog>
   );

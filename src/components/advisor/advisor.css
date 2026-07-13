@@ -22,6 +22,36 @@
   flex-wrap: wrap;
 }
 
+/* Karakteren er spillets dømmende artefakt: farge etter dom + landing */
+.advisor-grade-card {
+  animation: grade-pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) backwards;
+}
+
+.advisor-grade-card[data-grade^="A"],
+.advisor-grade-card[data-grade^="B"] {
+  background-color: var(--eple);
+  color: var(--skog);
+  border-color: var(--skog);
+}
+
+.advisor-grade-card[data-grade^="C"],
+.advisor-grade-card[data-grade^="D"] {
+  border-color: var(--rav);
+  color: inherit;
+}
+
+.advisor-grade-card[data-grade^="E"],
+.advisor-grade-card[data-grade^="F"] {
+  border-color: #c0392b;
+}
+
+@keyframes grade-pop {
+  from {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}
+
 .advisor-grade-card {
   display: flex;
   flex-direction: column;

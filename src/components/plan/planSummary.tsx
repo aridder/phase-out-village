@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from "react";
 import { ApplicationContext } from "../../applicationContext";
 import { EmissionSummaryPage } from "../emissions/emissionSummaryPage";
 import { ProductionSummaryPage } from "../production/productionSummaryPage";
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { decodePlan, planShareUrl } from "../../data/planShare";
 import {
   gameData,
@@ -24,7 +24,6 @@ export function PlanSummary() {
     setPhaseOut,
   } = useContext(ApplicationContext);
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
 
@@ -80,15 +79,6 @@ export function PlanSummary() {
 
   return (
     <div className="plan-summary">
-      <div className="close-corner">
-        <button
-          onClick={() => navigate("/map", { state: { from: location } })}
-          title="Tilbake"
-        >
-          X
-        </button>
-      </div>
-
       <h2>{isSharedView ? "Delt plan" : "Din plan"}</h2>
 
       {isSharedView ? (
@@ -101,18 +91,7 @@ export function PlanSummary() {
           <button onClick={adoptSharedPlan}>Bruk som min plan</button>
           <button onClick={() => navigate("/plan")}>Vis min egen plan</button>
         </div>
-      ) : (
-        Object.keys(ownPlan).length > 0 && (
-          <div>
-            <button
-              onClick={sharePlan}
-              title="Kopier en delbar lenke til planen din"
-            >
-              {copied ? "✅ Lenke kopiert!" : "📤 Del planen din"}
-            </button>
-          </div>
-        )
-      )}
+      ) : null}
 
       <div className="summary-cards">
         <div className="summary-card">
@@ -190,15 +169,27 @@ export function PlanSummary() {
           tidligere lå to av dem duplisert i en egen blokk over her */}
       <div className="charts-block">
         <h2>Utslipp</h2>
-        <div>
+        <div className="plan-emissions">
           <EmissionSummaryPage phaseOut={phaseOut} />
         </div>
         <div className="divider"></div>
         <h2>Produksjon</h2>
-        <div>
+        <div className="plan-production">
           <ProductionSummaryPage />
         </div>
       </div>
+
+      {/* Deling er en exit-handling: den bor etter innholdet den deler */}
+      {!isSharedView && Object.keys(ownPlan).length > 0 && (
+        <div className="share-row">
+          <button
+            onClick={sharePlan}
+            title="Kopier en delbar lenke til planen din"
+          >
+            {copied ? "✅ Lenke kopiert!" : "📤 Del planen din"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

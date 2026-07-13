@@ -78,6 +78,7 @@ export function PhaseOutDialog({
   const isSmall = useIsSmallScreen();
 
   const [sortKey, setSortKey] = useState<SortKey>("recommended");
+  const [query, setQuery] = useState("");
 
   // Handles submission: commitDraft() retires the fields, records the
   // decision and navigates to the period report (or the final summary).
@@ -108,6 +109,7 @@ export function PhaseOutDialog({
       ),
     );
     setDraft(fields);
+    revealSelection();
   }
 
   // Quick pick: adds the five worst remaining fields (size + inefficiency
@@ -122,6 +124,15 @@ export function PhaseOutDialog({
       ...d,
       ...fromEntries(worst.map((r) => [r.field, year])),
     }));
+    revealSelection();
+  }
+
+  // Quick picks select rows the user may have scrolled past — bring the
+  // list back into view so the choice is visibly confirmed
+  function revealSelection() {
+    document
+      .querySelector(".phaseout-list")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   // Removes a field from the draft plan
@@ -179,7 +190,12 @@ export function PhaseOutDialog({
   }, [phaseOut, year]);
 
   const sortedRows = useMemo(() => {
-    return [...fieldRows].sort((a, b) => {
+    const matching = query
+      ? fieldRows.filter((r) =>
+          r.field.toLowerCase().includes(query.toLowerCase()),
+        )
+      : fieldRows;
+    return [...matching].sort((a, b) => {
       switch (sortKey) {
         case "alphabetical":
           return a.field.localeCompare(b.field);
@@ -193,7 +209,7 @@ export function PhaseOutDialog({
           return b.score - a.score;
       }
     });
-  }, [fieldRows, sortKey]);
+  }, [fieldRows, sortKey, query]);
 
   // Calculate total production/emission reductions for draft fields
   const totalOilProduction = sumFieldValues(
@@ -293,6 +309,15 @@ export function PhaseOutDialog({
 
         <div className="phaseout-dialog-header">
           <div className="phaseout-sort-wrapper">
+            <input
+              type="search"
+              className="phaseout-search"
+              placeholder="🔎 Finn felt …"
+              aria-label="Søk etter oljefelt"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+            />
             <label className="phaseout-sort-dropdown">
               Sorter etter:{" "}
               <select
@@ -426,7 +451,11 @@ export function PhaseOutDialog({
             <button type="button" onClick={handleMdgPlanClick}>
               {isSmall ? `📋 Velg MDGs felter` : `📋 Velg felter fra MDGs plan`}
             </button>
-            <button type="submit" disabled={year === "2040"}>
+            <button
+              type="submit"
+              className="primary"
+              disabled={year === "2040"}
+            >
               {/* Null valgte felter betyr i praksis «hopp over perioden» —
                   si det, så én feiltapp ikke ser ut som en avvikling */}
               {Object.keys(phaseOutDraft).length === 0
