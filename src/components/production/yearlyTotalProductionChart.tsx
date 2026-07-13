@@ -20,7 +20,12 @@ export function YearlyTotalProductionChart() {
       title="Inndeling av olje og gass"
       categories={years}
       xLabel="År"
-      yLabel="Millioner Sm3 o.e."
+      yLabel="Mill. Sm³ o.e."
+      tooltipLabel={(series, value) =>
+        `${series.label}: ${value.toLocaleString("nb-NO", {
+          maximumFractionDigits: 1,
+        })} mill. Sm³`
+      }
       series={[
         {
           label: "Olje/væskeproduksjon",

@@ -44,9 +44,14 @@
   .phaseout-panel .close-corner-mobile {
     display: block;
     position: fixed;
-    top: 1rem;
-    right: 1rem;
+    top: 0.5rem;
+    right: 0.5rem;
     z-index: 3;
+  }
+  /* Sorteringsraden må vike for det faste lukkekrysset — før overlappet
+     de og krysset ble delvis klippet */
+  .phaseout-dialog-header {
+    padding-right: 3rem;
   }
   .phaseout-panel .close-corner-desktop {
     display: none;
@@ -118,6 +123,12 @@
 
 .field-row-label input[type="checkbox"] {
   margin-top: 0.3rem;
+  /* 13px-standardboksen er et for lite treffmål og nesten usynlig valgt-
+     indikator på mobil */
+  width: 1.4rem;
+  height: 1.4rem;
+  accent-color: var(--gran);
+  flex-shrink: 0;
 }
 
 .field-info {

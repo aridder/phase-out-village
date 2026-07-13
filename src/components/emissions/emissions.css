@@ -19,7 +19,7 @@
 
 /* Utslippsdiagrammet for ett felt (kartdetaljene) */
 .field-emission-chart {
-  height: 290px;
+  height: 320px;
 }
 
 @media (width <= 600px) {
@@ -27,4 +27,18 @@
     height: 300px;
     padding: 0.5rem;
   }
+}
+
+/* Undernavigasjonen: aktiv fane markeres som chip (samme mønster som
+   produksjonssidene) */
+.emission-nav a {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.emission-nav a.active {
+  background-color: var(--gran);
+  color: var(--lime);
+  text-decoration: none;
+  font-weight: bold;
 }

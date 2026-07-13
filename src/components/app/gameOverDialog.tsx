@@ -164,7 +164,13 @@ export function GameOverDialog() {
         </div>
 
         <div className="button-row">
-          <button className="primary" onClick={() => navigate("/advisor")}>
+          {/* autoFocus: uten den lander dialogfokuset på første fokuserbare
+              element — en legend-knapp midt i diagrammet */}
+          <button
+            className="primary"
+            autoFocus
+            onClick={() => navigate("/advisor")}
+          >
             💡 Få rådgiverens dom
           </button>
           <button onClick={() => navigate("/map")}>

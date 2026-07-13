@@ -1,6 +1,6 @@
 /**
  * Converts an iterable of key-value pairs into a plain object.
- * 
+ *
  * This is a TypeScript-safe version of `Object.fromEntries` with a fallback
  * for environments where `Object.fromEntries` is not available.
  *

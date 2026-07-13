@@ -39,9 +39,9 @@ export function ProductionReductionChart({
       title="Total produksjon fra alle felter"
       categories={gameData.gameYears}
       xLabel="År"
-      yLabel="Millioner Sm3 o.e."
+      yLabel="Mill. Sm³ o.e."
       tooltipLabel={(series, value) =>
-        `${series.label}: ${value.toLocaleString("nb-NO")}M Sm3`
+        `${series.label}: ${value.toLocaleString("nb-NO", { maximumFractionDigits: 1 })} mill. Sm³`
       }
       series={[
         {

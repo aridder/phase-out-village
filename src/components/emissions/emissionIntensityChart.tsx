@@ -32,18 +32,28 @@ export function EmissionIntensityChart({
         : "var(--chart-plan)",
     }));
 
+  // Dynamic x range: with a hardcoded 100 the biggest fields (Johan
+  // Sverdrup, Troll produce > 100M barrels) silently vanished from a chart
+  // that claims to show all fields
+  const xMax =
+    Math.ceil(Math.max(100, ...points.map((point) => point.x)) / 50) * 50;
+
   return (
     <ScatterChart
-      title={`Utslippsintensitet vs Produksjon i ${year}`}
+      title={`Utslippsintensitet vs produksjon i ${year}`}
       points={points}
-      xMax={100}
+      xMax={xMax}
       yMax={100}
       xLabel="Millioner fat produsert"
-      yLabel="Utslippsintensitet (kg CO2e/BOE)"
+      yLabel="Utslippsintensitet (kg CO₂e per fat)"
+      legend={[
+        { label: "I drift", color: "var(--chart-plan)" },
+        { label: "Avviklet i planen", color: "var(--chart-avviklet)" },
+      ]}
       tooltipLabel={(point) => {
         const phasedOut = point.label in phaseOut;
         const production = Math.round(point.x).toLocaleString("nb-NO");
-        return `${point.label}${phasedOut ? " (Avviklet)" : ""}: ${point.y.toFixed(1)} kg/BOE${phasedOut ? "" : `, ${production}M fat`}`;
+        return `${point.label}${phasedOut ? " (Avviklet)" : ""}: ${point.y.toFixed(1).replace(".", ",")} kg/fat${phasedOut ? "" : `, ${production} mill. fat`}`;
       }}
       annotation={{
         yMin: 15,

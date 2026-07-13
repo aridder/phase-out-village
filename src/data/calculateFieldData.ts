@@ -23,7 +23,7 @@ import { development } from "../generated/development";
  * development factors from the `development` object.
  *
  * The `estimate` property is set to `true` for all projected values.
- * If the projected combined production falls below 0.2 million Sm³, 
+ * If the projected combined production falls below 0.2 million Sm³,
  * the forecast stops early.
  *
  * @param field - The oil field name to calculate data for.
@@ -53,7 +53,6 @@ export function calculateFieldData(
     Partial<Record<Exclude<DataField, "totalProduction">, number>>
   >,
 ): DatasetForSingleField {
-
   const dataset: DatasetForSingleField = {};
 
   const years = [
@@ -64,38 +63,38 @@ export function calculateFieldData(
     ),
   ].sort();
 
-/**
- * Creates a complete `FieldDataValues` object for a given year.
- *
- * Calculates:
- * - `totalProduction` as the sum of oil and gas production.
- * - `emissionIntensity` as emissions per unit of production (if emissions are available).
- * 
- * For years after 2024, all values are marked as estimates (`estimate: true`).
- *
- * @param year - The year for which to create data values.
- * @param productionData - Partial data for the year:
- *   - `productionOil`: oil production (DataValue or undefined)
- *   - `productionGas`: gas production (DataValue or undefined)
- *   - `emission`: CO₂e emissions (DataValue or undefined)
- *
- * @returns A `FieldDataValues` object containing:
- *   - `productionOil`
- *   - `productionGas`
- *   - `emission`
- *   - `totalProduction` (oil + gas)
- *   - `emissionIntensity` (emission / totalProduction)
- *   Each property may include `estimate: true` if applicable.
- *
- * @example
- * const yearData = createDataValues("2025", {
- *   productionOil: { value: 0.2 },
- *   productionGas: { value: 9 },
- *   emission: { value: 200000 }
- * });
- * // yearData.productionOil.estimate === true
- * // yearData.emissionIntensity.value is calculated automatically
- */
+  /**
+   * Creates a complete `FieldDataValues` object for a given year.
+   *
+   * Calculates:
+   * - `totalProduction` as the sum of oil and gas production.
+   * - `emissionIntensity` as emissions per unit of production (if emissions are available).
+   *
+   * For years after 2024, all values are marked as estimates (`estimate: true`).
+   *
+   * @param year - The year for which to create data values.
+   * @param productionData - Partial data for the year:
+   *   - `productionOil`: oil production (DataValue or undefined)
+   *   - `productionGas`: gas production (DataValue or undefined)
+   *   - `emission`: CO₂e emissions (DataValue or undefined)
+   *
+   * @returns A `FieldDataValues` object containing:
+   *   - `productionOil`
+   *   - `productionGas`
+   *   - `emission`
+   *   - `totalProduction` (oil + gas)
+   *   - `emissionIntensity` (emission / totalProduction)
+   *   Each property may include `estimate: true` if applicable.
+   *
+   * @example
+   * const yearData = createDataValues("2025", {
+   *   productionOil: { value: 0.2 },
+   *   productionGas: { value: 9 },
+   *   emission: { value: 200000 }
+   * });
+   * // yearData.productionOil.estimate === true
+   * // yearData.emissionIntensity.value is calculated automatically
+   */
   function createDataValues(
     year: Year,
     {

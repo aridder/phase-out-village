@@ -46,9 +46,26 @@
   align-items: center;
 }
 
+.transition-scenarios button {
+  /* Touch-mål på minst 44px og tydelig deaktivert-tilstand */
+  min-height: 44px;
+}
+
 .transition-scenarios button.active {
   background-color: var(--gran);
   color: var(--lime);
+}
+
+.transition-scenarios button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Maks tre nøkkeltall per rad — auto-fit ga 4+2 med to ensomme kort */
+@media (width > 960px) {
+  .transition-page .stat-tiles {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .transition-chart {

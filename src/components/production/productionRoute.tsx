@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import { NavLink, Route, Routes } from "react-router-dom";
 import { ProductionPerFieldPage } from "./productionPerFieldPage";
 import { YearlyTotalProductionChart } from "./yearlyTotalProductionChart";
 import { ProductionSummaryPage } from "./productionSummaryPage";
@@ -21,9 +21,15 @@ export function ProductionRoute() {
           element={
             <div className="production-chart">
               <nav className="production-nav">
-                <Link to={"/production/"}>Din plan</Link>
-                <Link to={"/production/composition"}>Inndeling produksjon</Link>
-                <Link to={"/production/oilPerField"}>Produksjon per felt</Link>
+                <NavLink end to={"/production/"}>
+                  Din plan
+                </NavLink>
+                <NavLink to={"/production/composition"}>
+                  Inndeling produksjon
+                </NavLink>
+                <NavLink to={"/production/oilPerField"}>
+                  Produksjon per felt
+                </NavLink>
               </nav>
               <YearlyTotalProductionChart />
             </div>

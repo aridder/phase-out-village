@@ -14,6 +14,8 @@ export type TooltipLine = {
   text: string;
   /** Swatch color; omit for lines without a series identity */
   color?: string;
+  /** Striped swatch, matching striped bar series */
+  striped?: boolean;
 };
 
 export type TooltipState = {
@@ -101,7 +103,9 @@ export function ChartShell({
             )}
             {tooltip.lines.map((line, index) => (
               <div key={index} className="tooltip-line">
-                {line.color && <Swatch color={line.color} />}
+                {line.color && (
+                  <Swatch color={line.color} striped={line.striped} />
+                )}
                 {line.text}
               </div>
             ))}

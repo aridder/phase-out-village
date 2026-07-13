@@ -22,28 +22,28 @@
  */
 export type Slugify<S extends string> =
   Lowercase<S> extends infer L extends string
-  ? L extends `${infer T} ${infer U}`
-  ? `${T}-${Slugify<U>}` // Replace the first space with "-" and continue recursively
-  : L // No more spaces — return the lowercase string
-  : never;
+    ? L extends `${infer T} ${infer U}`
+      ? `${T}-${Slugify<U>}` // Replace the first space with "-" and continue recursively
+      : L // No more spaces — return the lowercase string
+    : never;
 
 /**
-* Converts a given string into a lowercase, hyphen-separated "slug".
-* This is a runtime implementation that complements the `Slugify` type.
-*
-* @param name - The input string to slugify (e.g., `"North Sea Field"`).
-* @returns The slugified version (e.g., `"north-sea-field"`), typed as `Slugify<T>`.
-*
-* @example
-* slugify("Aasta Hansteen"); // → "aasta-hansteen"
-*
-* Implementation details:
-* - `.toLowerCase()` converts all letters to lowercase.
-* - `.replace(/\s+/g, "-")` replaces one or more whitespace characters
-*   with a single hyphen (`-`).
-* - The final `as Slugify<T>` ensures the TypeScript type matches
-*   the inferred slugified literal type.
-*/
+ * Converts a given string into a lowercase, hyphen-separated "slug".
+ * This is a runtime implementation that complements the `Slugify` type.
+ *
+ * @param name - The input string to slugify (e.g., `"North Sea Field"`).
+ * @returns The slugified version (e.g., `"north-sea-field"`), typed as `Slugify<T>`.
+ *
+ * @example
+ * slugify("Aasta Hansteen"); // → "aasta-hansteen"
+ *
+ * Implementation details:
+ * - `.toLowerCase()` converts all letters to lowercase.
+ * - `.replace(/\s+/g, "-")` replaces one or more whitespace characters
+ *   with a single hyphen (`-`).
+ * - The final `as Slugify<T>` ensures the TypeScript type matches
+ *   the inferred slugified literal type.
+ */
 export function slugify<T extends string>(name: T): Slugify<T> {
   // Convert to lowercase and replace any sequence of whitespace with a single dash
   // Erlend: Could it be useful to trim first?

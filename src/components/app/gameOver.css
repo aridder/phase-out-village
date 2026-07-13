@@ -98,6 +98,13 @@
   min-width: 0;
 }
 
+/* Fire nøkkeltall skal stå 2×2 — auto-fit ga 3+1 med ett ensomt kort */
+@media (width > 600px) {
+  .game-over .stat-tiles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (width <= 600px) {
   .game-over .close-corner {
     display: block;

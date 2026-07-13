@@ -45,6 +45,22 @@
 }
 
 .map-intro .legend .in-operation {
-  /* Samme rødtone som feltprikkene på kartet */
+  /* Samme rødtone som feltprikkene på kartet; lysere i mørkt tema der
+     originalfargen bare hadde 2,6:1 i kontrast */
   color: #c0392b;
+  font-weight: bold;
+}
+
+.map-intro .legend .selected-field {
+  color: #2e6bc4;
+  font-weight: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+  .map-intro .legend .in-operation {
+    color: #ff8a75;
+  }
+  .map-intro .legend .selected-field {
+    color: #8ab8f0;
+  }
 }

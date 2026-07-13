@@ -10,7 +10,7 @@ import {
   DatasetForAllFields,
   gameData,
   OilfieldName,
-  PhaseOutSchedule,
+  periodLabel,
 } from "../../data/gameData";
 import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
 
@@ -68,7 +68,7 @@ export function PhaseOutDialog({
     phaseOut,
     phaseOutDraft,
     setPhaseOutDraft,
-    getEndOfTermYear,
+    getCurrentRound,
   } = useContext(ApplicationContext);
 
   // Draft selection state for the current period
@@ -172,7 +172,9 @@ export function PhaseOutDialog({
       ...r,
       score: r.emission / maxEmission + r.intensity / maxIntensity,
       intensityShare: r.intensity / maxIntensity,
-      isWorst: r.intensity > shelfAvgIntensity * 1.5,
+      // 2,5× sokkel-snittet: med 1,5× fikk 13 av 34 felter merket og
+      // «versting» mistet all signalverdi
+      isWorst: r.intensity > shelfAvgIntensity * 2.5,
     }));
   }, [phaseOut, year]);
 
@@ -283,8 +285,9 @@ export function PhaseOutDialog({
               navigate(from);
             }}
             title="Tilbake"
+            aria-label="Lukk feltvelgeren"
           >
-            X
+            ✕
           </button>
         </div>
 
@@ -316,15 +319,16 @@ export function PhaseOutDialog({
                 navigate(from);
               }}
               title="Tilbake"
+              aria-label="Lukk feltvelgeren"
             >
-              X
+              ✕
             </button>
           </div>
         </div>
 
         <div className="phaseout-checkboxes">
           <h3 className="phaseout-header">
-            Velg felter for avvikling {year}-{getEndOfTermYear()}
+            Velg felter for avvikling {periodLabel(getCurrentRound())}
           </h3>
           <ul className="phaseout-list">
             {sortedRows.map((row) => (
@@ -350,7 +354,7 @@ export function PhaseOutDialog({
                     </div>
                     <div className="field-stats">
                       <span title={`Utslipp i ${year}`}>
-                        🌫️{" "}
+                        🏭{" "}
                         {Math.round(row.emission / 1000).toLocaleString(
                           "nb-NO",
                         )}{" "}
@@ -402,24 +406,32 @@ export function PhaseOutDialog({
             </div>
           )}
           <div className="button-row">
+            {/* type="button" er viktig: uten den er knappene submit-knapper
+                i skjemaet, og «Tøm» ville tømt utvalget OG avsluttet
+                perioden i samme klikk */}
             <button
+              type="button"
               onClick={() => setPhaseOutDraft({})}
               disabled={Object.keys(phaseOutDraft).length < 1}
             >
               Tøm
             </button>
             <button
+              type="button"
               onClick={handleWorstClick}
               title="Legg til de fem feltene med størst utslipp og dårligst effektivitet"
             >
               {isSmall ? `⚡ 5 verste` : `⚡ Velg de 5 verste`}
             </button>
-            <button onClick={handleMdgPlanClick}>
-              {isSmall ? `Velg MDGs felter` : `Velg felter fra MDGs plan`}
+            <button type="button" onClick={handleMdgPlanClick}>
+              {isSmall ? `📋 Velg MDGs felter` : `📋 Velg felter fra MDGs plan`}
             </button>
             <button type="submit" disabled={year === "2040"}>
-              ♻ Avvikle {" " + Object.keys(phaseOutDraft).length + " "}{" "}
-              {isSmall ? `felt` : `oljefelt`}
+              {/* Null valgte felter betyr i praksis «hopp over perioden» —
+                  si det, så én feiltapp ikke ser ut som en avvikling */}
+              {Object.keys(phaseOutDraft).length === 0
+                ? "⏭ Hopp over perioden"
+                : `♻ Avvikle ${Object.keys(phaseOutDraft).length} ${isSmall ? "felt" : "oljefelt"}`}
             </button>
           </div>
         </div>

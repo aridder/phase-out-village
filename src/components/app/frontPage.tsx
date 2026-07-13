@@ -21,7 +21,8 @@ export function FrontPage() {
 
           <p>
             Norge sliter med å nå sine klimamål, og en av årsakene er høye
-            utslipp fra norsk sokkel – faktisk står produksjon av olje og for{" "}
+            utslipp fra norsk sokkel – faktisk står produksjon av olje og gass
+            for{" "}
             <a href={SSB_LINK}>en fjerdedel av Norges utslipp av klimagasser</a>
             ! Til tross for at det planlegges å bruke 17 TWh med kraft årlig til
             elektrifisering, vil oljenæringen slippe ut 170 millioner tonn CO2
@@ -30,7 +31,11 @@ export function FrontPage() {
           </p>
 
           <p>
-            <img src={arildHermstad} alt={"MDG partileder Arild Hermstad"} />
+            <img
+              src={arildHermstad}
+              alt={"MDG-leder Arild Hermstad"}
+              title={"Arild Hermstad, leder i MDG"}
+            />
             Samtidig er sokkelen i ferd med å tømmes for reserver, og norsk
             næringsliv trenger flere ben å stå på. Klimautvalget 2050 har
             anbefalt Norge å lage en «strategi for sluttfasen av norsk
@@ -53,7 +58,13 @@ export function FrontPage() {
           </p>
 
           <p>
-            <button onClick={() => setOpen(false)}>Jeg er klar</button>
+            <button
+              className="primary front-cta"
+              autoFocus
+              onClick={() => setOpen(false)}
+            >
+              🛢️ Jeg er klar – start spillet
+            </button>
           </p>
         </Dialog>
       </div>

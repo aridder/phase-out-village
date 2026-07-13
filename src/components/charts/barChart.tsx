@@ -128,16 +128,18 @@ export function BarChart({
           title: String(categories[hoverIndex]),
           lines: visibleSeries.flatMap((s) => {
             const value = s.values[hoverIndex];
-            return value == null
-              ? []
-              : [
-                  {
-                    color: s.color,
-                    text: tooltipLabel
-                      ? tooltipLabel(s, value)
-                      : `${s.label}: ${formatNumberNb(value)}`,
-                  },
-                ];
+            // Reduction segments at zero (historical years, empty plans)
+            // are noise in the tooltip — skip them
+            if (value == null || (value === 0 && s.striped)) return [];
+            return [
+              {
+                color: s.color,
+                striped: s.striped,
+                text: tooltipLabel
+                  ? tooltipLabel(s, value)
+                  : `${s.label}: ${formatNumberNb(value)}`,
+              },
+            ];
           }),
         }
       : null;

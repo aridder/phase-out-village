@@ -1,7 +1,5 @@
 import React, { useContext, useMemo, useState } from "react";
 import { ApplicationContext } from "../../applicationContext";
-import { ProductionReductionChart } from "../production/productionReductionChart";
-import { EmissionStackedBarChart } from "../emissions/emissionStackedBarChart";
 import { EmissionSummaryPage } from "../emissions/emissionSummaryPage";
 import { ProductionSummaryPage } from "../production/productionSummaryPage";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
@@ -119,7 +117,7 @@ export function PlanSummary() {
       <div className="summary-cards">
         <div className="summary-card">
           <div>
-            <div className="card-title">Utslippsredusering</div>
+            <div className="card-title">Utslippsreduksjon</div>
             <div className="card-lead">
               Uten inngrep vil oljefeltene produsere{" "}
               <strong>{baselineEmRounded} millioner tonn CO₂</strong> innen{" "}
@@ -141,8 +139,8 @@ export function PlanSummary() {
                 includeDecimal={true}
                 metricLabel={`millioner tonn CO₂`}
                 size="medium"
-                barColor="hsla(0, 83%, 34%, 1.00)"
-                endColor="hsla(120, 99%, 32%, 1.00)"
+                barColor="var(--gran)"
+                endColor="var(--eple)"
                 showMiddlePercentage={true}
                 rightLabelType="prevented"
               />
@@ -152,17 +150,20 @@ export function PlanSummary() {
 
         <div className="summary-card">
           <div>
-            <div className="card-title">Produksjonsredusering</div>
+            <div className="card-title">Produksjonsreduksjon</div>
             <div className="card-lead">
               Uten inngrep vil oljefeltene produsere{" "}
-              <strong>{baselinePrRounded} milliarder fat olje</strong> innen{" "}
-              {gameData.allYears[gameData.allYears.length - 1]}.
+              <strong>
+                {baselinePrRounded.toLocaleString("nb-NO")} milliarder fat olje
+              </strong>{" "}
+              innen {gameData.allYears[gameData.allYears.length - 1]}.
             </div>
             <div className="card-result">
               {isSharedView ? "Denne planen" : "Din plan"} har så langt redusert
               produksjonen med{" "}
               <strong>
-                {preventedPrRounded} milliarder fat olje ({reductionPrPositive}
+                {preventedPrRounded.toLocaleString("nb-NO")} milliarder fat olje
+                ({reductionPrPositive}
                 %)
               </strong>
               {parseInt(year) > 2025 ? "!" : "."}
@@ -175,8 +176,8 @@ export function PlanSummary() {
                 includeDecimal={true}
                 metricLabel={`milliarder fat olje`}
                 size="medium"
-                barColor="hsl(0, 0%, 15%)"
-                endColor="hsla(207, 100%, 47%, 1.00)"
+                barColor="var(--gran)"
+                endColor="var(--eple)"
                 showMiddlePercentage={true}
                 rightLabelType="prevented"
               />
@@ -185,16 +186,9 @@ export function PlanSummary() {
         </div>
       </div>
 
+      {/* Utslipps- og produksjonsseksjonene viser fire ulike diagrammer;
+          tidligere lå to av dem duplisert i en egen blokk over her */}
       <div className="charts-block">
-        <div className="charts roomy">
-          <div className="chart-frame">
-            <ProductionReductionChart phaseOut={phaseOut} />
-          </div>
-          <div className="chart-frame">
-            <EmissionStackedBarChart phaseOut={phaseOut} />
-          </div>
-        </div>
-        <div className="divider"></div>
         <h2>Utslipp</h2>
         <div>
           <EmissionSummaryPage phaseOut={phaseOut} />

@@ -41,7 +41,7 @@ export function EmissionForAllFieldsChart({
     <LineChart
       title="Totalt årlig utslipp fra alle oljefelt"
       xLabel="År"
-      yLabel="Tonn Co2"
+      yLabel="Tonn CO₂"
       formatY={formatY}
       tooltipLabel={(series, point) =>
         `${series.label}: ${point.y.toLocaleString("nb-NO")} tonn`
