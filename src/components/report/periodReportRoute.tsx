@@ -77,7 +77,7 @@ export function PeriodReportRoute() {
     <div className="period-report">
       <h1>📋 Slik gikk det i {periodLabel(round)}</h1>
 
-      <div>
+      <div className="decision">
         {fields.length === 0 ? (
           <>
             Stortinget vedtok <strong>ingen avviklinger</strong> denne perioden.

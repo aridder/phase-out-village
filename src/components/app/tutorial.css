@@ -25,11 +25,12 @@
   gap: 0.75rem;
 }
 
-/* Innholdskort i samme stil som spillets goal-box — ikke en tom slide */
+/* Innholdskort i samme stil som spillets kortflater — ikke en tom slide */
 .tutorial-card {
-  border: 1px solid currentColor;
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
+  background: var(--flate);
+  border-radius: var(--radius);
+  box-shadow: var(--skygge-1);
+  padding: 1rem 1.25rem;
 }
 
 .tutorial-card h3 {

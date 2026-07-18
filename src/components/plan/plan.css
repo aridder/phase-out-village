@@ -65,9 +65,10 @@
 
 .plan-summary .summary-card {
   width: 100%;
-  padding: 1rem;
-  border: 1px solid var(--lime);
-  border-radius: 0.5rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--flate);
+  border-radius: var(--radius);
+  box-shadow: var(--skygge-1);
 }
 
 .plan-summary .summary-card .card-title {
