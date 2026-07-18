@@ -20,6 +20,7 @@ export function FrontPage() {
       <h1 className="front-title">Chill, baby! Chill!</h1>
       <div className="welcome">
         <Dialog open={open} onClose={() => navigate("/map")}>
+          <div className="front-kicker">🛢️ Oljespillet</div>
           <h1>{storyIntro.heading}</h1>
 
           <p>

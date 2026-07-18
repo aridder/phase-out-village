@@ -263,6 +263,16 @@
   font-size: 0.9rem;
 }
 
+/* «Hopp over» (submit uten valg): dempet tekstknapp i stedet for stor
+   grønn primær — å hoppe over en periode skal være mulig, ikke fristende */
+.phaseout-actions .button-row button[type="submit"].skip {
+  background: transparent;
+  border-color: transparent;
+  text-decoration: underline;
+  opacity: 0.8;
+  box-shadow: none;
+}
+
 /* Valgte rader skal SE valgt ut — før endret bare 1,4rem-boksen seg */
 .phaseout-row:has(input:checked) {
   background: color-mix(in srgb, var(--eple) 25%, transparent);

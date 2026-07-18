@@ -465,11 +465,14 @@ export function PhaseOutDialog({
             </button>
             <button
               type="submit"
-              className="primary"
+              /* Uten valg er submit et «hopp over»: da skal knappen hverken
+                 se ut som eller ligge der hovedhandlingen gjør — en stor
+                 grønn «Hopp over» ble trykket i vanvare */
+              className={
+                Object.keys(phaseOutDraft).length === 0 ? "skip" : "primary"
+              }
               disabled={year === "2040"}
             >
-              {/* Null valgte felter betyr i praksis «hopp over perioden» —
-                  si det, så én feiltapp ikke ser ut som en avvikling */}
               {Object.keys(phaseOutDraft).length === 0
                 ? "⏭ Hopp over perioden"
                 : `♻ Avvikle ${Object.keys(phaseOutDraft).length} ${isSmall ? "felt" : "oljefelt"}`}

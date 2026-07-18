@@ -31,6 +31,16 @@
 
 /* Undernavigasjonen: aktiv fane markeres som chip (samme mønster som
    produksjonssidene) */
+.emission-nav {
+  display: flex;
+  flex-wrap: wrap;
+  /* Den globale headernav-en sprer barna med space-between — her skal
+     fanene stå samlet til venstre */
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .emission-nav a {
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;

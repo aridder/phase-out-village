@@ -500,6 +500,38 @@
     opacity: 0.85;
   }
 
+  /* Spillets navn over historiestarten — på mobil dekker dialogen hele
+     skjermen og er ellers det eneste stedet merket vises */
+  .welcome .front-kicker {
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    opacity: 0.8;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Forsidedialogen på mobil: temaets grønne flate og luft rundt
+     innholdet — ikke nettleser-hvit kant-til-kant tekst */
+  @media (width <= 600px) {
+    .welcome dialog {
+      background: var(--lime);
+      color: var(--skog);
+      padding: 1.25rem 1rem;
+      @media (prefers-color-scheme: dark) {
+        background: var(--skog);
+        color: var(--lime);
+      }
+    }
+  }
+
+  /* Ledetekst rett under en sidetittel: én setning som forklarer hva
+     siden viser, før grafene tar over */
+  .page-lead {
+    max-width: 70ch;
+    margin: 0.25rem 0 1rem;
+  }
+
   /* Kildeblokken nederst på sidene som viser tall */
   .sources-note {
     font-size: 0.85em;

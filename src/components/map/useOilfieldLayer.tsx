@@ -249,18 +249,31 @@ export function useOilfieldLayer(map: Map, slug: string | undefined) {
    */
   const selectedStyle = (f: FeatureLike) => {
     return phaseOut[aggregateOilFields[oilfieldName(f)]]
-      ? new Style({ fill: new Fill({ color: simpleStripePattern("blue") }) })
-      : new Style({ fill: new Fill({ color: "blue" }) });
+      ? new Style({
+          fill: new Fill({ color: simpleStripePattern("blue") }),
+          stroke: new Stroke({ color: "blue", width: 1.5 }),
+        })
+      : new Style({
+          fill: new Fill({ color: "blue" }),
+          stroke: new Stroke({ color: "#00008b", width: 1.5 }),
+        });
   };
 
   /**
-   * Styles for unselected features.
-   * Red or gray if phased out.
+   * Styles for unselected features. A thin outline keeps even the smallest
+   * fields visible at country zoom — without it, most fields rendered as
+   * sub-pixel specks and the map barely changed as the plan grew.
    */
   const unselectedStyle = (f: FeatureLike) => {
     return phaseOut[aggregateOilFields[oilfieldName(f)]]
-      ? new Style({ fill: new Fill({ color: "gray" }) })
-      : new Style({ fill: new Fill({ color: "red" }) });
+      ? new Style({
+          fill: new Fill({ color: "gray" }),
+          stroke: new Stroke({ color: "#666", width: 1.5 }),
+        })
+      : new Style({
+          fill: new Fill({ color: "red" }),
+          stroke: new Stroke({ color: "#8b0000", width: 1.5 }),
+        });
   };
 
   /**

@@ -13,6 +13,26 @@
   z-index: 3;
 }
 
+/* Tom plan: si hva siden viser og hva neste steg er, i stedet for to
+   null-målere uten forklaring */
+.plan-summary .plan-empty {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem;
+  border: 2px dashed currentColor;
+  border-radius: 0.5rem;
+  max-width: 75ch;
+}
+
+/* Målernes rene tall («69,9 … 50,2») var uleselige uten enhet */
+.plan-summary .meter-legend {
+  font-size: 0.85em;
+  opacity: 0.9;
+  margin-top: 0.4rem;
+}
+
 .plan-summary .shared-banner {
   display: flex;
   align-items: center;

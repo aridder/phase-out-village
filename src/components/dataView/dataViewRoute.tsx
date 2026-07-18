@@ -93,7 +93,12 @@ function FieldOverview() {
 
   return (
     <>
-      <h2>Dataoversikt</h2>
+      <h2>📊 Dataoversikt</h2>
+      <p className="page-lead">
+        Alle tallene bak spillet: produksjon og utslipp per felt og per år,
+        hentet fra Norsk Petroleum og Offshore Norge. Utforsk dem her eller last
+        dem ned som Excel.
+      </p>
       <button onClick={handleClickAllDataFieldsToExcel}>
         Eksporter alle til Excel
       </button>
