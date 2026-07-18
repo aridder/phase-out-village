@@ -41,6 +41,16 @@ As future production is secret and emission is tied to production, the following
   displayed. The revenue is divided into fund contributions and direct budget contributions
 - When the user selects an oil field, the graphs are limited to that oil field
 
+## The story
+
+The game is told as one simple story, defined in a single file (`src/data/story.ts`):
+you are Norway's new energy minister, and your mission is to give the oil fields an
+end date and cut emissions at least as much as MDG's phase-out plan by 2040. The
+story has four named chapters — one per parliamentary term — and every text-bearing
+surface (front page, status bar, chapter reports, finale) reads from the same story
+file, so the player meets one consistent narrative with a clear beginning, middle
+and end.
+
 ## New features (this fork)
 
 This fork adds features focused on making the phase-out message easier to understand.

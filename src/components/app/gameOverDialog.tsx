@@ -11,6 +11,7 @@ import { analyzePlan } from "../../analysis/advisorEngine";
 import { economySummary } from "../../data/petroleumEconomy";
 import { transitionSummary } from "../../data/energyTransition";
 import { emissionEquivalents } from "../../analysis/emissionEquivalents";
+import { endingHeadline } from "../../data/story";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./gameOver.css";
 
@@ -60,12 +61,13 @@ export function GameOverDialog() {
   // curiosity) it read as if the game was over
   if (year !== "2040") return <Navigate to="/map" replace />;
 
+  const reachedGoal = result.cutPercent >= result.mdgCutPercent;
   const verdict =
     fieldsClosed === 0
-      ? "Ingen felter fikk sluttdato, så alle kutt du ser kommer fra naturlig nedgang. Prøv igjen og se hvor mye mer en plan får til."
-      : result.cutPercent >= result.mdgCutPercent
-        ? `Planen din er minst like ambisiøs som MDG-planen – du avviklet ${fieldsClosed} av ${fieldsTotal} felter og kuttet de samlede utslippene frem mot 2040 med ${result.cutPercent} %.`
-        : `Du avviklet ${fieldsClosed} av ${fieldsTotal} felter og kuttet de samlede utslippene frem mot 2040 med ${result.cutPercent} %. MDG-planen når ${result.mdgCutPercent} % – se hvilke felter som gjenstår.`;
+      ? "Ingen felter fikk sluttdato, så alle kutt kommer fra naturlig nedgang. Prøv igjen – en plan får til mye mer."
+      : reachedGoal
+        ? `Du avviklet ${fieldsClosed} av ${fieldsTotal} felter og kuttet utslippene ${result.cutPercent} %. Det er minst like mye som MDGs egen plan. Oppdraget er løst!`
+        : `Du avviklet ${fieldsClosed} av ${fieldsTotal} felter og kuttet utslippene ${result.cutPercent} %. Målet var ${result.mdgCutPercent} % – du var nærme. Prøv igjen?`;
 
   const compareMax = Math.max(result.cutPercent, result.mdgCutPercent, 1);
 
@@ -82,7 +84,7 @@ export function GameOverDialog() {
         </div>
 
         <h2>
-          🏁 2040 – slik gikk det{" "}
+          {endingHeadline(reachedGoal, fieldsClosed)}{" "}
           <span
             className="grade-badge"
             data-grade={grade}

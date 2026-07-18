@@ -47,15 +47,15 @@ export function MapIntro() {
       <h2>Norsk sokkel – {total} felter</h2>
 
       <div className="goal-box">
-        🎯 <strong>Målet ditt:</strong> kutt utslippene minst {goalCutPercent()}{" "}
-        % innen 2040 – like mye som MDG-planen. <strong>{retired}</strong> av{" "}
-        {total} felter har fått sluttdato.
+        🎯 <strong>Oppdraget:</strong> kutt utslippene minst {goalCutPercent()}{" "}
+        % innen 2040. <strong>{retired}</strong> av {total} felter har fått
+        sluttdato.
       </div>
 
       {gameEnded ? (
         <>
           <div>
-            🏁 Reisen er fullført. Kartet viser sluttresultatet – grå felter er
+            🏁 Historien er ferdig. Kartet viser sluttresultatet – grå felter er
             avviklet.
           </div>
           {/* cta-row skjules på mobil — footeren har samme handling */}
@@ -101,8 +101,7 @@ export function MapIntro() {
           <div className="legend">
             Kartet: <span className="in-operation">rødt</span> = i drift,{" "}
             <span className="selected-field">blått</span> = valgt felt, grått =
-            avviklet. Trykk på et felt for nøkkeltall. Du styrer fire
-            stortingsperioder frem til 2040 – følg målet i statuslinjen øverst.
+            avviklet. Trykk på et felt for nøkkeltall.
           </div>
         </>
       )}

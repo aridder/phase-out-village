@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
 import { gameData, sumOverYears, totalProduction } from "../../data/gameData";
 import { goalCutPercent } from "../../data/gameGoal";
+import { chapterForRound } from "../../data/story";
 import "./statusBar.css";
 
 /**
@@ -30,16 +31,19 @@ export function StatusBar() {
     return Math.round(((baseline - current) / baseline) * 100);
   }, [phaseOut]);
 
+  const chapter = chapterForRound(round);
   const periodLabel = finished
-    ? "🏁 2040 – reisen er fullført"
-    : `${periods[round - 1].years[0]}–${periods[round - 1].years[periods[round - 1].years.length - 1]} · ${round}. stortingsperiode av ${periods.length}`;
+    ? "🏁 2040 – historien er ferdig"
+    : chapter
+      ? `📖 Kapittel ${round} av ${periods.length}: ${chapter.name} · ${chapter.period}`
+      : `${periods[round - 1].years[0]}–${periods[round - 1].years[periods[round - 1].years.length - 1]}`;
 
   const goal = goalCutPercent();
   const story = finished
-    ? `Planen din avviklet ${fieldsClosed} felter og kuttet utslippene mot 2040 med ${cutPercent} %.`
+    ? `Du ga ${fieldsClosed} felter en sluttdato og kuttet utslippene ${cutPercent} %.`
     : fieldsClosed === 0
-      ? `Klarer du å kutte minst ${goal} % innen 2040 – like mye som MDG-planen?`
-      : `${fieldsClosed} felter har fått sluttdato – utslippene mot 2040 er kuttet ${cutPercent} % av målet på ${goal} %.`;
+      ? `Oppdraget: kutt utslippene minst ${goal} % innen 2040.`
+      : `${fieldsClosed} felter har fått sluttdato. Du har kuttet ${cutPercent} % – målet er ${goal} %.`;
 
   return (
     <div className="status-bar" role="status">

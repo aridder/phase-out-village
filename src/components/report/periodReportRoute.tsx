@@ -7,20 +7,20 @@ import {
   goalCutPercent,
   paceVerdict,
 } from "../../data/gameGoal";
-import { storyForRound } from "../../data/periodStories";
+import { chapterForRound } from "../../data/story";
 import { cumulativeEmissions } from "../../analysis/fieldStats";
 import { emissionEquivalents } from "../../analysis/emissionEquivalents";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./periodReport.css";
 
 /**
- * The beat between rounds: after each "avvikle", the player lands here
- * instead of silently starting an identical new round.
+ * The chapter break between rounds: after each "avvikle", the player lands
+ * here instead of silently starting an identical new round.
  *
  * Shows what the decision just did (fields retired, yearly emissions and
- * production removed), whether the plan is ahead of or behind schedule
- * toward the game's goal (beat MDG's cut by 2040), and what happens in the
- * world during the period they are about to steer.
+ * production removed), whether the plan is on schedule toward the goal, and
+ * the next chapter of the story — what happens in the world during the
+ * period they are about to steer.
  */
 export function PeriodReportRoute() {
   const { year, phaseOut, lastDecision, getCurrentRound } =
@@ -64,18 +64,18 @@ export function PeriodReportRoute() {
 
   const paceText =
     pace === "ahead"
-      ? `Du ligger foran skjema! Fortsetter du sånn, slår du målet på −${goal} % med god margin.`
+      ? `Du ligger foran skjema! Fortsetter du sånn, når du målet på −${goal} % med god margin.`
       : pace === "onTrack"
-        ? `Du følger skjema mot målet på −${goal} %. Hold trykket oppe i neste periode.`
-        : `Du ligger bak skjema mot målet på −${goal} %. De største og mest forurensende feltene gir mest – de ligger øverst i feltvelgeren.`;
+        ? `Du følger skjema mot målet på −${goal} %. Hold trykket oppe.`
+        : `Du ligger bak skjema mot målet på −${goal} %. Tips: de verste feltene ligger øverst i feltvelgeren.`;
 
   const paceEmoji = pace === "ahead" ? "🚀" : pace === "onTrack" ? "👍" : "⚠️";
 
-  const story = storyForRound(getCurrentRound());
+  const chapter = chapterForRound(getCurrentRound());
 
   return (
     <div className="period-report">
-      <h1>📋 Perioderapport {periodLabel(round)}</h1>
+      <h1>📋 Slik gikk det i {periodLabel(round)}</h1>
 
       <div>
         {fields.length === 0 ? (
@@ -137,12 +137,16 @@ export function PeriodReportRoute() {
         </div>
       </div>
 
-      {story && (
+      {chapter && (
         <div className="world">
-          <h2>🌍 Mens du styrer {story.period} …</h2>
-          <div className="world-headline">{story.headline}</div>
+          <h2>
+            📖 Kapittel {chapter.round} av 4: {chapter.name}
+          </h2>
+          <div className="world-headline">
+            Dette skjer i verden i {chapter.period}:
+          </div>
           <ul>
-            {story.events.map((event) => (
+            {chapter.events.map((event) => (
               <li key={event.text}>
                 {event.emoji} {event.text}
               </li>
