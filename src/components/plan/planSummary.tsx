@@ -77,9 +77,23 @@ export function PlanSummary() {
     ((baselinePrCalc - currentPrCalc) / baselinePrCalc) * 100,
   );
 
+  const planIsEmpty = Object.keys(phaseOut).length === 0;
+
   return (
     <div className="plan-summary">
       <h2>{isSharedView ? "Delt plan" : "Din plan"}</h2>
+
+      {/* Empty state: without it the page opened on two zero-meters and
+          four baseline charts with no hint about what to do next */}
+      {!isSharedView && planIsEmpty && (
+        <div className="plan-empty">
+          📝 Planen din er tom foreløpig. Grafene viser hva som skjer uten
+          inngrep – feltene tømmes sakte av seg selv.{" "}
+          <button className="primary" onClick={() => navigate("/phaseout")}>
+            ✏️ Velg de første feltene
+          </button>
+        </div>
+      )}
 
       {isSharedView ? (
         <div className="shared-banner">
@@ -123,6 +137,18 @@ export function PlanSummary() {
                 showMiddlePercentage={true}
                 rightLabelType="prevented"
               />
+              {/* The bar's bare end-figures (e.g. "69,9 … 50,2") were
+                  unreadable without units — spell them out */}
+              <div className="meter-legend">
+                Igjen med planen:{" "}
+                <strong>
+                  {(
+                    Math.round((currentEm / 1_000_000) * 10) / 10
+                  ).toLocaleString("nb-NO")}{" "}
+                  mill. tonn CO₂
+                </strong>{" "}
+                · Unngått: <strong>{preventedEmRounded} mill. tonn</strong>
+              </div>
             </div>
           </div>
         </div>
@@ -160,6 +186,19 @@ export function PlanSummary() {
                 showMiddlePercentage={true}
                 rightLabelType="prevented"
               />
+              <div className="meter-legend">
+                Igjen med planen:{" "}
+                <strong>
+                  {(
+                    Math.round((currentPrCalc / 1_000) * 10) / 10
+                  ).toLocaleString("nb-NO")}{" "}
+                  mrd. fat
+                </strong>{" "}
+                · Unngått:{" "}
+                <strong>
+                  {preventedPrRounded.toLocaleString("nb-NO")} mrd. fat
+                </strong>
+              </div>
             </div>
           </div>
         </div>

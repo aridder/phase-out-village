@@ -20,39 +20,32 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
       </div>
 
       <div className="tutorial-card">
-        <h3>🎯 Målet</h3>
+        <h3>🎯 Oppdraget</h3>
         <ul>
           <li>
-            Lag en plan som <b>faser ut olje- og gassfelter</b> frem mot 2040.
-          </li>
-          <li>
-            Kutt utslippene minst <b>{goalCutPercent()} %</b> – like mye som
-            MDG-planen.
+            Du er energiminister. Gi oljefeltene en <b>sluttdato</b> og kutt
+            utslippene minst <b>{goalCutPercent()} %</b> innen 2040.
           </li>
         </ul>
 
-        <h3>🕹️ Spillet</h3>
+        <h3>🕹️ Slik spiller du</h3>
         <ul>
           <li>
-            Du styrer <b>fire stortingsperioder</b> (2025–2040). Trykk
-            <b> «Velg felter»</b> nede til høyre, huk av feltene som skal
-            stenges, og trykk <b>«Avvikle»</b> for å vedta.
+            Historien har <b>fire kapitler</b> – ett per stortingsperiode. I
+            hvert kapittel: trykk <b>«Velg felter»</b>, huk av feltene som skal
+            stenges, og trykk <b>«Avvikle»</b>.
           </li>
           <li>
-            Etter hver periode får du en <b>perioderapport</b>: ligger du foran
-            eller bak skjema?
-          </li>
-          <li>
-            Følg med i <b>statuslinjen øverst</b> – og spør <b>Rådgiveren</b>{" "}
-            når du vil ha en dom underveis.
+            Mellom kapitlene får du vite <b>hvordan det går</b> – og hva som
+            skjer i verden. I 2040 kommer dommen.
           </li>
         </ul>
 
-        <h3>📏 Tallene</h3>
+        <h3>💡 Trenger du hjelp?</h3>
         <ul>
           <li>
-            Produksjon måles i mill. Sm³, utslipp i tonn CO₂e og intensitet i kg
-            CO₂e per fat. Alle tallene per felt ligger i{" "}
+            De verste feltene ligger øverst i feltvelgeren. <b>Rådgiveren</b>{" "}
+            gir deg en dom underveis, og alle tallene ligger i{" "}
             <Link to="/data">dataoversikten</Link>.
           </li>
         </ul>

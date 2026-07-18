@@ -11,8 +11,28 @@
   position: relative;
 }
 
+/* Landingssiden trenger sin egen luft — ruten har ingen ytre container */
+.production-home,
+.production-chart {
+  padding: 1rem;
+
+  @media (width <= 600px) {
+    padding: 0.5rem;
+  }
+}
+
 /* Undernavigasjonen: aktiv fane markeres som chip, ikke bare understreket
    lenke — før kunne man ikke se hvilken visning man sto i */
+.production-nav {
+  display: flex;
+  flex-wrap: wrap;
+  /* Den globale headernav-en sprer barna med space-between — her skal
+     fanene stå samlet til venstre */
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .production-nav a {
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;

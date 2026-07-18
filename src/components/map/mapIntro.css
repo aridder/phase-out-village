@@ -12,15 +12,15 @@
 }
 
 .map-intro .goal-box {
-  border: 1px solid currentColor;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  background: var(--flate);
+  border-radius: var(--radius-s);
+  box-shadow: var(--skygge-1);
+  padding: 0.65rem 0.85rem;
 }
 
 .map-intro .worst-list {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
   margin-top: 0.35rem;
 }
 
@@ -29,6 +29,12 @@
   justify-content: space-between;
   gap: 0.75rem;
   font-size: 0.95em;
+  padding: 0.3rem 0.1rem;
+  border-bottom: 1px solid var(--linje);
+}
+
+.map-intro .worst-row:last-child {
+  border-bottom: none;
 }
 
 .map-intro .worst-row .figures {

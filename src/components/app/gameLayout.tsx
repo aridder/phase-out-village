@@ -119,7 +119,7 @@ function GameFooter() {
       <footer>
         <div className="footer-row spread">
           <div className="footer-note">
-            🏁 Alle periodene er spilt – planen din er komplett.
+            🏁 Historien er ferdig – planen din er komplett.
           </div>
           <MainButton
             icon={<FcViewDetails />}

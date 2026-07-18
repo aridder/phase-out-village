@@ -10,8 +10,8 @@
   width: 100%;
   max-width: 1024px;
   padding: 1rem 1rem 0;
-  background-color: var(--lime);
-  color: black;
+  background-color: var(--flate);
+  color: var(--skog);
 }
 
 @media (width > 600px) {
@@ -22,7 +22,7 @@
 
 @media (prefers-color-scheme: dark) {
   .phaseout-panel {
-    background-color: var(--skog);
+    background-color: var(--flate);
     color: inherit;
   }
 }
@@ -125,6 +125,12 @@
   width: 100%;
   padding: 0.45rem 0.5rem;
   cursor: pointer;
+  border-radius: 0.5rem;
+  transition: background-color 0.1s ease;
+}
+
+.field-row-label:hover {
+  background: var(--flate-2);
 }
 
 .field-row-label input[type="checkbox"] {
@@ -204,16 +210,14 @@
   flex-direction: column;
   padding: 0.75rem 1rem 1rem;
   margin-top: 0.5rem;
-  border-top: 2px solid var(--skog);
-  background-color: color-mix(in srgb, var(--skog) 7%, var(--lime));
-  box-shadow: 0 -4px 12px rgb(0 0 0 / 0.1);
+  border-top: 1px solid var(--linje);
+  background-color: var(--flate-2);
+  box-shadow: 0 -4px 12px rgb(0 0 0 / 0.08);
   color: var(--skog);
 }
 
 @media (prefers-color-scheme: dark) {
   .phaseout-actions {
-    border-top-color: var(--lime);
-    background-color: color-mix(in srgb, var(--lime) 8%, var(--skog));
     color: inherit;
   }
 }
@@ -261,6 +265,16 @@
 .phaseout-actions .button-row button[type="button"] {
   flex: 1 1 auto;
   font-size: 0.9rem;
+}
+
+/* «Hopp over» (submit uten valg): dempet tekstknapp i stedet for stor
+   grønn primær — å hoppe over en periode skal være mulig, ikke fristende */
+.phaseout-actions .button-row button[type="submit"].skip {
+  background: transparent;
+  border-color: transparent;
+  text-decoration: underline;
+  opacity: 0.8;
+  box-shadow: none;
 }
 
 /* Valgte rader skal SE valgt ut — før endret bare 1,4rem-boksen seg */
