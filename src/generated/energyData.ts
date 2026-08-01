@@ -11,16 +11,16 @@
  */
 export const energyData = {
   /** ISO date the data was last fetched, or null for the seeded values */
-  updatedAt: "2026-07-13" as string | null,
+  updatedAt: "2026-08-01" as string | null,
   /** True when generated against the live SSB/NVE APIs */
   verified: true,
   /** Last 12 months with complete statistics */
-  referenceYear: "siste 12 md. til 2026M05",
+  referenceYear: "siste 12 md. til 2026M06",
   electricity: {
     /** Total electricity production @unit TWh/year (SSB elektrisitetsbalansen) */
     productionTwh: 155,
     /** Gross domestic consumption @unit TWh/year */
-    consumptionTwh: 142,
+    consumptionTwh: 143,
     /** Physical export @unit TWh/year */
     exportTwh: 28,
     /** Physical import @unit TWh/year */
@@ -28,7 +28,7 @@ export const energyData = {
     /** Wind power production @unit TWh/year */
     windProductionTwh: 15,
     /** Electricity used by oil and gas extraction @unit TWh/year */
-    oilGasConsumptionTwh: 11,
+    oilGasConsumptionTwh: 12,
   },
   trade: {
     /** Calendar year the trade values cover */
