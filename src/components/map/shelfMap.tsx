@@ -31,6 +31,23 @@ import {
   SELECTED_COLOR,
 } from "./fieldScales";
 
+/**
+ * Stadia Maps key for the background tiles.
+ *
+ * A key used by a browser can never be a secret — it goes out with every
+ * tile request, so anyone with devtools can read it. Stadia's own model is
+ * to restrict a key to the domains that may use it, which is a setting in
+ * their dashboard rather than anything we can do in code. That restriction,
+ * not secrecy, is what stops the key being used elsewhere.
+ *
+ * What the env var buys is rotation: a fork, or MDG on their own domain,
+ * can set VITE_STADIA_API_KEY at build time instead of editing this file
+ * and carrying a diff forever. The fallback is the key the project has been
+ * using since its first commit.
+ */
+const STADIA_API_KEY =
+  import.meta.env.VITE_STADIA_API_KEY || "5a2e5035-ad83-4002-a6e6-5f679b73240f";
+
 useGeographic();
 
 /**
@@ -231,7 +248,7 @@ export function ShelfMap({
         // One cartographic language in both themes — the old map paired a
         // full-colour OSM raster in light mode with a smooth dark one
         layer: dark ? "alidade_smooth_dark" : "alidade_smooth",
-        apiKey: "5a2e5035-ad83-4002-a6e6-5f679b73240f",
+        apiKey: STADIA_API_KEY,
       }),
       opacity: dark ? 0.75 : 0.65,
     });

@@ -20,6 +20,11 @@ jobs:
       - run: npm run build
         env:
           REPO_BASE: ${{ vars.REPO_BASE }}
+          # Optional. Without it the map falls back to the key committed in
+          # src/components/map/shelfMap.tsx, which is what forks get. A key
+          # in a browser is public either way — the protection is the domain
+          # restriction set in the Stadia dashboard, not this variable.
+          VITE_STADIA_API_KEY: ${{ vars.VITE_STADIA_API_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with: { path: ./dist }
       - uses: actions/deploy-pages@v4

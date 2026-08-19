@@ -3,8 +3,8 @@ import { Link, Route, Routes, useParams } from "react-router-dom";
 import { slugify } from "../../data/slugify";
 import { OilFieldTable } from "../map/oilFieldTable";
 import { DataFieldTable } from "./dataFieldTable";
-import * as XLSX from "xlsx";
-import { dataFieldToExcel, oilFieldToExcel } from "./exportToExcel";
+import { allDataToCsv } from "./exportData";
+import { downloadCsv } from "./downloadCsv";
 import { gameData } from "../../data/gameData";
 import "./dataView.css";
 
@@ -12,7 +12,7 @@ import "./dataView.css";
 function OilProductionTable() {
   return (
     <>
-      <h2>Oversikt over olje/væskeproduksjon</h2>
+      <h1>Oversikt over olje/væskeproduksjon</h1>
       <DataFieldTable dataField={"productionOil"} />
     </>
   );
@@ -22,7 +22,7 @@ function OilProductionTable() {
 function GasProductionTable() {
   return (
     <>
-      <h2>Oversikt over gasseksport</h2>
+      <h1>Oversikt over gasseksport</h1>
       <DataFieldTable dataField={"productionGas"} />
     </>
   );
@@ -32,7 +32,7 @@ function GasProductionTable() {
 function EmissionTable() {
   return (
     <>
-      <h2>Utslipp</h2>
+      <h1>Utslipp</h1>
       <DataFieldTable dataField={"emission"} />
     </>
   );
@@ -42,11 +42,11 @@ function EmissionTable() {
 function FieldTableWrapper() {
   const { oilFieldSlug } = useParams();
   const field = gameData.allFields.find((s) => slugify(s) === oilFieldSlug);
-  if (!field) return <h2>Fant ikke {oilFieldSlug}</h2>;
+  if (!field) return <h1>Fant ikke {oilFieldSlug}</h1>;
 
   return (
     <>
-      <h2>{field}</h2>
+      <h1>{field}</h1>
       <p>
         <Link to={"/data"}>Tilbake</Link>
       </p>
@@ -57,51 +57,27 @@ function FieldTableWrapper() {
 
 /** Overview page for all data tables and export options */
 function FieldOverview() {
-  /** Export all data fields to a single Excel file */
-  function handleClickAllDataFieldsToExcel() {
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(
-      workbook,
-      XLSX.utils.json_to_sheet(dataFieldToExcel("productionOil")),
-      "Oljeproduksjon",
-    );
-    XLSX.utils.book_append_sheet(
-      workbook,
-      XLSX.utils.json_to_sheet(dataFieldToExcel("productionGas")),
-      "Gassproduksjon",
-    );
-    XLSX.utils.book_append_sheet(
-      workbook,
-      XLSX.utils.json_to_sheet(dataFieldToExcel("emission")),
-      "Utslipp",
-    );
-    XLSX.writeFile(workbook, `phaseout-all-fields.xlsx`);
-  }
-
-  /** Export each oil field to separate sheets in an Excel file */
-  function handleClickAllOilFieldsToExcel() {
-    const workbook = XLSX.utils.book_new();
-    for (const oilField of Object.keys(gameData.data)) {
-      XLSX.utils.book_append_sheet(
-        workbook,
-        XLSX.utils.json_to_sheet(oilFieldToExcel(oilField)),
-        oilField,
-      );
-    }
-    XLSX.writeFile(workbook, `oil-field-data.xlsx`);
+  /**
+   * The whole dataset as one file.
+   *
+   * This was two buttons — a three-sheet workbook and a thirty-four-sheet
+   * workbook — holding the same numbers in two different shapes. One long
+   * table says it once and pivots into either shape.
+   */
+  function handleDownloadAll() {
+    downloadCsv("oljespillet-alle-data.csv", allDataToCsv());
   }
 
   return (
     <>
-      <h2>Dataoversikt</h2>
+      <h1>Dataoversikt</h1>
       <p className="page-lead">
         Alle tallene bak spillet: produksjon og utslipp per felt og per år,
-        hentet fra Norsk Petroleum og Offshore Norge. Utforsk dem her eller last
-        dem ned som Excel.
+        hentet fra Norsk Petroleum og Offshore Norge. Utforsk dem her, eller
+        last dem ned som CSV (semikolon som skilletegn og komma som desimaltegn,
+        så fila åpner rett i norsk Excel).
       </p>
-      <button onClick={handleClickAllDataFieldsToExcel}>
-        Eksporter alle til Excel
-      </button>
+      <button onClick={handleDownloadAll}>Last ned alle tallene (CSV)</button>
       <ul>
         <li>
           <Link to={"/data/oil"}>Produksjonsoversikt (olje)</Link>
@@ -114,9 +90,6 @@ function FieldOverview() {
         </li>
       </ul>
       <h2>Oljefelt</h2>
-      <button onClick={handleClickAllOilFieldsToExcel}>
-        Eksporter alle til Excel
-      </button>
       <ul>
         {Object.keys(gameData.data).map((oilField) => (
           <li key={slugify(oilField)}>

@@ -22,58 +22,31 @@
   flex-wrap: wrap;
 }
 
-/* Karakteren er spillets dømmende artefakt: farge etter dom + landing */
-.advisor-grade-card {
-  animation: grade-pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) backwards;
-}
-
-.advisor-grade-card[data-grade^="A"],
-.advisor-grade-card[data-grade^="B"] {
-  background-color: var(--eple);
-  color: var(--skog);
-  border-color: var(--skog);
-}
-
-.advisor-grade-card[data-grade^="C"],
-.advisor-grade-card[data-grade^="D"] {
-  border-color: var(--rav);
-  color: inherit;
-}
-
-.advisor-grade-card[data-grade^="E"],
-.advisor-grade-card[data-grade^="F"] {
-  border-color: #c0392b;
-}
-
-@keyframes grade-pop {
-  from {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-}
-
-.advisor-grade-card {
+/* Kuttet som tall. Sto her som en karakterrute fra A+ til F, farget grønn,
+   gul eller rød etter dommen. Ingen farge nå: tallet er et måltall, ikke en
+   dom, og setningen ved siden av sier hvor det ligger. */
+.advisor-figure {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-width: 120px;
-  min-height: 120px;
-  border: 2px solid currentColor;
-  border-radius: 1rem;
-  padding: 1rem;
+  min-width: 8rem;
+  padding-right: var(--space-5);
+  border-right: 1px solid var(--linje);
 }
 
-.advisor-grade {
-  font-size: 3.5em;
-  font-weight: bold;
+.advisor-figure-value {
+  font-size: clamp(2.2rem, 1.6rem + 2vw, 3rem);
+  font-weight: 700;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
-.advisor-grade-label {
+.advisor-figure-label {
   font-size: 0.85em;
-  opacity: 0.8;
+  /* 0,82 er det laveste som fortsatt klarer 4,5:1 mot bakgrunnen */
+  opacity: 0.82;
   margin-top: 0.5rem;
+  line-height: 1.35;
 }
 
 .advisor-summary {
@@ -178,7 +151,7 @@
   border-color: var(--gran);
 }
 
-.advisor-insight h4 {
+.advisor-insight h3 {
   margin-bottom: 0.5rem;
 }
 

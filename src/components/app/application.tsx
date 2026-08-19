@@ -1,26 +1,78 @@
-import React, { useEffect } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
-import { MapRoute } from "../map/mapRoute";
 import { ApplicationContext, PeriodDecision } from "../../applicationContext";
 import { PeriodReportRoute } from "../report/periodReportRoute";
 import { FrontPage } from "./frontPage";
-import { CostPage } from "../cost/costPage";
 import { PhaseOutRoute } from "../phaseout/phaseOutRoute";
-import { ProductionRoute } from "../production/productionRoute";
 import { useSessionState } from "../../hooks/useSessionState";
-import { EmissionRoute } from "../emissions/emissionRoute";
 import { VerdictRoute } from "../verdict/verdictRoute";
 import { SiteLayout } from "./siteLayout";
 import { GameLayout } from "./gameLayout";
-import { PlanRoute } from "../plan/planRoute";
 import { Year } from "../../data/types";
-import { DataViewRoute } from "../dataView/dataViewRoute";
 import { PhaseOutSchedule } from "../../data/gameData";
-import { TutorialRoute } from "./tutorialRoute";
-import { AdvisorRoute } from "../advisor/advisorRoute";
-import { TransitionRoute } from "../transition/transitionRoute";
 import { TodayRoute } from "../today/todayRoute";
 import { PeriodBriefRoute } from "../period/periodBriefRoute";
+
+/**
+ * Routes that are not on the path a first-time player takes.
+ *
+ * Everything used to arrive in one 1.07 MB script, which a phone on a train
+ * has to download and parse before the front page draws a single word. The
+ * split below is by WHEN a page is needed, not by how big it is:
+ *
+ *  - The map carries OpenLayers, by far the heaviest dependency, and is the
+ *    second screen rather than the first. Splitting it alone takes roughly
+ *    half the JavaScript off the initial load. `warmMap()` fetches it while
+ *    the player reads the front page, so the click still feels instant.
+ *  - The chart and table pages (`/plan`, `/emissions`, `/production`,
+ *    `/data`, `/kostnad`) and the two side rooms (`/advisor`,
+ *    `/transition`) are reached from a menu, deliberately, and a great many
+ *    players never open them at all.
+ *
+ * The three acts themselves — front page, Norge i dag, the period brief, the
+ * selector, the report, the reckoning — stay in the main bundle. They are
+ * the game, and a loading pause between acts would be felt.
+ */
+const MapRoute = lazy(() =>
+  import("../map/mapRoute").then((m) => ({ default: m.MapRoute })),
+);
+const CostPage = lazy(() =>
+  import("../cost/costPage").then((m) => ({ default: m.CostPage })),
+);
+const ProductionRoute = lazy(() =>
+  import("../production/productionRoute").then((m) => ({
+    default: m.ProductionRoute,
+  })),
+);
+const EmissionRoute = lazy(() =>
+  import("../emissions/emissionRoute").then((m) => ({
+    default: m.EmissionRoute,
+  })),
+);
+const PlanRoute = lazy(() =>
+  import("../plan/planRoute").then((m) => ({ default: m.PlanRoute })),
+);
+const DataViewRoute = lazy(() =>
+  import("../dataView/dataViewRoute").then((m) => ({
+    default: m.DataViewRoute,
+  })),
+);
+const TutorialRoute = lazy(() =>
+  import("./tutorialRoute").then((m) => ({ default: m.TutorialRoute })),
+);
+const AdvisorRoute = lazy(() =>
+  import("../advisor/advisorRoute").then((m) => ({ default: m.AdvisorRoute })),
+);
+const TransitionRoute = lazy(() =>
+  import("../transition/transitionRoute").then((m) => ({
+    default: m.TransitionRoute,
+  })),
+);
+
+/** Starts the map download early, before the player asks for it. */
+function warmMap() {
+  void import("../map/mapRoute");
+}
 
 /**
  * All routes, organized as two layout routes that each own their chrome:
@@ -46,41 +98,62 @@ function ScrollToTop() {
   return null;
 }
 
+/**
+ * Shown while a split-out route's script arrives.
+ *
+ * Deliberately quiet: a spinner that appears for 80 ms on a fast connection
+ * reads as jank. `role="status"` so a screen reader is told something is
+ * happening rather than landing in an empty main element.
+ */
+function RouteLoading() {
+  return (
+    <div className="route-loading" role="status">
+      Laster …
+    </div>
+  );
+}
+
 function ApplicationRoutes() {
+  // The map is the screen after the front page for nearly every player, so
+  // its chunk is fetched while they are still reading
+  useEffect(warmMap, []);
+
   return (
     <>
       <ScrollToTop />
-      <Routes>
-        <Route element={<SiteLayout />}>
-          <Route path={"/"} element={<FrontPage />} />
-          {/* Akt 1 — orienteringen, før noe valg tas */}
-          <Route path={"/norge"} element={<TodayRoute />} />
-          <Route path={"/kostnad"} element={<CostPage />} />
-          <Route path={"/tutorial"} element={<TutorialRoute />} />
-          <Route path={"*"} element={<h2>Not Found</h2>} />
-        </Route>
-        <Route element={<GameLayout />}>
-          {/* Råd og Grønt nås fra spillnavigasjonen midt i en runde —
+      <Suspense fallback={<RouteLoading />}>
+        <Routes>
+          <Route element={<SiteLayout />}>
+            <Route path={"/"} element={<FrontPage />} />
+            {/* Akt 1 — orienteringen, før noe valg tas */}
+            <Route path={"/norge"} element={<TodayRoute />} />
+            <Route path={"/kostnad"} element={<CostPage />} />
+            <Route path={"/tutorial"} element={<TutorialRoute />} />
+            <Route path={"*"} element={<h2>Not Found</h2>} />
+          </Route>
+          <Route element={<GameLayout />}>
+            {/* Råd og Grønt nås fra spillnavigasjonen midt i en runde —
             spillerne skal beholde statuslinjen og neste-steg-footeren */}
-          <Route path={"/transition"} element={<TransitionRoute />} />
-          <Route path={"/advisor"} element={<AdvisorRoute />} />
-          {/* ONE route with an optional param, not two routes rendering the
+            <Route path={"/transition"} element={<TransitionRoute />} />
+            <Route path={"/advisor"} element={<AdvisorRoute />} />
+            {/* ONE route with an optional param, not two routes rendering the
               same element: two separate <Route>s made React remount MapRoute
               when a field was opened, which reset the ref holding the row to
               return keyboard focus to. */}
-          <Route path={"/map/:slug?"} element={<MapRoute />} />
-          {/* Akt 2 — hver periode åpner med sin egen brief */}
-          <Route path={"/periode"} element={<PeriodBriefRoute />} />
-          <Route path={"/phaseout"} element={<PhaseOutRoute />} />
-          <Route path={"/plan/*"} element={<PlanRoute />} />
-          <Route path={"/emissions/*"} element={<EmissionRoute />} />
-          <Route path={"/production/*"} element={<ProductionRoute />} />
-          <Route path={"/data/*"} element={<DataViewRoute />} />
-          <Route path={"/report"} element={<PeriodReportRoute />} />
-          {/* Akt 3 — oppgjøret */}
-          <Route path={"/summary"} element={<VerdictRoute />} />
-        </Route>
-      </Routes>
+            <Route path={"/map/:slug?"} element={<MapRoute />} />
+            {/* Akt 2 — hver periode åpner med sin egen brief */}
+            <Route path={"/periode"} element={<PeriodBriefRoute />} />
+            <Route path={"/phaseout"} element={<PhaseOutRoute />} />
+            <Route path={"/plan/*"} element={<PlanRoute />} />
+            <Route path={"/emissions/*"} element={<EmissionRoute />} />
+            <Route path={"/production/*"} element={<ProductionRoute />} />
+            <Route path={"/data/*"} element={<DataViewRoute />} />
+            <Route path={"/report"} element={<PeriodReportRoute />} />
+            {/* Akt 3 — oppgjøret */}
+            <Route path={"/summary"} element={<VerdictRoute />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </>
   );
 }

@@ -60,7 +60,8 @@ function ThinkingIndicator() {
  * The climate advisor page.
  *
  * Analyzes the player's committed phase-out plan and presents:
- * - a grade and a generated natural language summary
+ * - the cut the plan achieves, and a generated summary saying where
+ *   that sits among the reference plans
  * - concrete insights and recommendations based on the game dataset
  * - the avoided emissions translated into relatable equivalents
  * - an interactive plan optimizer that generates a phase-out schedule
@@ -88,16 +89,25 @@ export function AdvisorRoute() {
 
   return (
     <div className="advisor-page">
-      <h2 className="advisor-title">Klimarådgiveren</h2>
+      <h1 className="advisor-title">Klimarådgiveren</h1>
 
       {thinking ? (
         <ThinkingIndicator />
       ) : (
         <>
           <div className="advisor-hero">
-            <div className="advisor-grade-card" data-grade={report.grade}>
-              <div className="advisor-grade">{report.grade}</div>
-              <div className="advisor-grade-label">Klimakarakter</div>
+            {/* Tallet, ikke en karakter. Kortet sto her med A+ til F og
+                farge etter dommen – rødt for F. Det var det siste stedet i
+                spillet som ga spilleren terningkast for hvor enig hun er
+                med én plan. Nå står kuttet som tall, og setningen under
+                sier hvor det ligger i forhold til de tre referansene. */}
+            <div className="advisor-figure">
+              <div className="advisor-figure-value">
+                {report.reductionPercent} %
+              </div>
+              <div className="advisor-figure-label">
+                av utslippene 2025–2040 kuttet
+              </div>
             </div>
             {/* Tap-to-skip: skrivemaskinen skal aldri holde innholdet
                 gissel for den utålmodige */}
@@ -113,17 +123,17 @@ export function AdvisorRoute() {
 
           {report.insights.length > 0 && (
             <>
-              <h3>Innsikt fra rådgiveren</h3>
+              <h2>Innsikt fra rådgiveren</h2>
               <div className="advisor-insights">
                 {report.insights.map((insight) => (
                   <div
                     key={insight.title}
                     className={`advisor-insight kind-${insight.kind}`}
                   >
-                    <h4>
+                    <h3>
                       <Icon name={insightIcon(insight.kind)} size={16} muted />
                       {insight.title}
-                    </h4>
+                    </h3>
                     <div>{insight.text}</div>
                   </div>
                 ))}
@@ -182,7 +192,7 @@ function PlanOptimizer() {
 
   return (
     <div className="advisor-optimizer">
-      <h3>Få forslag til en plan</h3>
+      <h2>Få forslag til en plan</h2>
       <div>
         Velg et klimamål, så finner optimalisereren utfasingsplanen som når
         målet med minst mulig produksjonstap.

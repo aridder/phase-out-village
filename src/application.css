@@ -1036,6 +1036,15 @@
     color: var(--skog);
   }
 
+  /* Mens en lat-lastet rute hentes (se app/application.tsx). Dempet med
+     vilje: på en rask linje er den synlig i under et hundredels sekund, og
+     noe som blinker der leses som en feil. */
+  .route-loading {
+    padding: var(--space-6) var(--space-4);
+    opacity: 0.6;
+    font-size: 0.9rem;
+  }
+
   /* Krasjskjermen (se app/errorBoundary.tsx) */
   .crash {
     max-width: 34rem;

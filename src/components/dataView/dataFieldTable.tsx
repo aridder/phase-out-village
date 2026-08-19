@@ -1,25 +1,22 @@
-import * as XLSX from "xlsx";
 import { Link } from "react-router-dom";
 import { slugify } from "../../data/slugify";
 import React from "react";
-import { dataFieldToExcel } from "./exportToExcel";
+import { dataFieldRows } from "./exportData";
+import { downloadCsv } from "./downloadCsv";
 import { gameData, yearsInRange } from "../../data/gameData";
 
 /**
  * Table showing data for a specific data field (productionOil, productionGas, emission)
- * and allows exporting that data to Excel.
+ * and allows downloading that data as CSV.
  */
 export function DataFieldTable({
   dataField,
 }: {
   dataField: "productionOil" | "productionGas" | "emission";
 }) {
-  /** Handles Excel export for the given dataField */
+  /** Downloads exactly the table below, as CSV */
   function handleExportClick() {
-    const worksheet = XLSX.utils.json_to_sheet(dataFieldToExcel(dataField));
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, dataField);
-    XLSX.writeFile(workbook, `phaseout-${dataField}-all-fields.xlsx`);
+    downloadCsv(`oljespillet-${dataField}.csv`, dataFieldRows(dataField));
   }
 
   return (
@@ -28,7 +25,7 @@ export function DataFieldTable({
         <Link to={"/data"}>Tilbake</Link>
       </div>
       <div>
-        <button onClick={handleExportClick}>Last ned som Excel</button>
+        <button onClick={handleExportClick}>Last ned som CSV</button>
       </div>
       <table border={1}>
         <thead>

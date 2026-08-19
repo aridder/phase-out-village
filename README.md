@@ -63,9 +63,9 @@ Everything runs locally in the browser on the game's open dataset — no data le
   households powered) and a scenario switch between the player's plan, MDG's plan and full phase-out by 2035
   (`src/data/energyTransition.ts`)
 - **Klimarådgiveren** (`/advisor`): analyzes the player's phase-out plan and generates a report in plain language —
-  a climate grade (A+ to F) benchmarked against MDG's reference plan, plus concrete insights such as high-intensity
-  fields still running, praise for well-chosen phase-outs, and the climate effect per barrel of forgone production
-  (`src/analysis/advisorEngine.ts`)
+  the cut the plan achieves and where that sits between the three reference plans (no decisions, MDG's plan, a
+  ramp-down finishing in 2035), plus concrete insights such as high-intensity fields still running and the climate
+  effect per barrel of forgone production (`src/analysis/advisorEngine.ts`)
 - **Plan optimizer**: pick an emission reduction target (e.g. "cut 60% by 2040") and a strategy, and a greedy
   optimizer generates the phase-out schedule that reaches the target with the smallest possible production loss.
   The suggested fields for the current period can be applied to the game with one click (`src/analysis/planOptimizer.ts`)
@@ -81,6 +81,28 @@ drawn with the project's own lightweight SVG chart library (`src/components/char
 mobile display format.
 
 The development language is English. The UI language is Norwegian.
+
+### Build-time configuration
+
+Both are optional repository variables (Settings > Secrets and variables > Actions > Variables):
+
+| Variable              | Purpose                                                                           |
+| --------------------- | --------------------------------------------------------------------------------- |
+| `REPO_BASE`           | Path the site is served from, e.g. `/phase-out-village/` for a GitHub Pages fork. |
+| `VITE_STADIA_API_KEY` | Stadia Maps key for the map's background tiles. Falls back to the committed key.  |
+
+A map key is delivered to the browser and travels with every tile request, so it cannot be
+kept secret in a frontend application. The way to stop a key being used elsewhere is to
+restrict it to your own domains in the [Stadia dashboard](https://client.stadiamaps.com/) —
+the variable exists so a key can be rotated or swapped for a fork's own without editing
+`src/components/map/shelfMap.tsx`.
+
+### Regenerating the datasets
+
+`npm run data` refetches production, emission and MDG-plan figures from the project's Google
+Sheet, `npm run data:energy` refetches the power-system figures from SSB, and
+`npm run data:geometry` rebuilds the map geometry from `data/oilfields.geojson`. All three
+write into `src/generated/`, which is committed — a normal build never hits the network.
 
 ## How to contribute
 

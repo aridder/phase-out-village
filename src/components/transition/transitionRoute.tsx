@@ -51,7 +51,7 @@ export function TransitionRoute() {
 
   return (
     <div className="transition-page">
-      <h2>Fra svart til grønn energi</h2>
+      <h1>Fra svart til grønn energi</h1>
       <div className="transition-intro">
         Hva skjer egentlig med energien når oljen fases ut? Mindre enn du skulle
         tro – og her er hvorfor.
@@ -60,7 +60,7 @@ export function TransitionRoute() {
       <div className="transition-steps">
         <div className="transition-step">
           <Illustration name="plattform" size={40} />
-          <h4>Sokkelen er en energigigant</h4>
+          <h2>Sokkelen er en energigigant</h2>
           <div>
             Norske olje- og gassfelt produserer rundt{" "}
             <strong>{baseline2025.toLocaleString("nb-NO")} TWh</strong> energi i
@@ -71,7 +71,7 @@ export function TransitionRoute() {
         </div>
         <div className="transition-step">
           <Illustration name="gassturbin" size={40} />
-          <h4>En del går opp i røyk</h4>
+          <h2>En del går opp i røyk</h2>
           <div>
             Hvor mye av energien som blir til nytte, avhenger av bruken: rundt{" "}
             <strong>35 %</strong> i en motor, <strong>55 %</strong> i et
@@ -81,7 +81,7 @@ export function TransitionRoute() {
         </div>
         <div className="transition-step">
           <Illustration name="havvind" size={40} />
-          <h4>Derfor er erstatningen mindre enn energien</h4>
+          <h2>Derfor er erstatningen mindre enn energien</h2>
           <div>
             Strøm brukes nesten uten tap. Med et blandet bruksmønster kan hver
             TWh fossil energi erstattes av rundt{" "}
@@ -115,7 +115,7 @@ export function TransitionRoute() {
         <TransitionChart series={series} />
       </div>
 
-      <h3>Slik ser regnestykket ut i 2040</h3>
+      <h2>Slik ser regnestykket ut i 2040</h2>
       <div className="stat-tiles">
         <div className="stat-tile">
           <div className="value">
@@ -153,11 +153,11 @@ export function TransitionRoute() {
         </div>
       </div>
 
-      <h3>Norge selger allerede energi til Europa – bare i feil form</h3>
+      <h2>Norge selger allerede energi til Europa – bare i feil form</h2>
       <div className="transition-steps">
         <div className="transition-step">
           <Illustration name="kraftnett" size={40} />
-          <h4>Strøm er allerede eksportvare</h4>
+          <h3>Strøm er allerede eksportvare</h3>
           <div>
             Det siste året eksporterte Norge{" "}
             <strong>
@@ -174,7 +174,7 @@ export function TransitionRoute() {
         </div>
         <div className="transition-step">
           <Illustration name="havvind" size={40} />
-          <h4>Er det realistisk? Sammenlign med i dag</h4>
+          <h3>Er det realistisk? Sammenlign med i dag</h3>
           <div>
             Norsk vindkraft produserer allerede{" "}
             <strong>
@@ -198,7 +198,7 @@ export function TransitionRoute() {
         </div>
         <div className="transition-step">
           <Illustration name="vannmagasin" size={40} />
-          <h4>Vi har allerede overskudd</h4>
+          <h3>Vi har allerede overskudd</h3>
           <div>
             Norge produserer{" "}
             {energyData.electricity.productionTwh.toLocaleString("nb-NO")} TWh

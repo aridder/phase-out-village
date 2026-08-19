@@ -159,7 +159,7 @@ export function CostPage() {
         erstatningen nå.
       </div>
 
-      <h3>Dette får vi igjen</h3>
+      <h2>Dette får vi igjen</h2>
       <div className="front-prose">
         <p>
           Det viktigste først: klimaet. Planen unngår{" "}
@@ -188,7 +188,7 @@ export function CostPage() {
         </p>
       </div>
 
-      <h3>Og Norge står støtt uansett</h3>
+      <h2>Og Norge står støtt uansett</h2>
       <div className="front-prose">
         <p>
           Oljefondet er verdt rundt{" "}

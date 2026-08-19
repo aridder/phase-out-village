@@ -27,7 +27,10 @@
   counter-increment: transition-step;
 }
 
-.transition-step h4 {
+/* Overskriftene ble h2 fordi de tre stegene er sidens første seksjon og
+   sto rett under h1-en — h1 → h4 var et hopp over to nivåer. Grad og vekt
+   er uendret; nivået er dokumentstruktur, ikke størrelse. */
+.transition-step h2 {
   margin: 0.5rem 0 0.3rem;
   font-size: 1rem;
 }
@@ -37,7 +40,7 @@
   line-height: 1.55;
 }
 
-.transition-step h4::before {
+.transition-step h2::before {
   content: counter(transition-step) ". ";
 }
 

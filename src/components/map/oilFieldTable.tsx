@@ -1,33 +1,24 @@
 import React from "react";
 import { slugify } from "../../data/slugify";
-import * as XLSX from "xlsx";
-import { oilFieldToExcel } from "../dataView/exportToExcel";
+import { oilFieldRows } from "../dataView/exportData";
+import { downloadCsv } from "../dataView/downloadCsv";
 import { gameData } from "../../data/gameData";
 
 /**
  * Component that renders a table with yearly data for a specific oil field.
  * Includes columns for oil production, gas production, emissions, and emission intensity.
- * Provides a button to export the table as an Excel file.
+ * Provides a button to download the table as CSV.
  */
 export function OilFieldTable({ field }: { field: string }) {
-  /**
-   * Handle click on "Export to Excel" button.
-   * Creates a workbook with one sheet containing the data for the selected oil field.
-   */
+  /** Downloads this field's yearly numbers as CSV */
   function handleExportClick() {
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(
-      workbook,
-      XLSX.utils.json_to_sheet(oilFieldToExcel(field)),
-      field,
-    );
-    XLSX.writeFile(workbook, `oil-field-data-${slugify(field)}.xlsx`);
+    downloadCsv(`oljespillet-${slugify(field)}.csv`, oilFieldRows(field));
   }
 
   return (
     <div>
       <div>
-        <button onClick={handleExportClick}>Last ned som Excel</button>
+        <button onClick={handleExportClick}>Last ned som CSV</button>
       </div>
       <table border={1}>
         <thead>
