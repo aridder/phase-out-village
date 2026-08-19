@@ -70,21 +70,23 @@ export function TransitionRoute() {
         </div>
         <div className="transition-step">
           <div className="step-emoji">🔥</div>
-          <h4>To tredjedeler går opp i røyk</h4>
+          <h4>En del går opp i røyk</h4>
           <div>
-            Når olje og gass brennes i motorer og kraftverk, blir bare rundt{" "}
-            <strong>35 %</strong> til nyttig energi – bevegelse, varme, strøm.
-            Resten forsvinner som spillvarme ut i lufta.
+            Hvor mye av energien som blir til nytte, avhenger av bruken: rundt{" "}
+            <strong>35 %</strong> i en motor, <strong>55 %</strong> i et
+            gasskraftverk og nærmere <strong>90 %</strong> i en gasskjel. Resten
+            forsvinner som spillvarme.
           </div>
         </div>
         <div className="transition-step">
           <div className="step-emoji">🌬️</div>
-          <h4>Derfor er erstatningen overkommelig</h4>
+          <h4>Derfor er erstatningen mindre enn energien</h4>
           <div>
-            Strøm fra vind og sol brukes nesten uten tap. Hver TWh fossil energi
-            kan derfor erstattes av bare{" "}
-            <strong>~{USEFUL_ENERGY_FACTOR.toLocaleString("nb-NO")} TWh</strong>{" "}
-            fornybar strøm – med samme nytte for samfunnet.
+            Strøm brukes nesten uten tap. Med et blandet bruksmønster kan hver
+            TWh fossil energi erstattes av rundt{" "}
+            <strong>{USEFUL_ENERGY_FACTOR.toLocaleString("nb-NO")} TWh</strong>{" "}
+            fornybar strøm med samme nytte. Går alt til oppvarming, må det
+            nærmere 0,9 TWh til.
           </div>
         </div>
       </div>
@@ -130,9 +132,9 @@ export function TransitionRoute() {
             {summary.replacementTwh.toLocaleString("nb-NO")} TWh
           </div>
           <div>
-            ren strøm er nok til å erstatte nytten av alt sammen – de andre{" "}
-            {100 - Math.round(USEFUL_ENERGY_FACTOR * 100)} % av fossilenergien
-            var spillvarme som ingen fikk glede av
+            ren strøm gir samme nytte, med et blandet bruksmønster. De andre{" "}
+            {100 - Math.round(USEFUL_ENERGY_FACTOR * 100)} % er tap som
+            forsvinner i motorer og kraftverk
           </div>
         </div>
         <div className="stat-tile">

@@ -14,8 +14,8 @@
    selektor-spesifisitet. Spesifisitetskriger er dermed umulige her inne.
 
    Alt annet er sidespesifikt og ligger i komponentmappen til siden det
-   gjelder: costPage.css, transition.css, periodReport.css, gameOver.css,
-   advisor.css, phaseOut.css, plan.css, map.css, mapIntro.css,
+   gjelder: today.css, verdict.css, period.css, costPage.css,
+   transition.css, advisor.css, phaseOut.css, plan.css, map.css,
    emissions.css, production.css, dataView.css, tutorial.css,
    statusBar.css, progressionBar.css. Sidefilene er BEVISST ulagdelte:
    ulagdelt CSS slår alle lag, så en side vinner alltid over det globale
@@ -281,12 +281,23 @@
   }
 
   /* Kartsiden styrer sin egen høyde og skal ikke scrolle som helhet */
-  #app main:has(.oilfield-map) {
+  #app main:has(.shelf-page) {
     overflow-y: hidden;
     height: 100%;
   }
 
-  #app header {
+  /* På smale skjermer ligger kart og panel under hverandre, og da MÅ siden
+     kunne scrolle — ellers er feltlisten uten å nå */
+  @media (max-width: 960px) {
+    #app main:has(.shelf-page) {
+      overflow-y: auto;
+    }
+  }
+
+  /* NB: direkte barn av #app. Uten «>» traff denne regelen også <header>
+     inne i sidene (akt 1 og periodebrief-en), som da fikk headerens
+     mørkegrønne gradient bak overskriftene sine. */
+  #app > header {
     /* Vanlig blokkflyt: med grid her ble radhøyden beregnet fra knappe-
        radens én-linjes størrelse, så når raden brakk på smale skjermer
        fløt linje to inn over sideinnholdet */

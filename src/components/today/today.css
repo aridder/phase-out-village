@@ -1,0 +1,543 @@
+/* ==========================================================================
+   Akt 1 — «Norge i dag»
+
+   En lesbar artikkelside, ikke et dashbord: én spalte med maks lesebredde,
+   store tall der de bærer et poeng, og god luft mellom seksjonene. Alt som
+   er en påstand står som brødtekst; alt som er et tall står som tall.
+   ========================================================================== */
+
+.today-page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.75rem;
+}
+
+/* ------------------------------------------------------------------- hero */
+
+.today-hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-bottom: 0.5rem;
+}
+
+.today-act {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.today-lead {
+  font-size: 1.1rem;
+  line-height: 1.55;
+  max-width: 42rem;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------------------- seksjoner */
+
+.today-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--linje);
+}
+
+.today-body,
+.today-note,
+.today-punchline {
+  max-width: 44rem;
+  line-height: 1.6;
+}
+
+.today-body {
+  font-size: 1.02rem;
+}
+
+.today-note {
+  font-size: 0.88rem;
+  opacity: 0.78;
+}
+
+.today-punchline {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  padding: 0.9rem 1.1rem;
+  background-color: var(--flate);
+  border-left: 4px solid var(--rav);
+  border-radius: 0 var(--radius-s) var(--radius-s) 0;
+  box-shadow: var(--skygge-1);
+}
+
+/* ------------------------------------------------------------------ tall */
+
+.figure-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem;
+}
+
+.figure {
+  padding: 1rem;
+  background-color: var(--flate);
+  border-radius: var(--radius);
+  border: 1px solid var(--linje);
+  box-shadow: var(--skygge-1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.figure.highlight {
+  border-color: var(--gran);
+  box-shadow: var(--skygge-2);
+}
+
+.figure-value {
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.figure-unit {
+  font-size: 0.82rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.figure-label {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  opacity: 0.72;
+  margin-top: 0.2rem;
+}
+
+/* ----------------------------------------------------------------- penger */
+
+.money-bar {
+  position: relative;
+  height: 2.4rem;
+  border-radius: var(--radius-s);
+  background-color: var(--gran);
+  overflow: hidden;
+  box-shadow: var(--skygge-1);
+}
+
+.money-bar .money-state {
+  height: 100%;
+  background-color: var(--eple);
+}
+
+.money-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-size: 0.85rem;
+}
+
+.money-legend .key {
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 3px;
+  vertical-align: -1px;
+  margin-right: 0.15rem;
+}
+
+.money-legend .key.state {
+  background-color: var(--eple);
+}
+
+.money-legend .key.rest {
+  background-color: var(--gran);
+}
+
+/* ------------------------------------------------------- intensitetsstripe */
+
+.intensity-strip {
+  margin: 0;
+  position: relative;
+  background-color: var(--flate);
+  border: 1px solid var(--linje);
+  border-radius: var(--radius);
+  box-shadow: var(--skygge-1);
+  padding: 1rem 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.intensity-strip svg {
+  position: absolute;
+  inset: 1rem 1rem auto;
+  width: calc(100% - 2rem);
+  height: 190px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.intensity-strip .axis {
+  stroke: var(--linje);
+  stroke-width: 1;
+}
+
+.intensity-strip .average {
+  stroke: var(--skog);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.55;
+}
+
+@media (prefers-color-scheme: dark) {
+  .intensity-strip .average {
+    stroke: var(--lime);
+  }
+}
+
+.strip-plot {
+  position: relative;
+  height: 190px;
+}
+
+.strip-dot {
+  position: absolute;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgb(19 54 0 / 0.45);
+  box-shadow: none;
+  transform: translateX(-50%);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.strip-dot:hover:not(:disabled),
+.strip-dot.active {
+  transform: translateX(-50%) scale(1.25);
+  box-shadow: none;
+  outline: 2px solid var(--gran);
+  outline-offset: 1px;
+  z-index: 5;
+}
+
+.strip-average-label {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.strip-anchor {
+  position: absolute;
+  bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.strip-anchor.left {
+  transform: translateX(-10%);
+}
+
+.strip-anchor.right {
+  transform: translateX(-90%);
+  text-align: right;
+}
+
+.anchor-name {
+  font-weight: 700;
+}
+
+.anchor-value {
+  opacity: 0.7;
+}
+
+.strip-tooltip {
+  position: absolute;
+  top: 12px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.45rem 0.7rem;
+  background-color: var(--flate-2);
+  border: 1px solid var(--linje);
+  border-radius: var(--radius-s);
+  box-shadow: var(--skygge-2);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tooltip-meta {
+  opacity: 0.7;
+  font-size: 0.72rem;
+}
+
+.strip-axis {
+  position: relative;
+  height: 2.6rem;
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.strip-axis span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+/* Enheten står på egen linje under tallene — på høyre kant kolliderte den
+   med den siste merkelappen på aksen */
+.strip-axis .strip-unit {
+  right: 0;
+  left: auto;
+  top: 1.25rem;
+  transform: none;
+  font-weight: 600;
+}
+
+.intensity-strip figcaption {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  opacity: 0.75;
+  margin-top: 0.6rem;
+  border-top: 1px solid var(--linje);
+  padding-top: 0.6rem;
+}
+
+/* ---------------------------------------------------------- kontrastkortene */
+
+.contrast {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.contrast-card {
+  padding: 1rem;
+  border-radius: var(--radius);
+  background-color: var(--flate);
+  border: 1px solid var(--linje);
+  box-shadow: var(--skygge-1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.contrast-card.clean {
+  border-left: 5px solid #ffd166;
+}
+
+.contrast-card.dirty {
+  border-left: 5px solid #b03a2e;
+}
+
+.contrast-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.contrast-figure {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.contrast-meta {
+  font-size: 0.76rem;
+  opacity: 0.72;
+  line-height: 1.4;
+}
+
+.contrast-versus {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ------------------------------------------------------------------ grunner */
+
+.reason-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.75rem;
+}
+
+.reason {
+  padding: 0.9rem;
+  background-color: var(--flate);
+  border-radius: var(--radius);
+  border: 1px solid var(--linje);
+  box-shadow: var(--skygge-1);
+}
+
+.reason-emoji {
+  font-size: 1.4rem;
+}
+
+.reason h4 {
+  margin: 0.2rem 0 0.3rem;
+  font-size: 0.95rem;
+}
+
+.reason p {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------------------- energitap */
+
+.scenario-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.scenario-picker button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  padding: 0.5rem 0.85rem;
+}
+
+.scenario-picker button.active {
+  background-color: var(--eple);
+  border-color: var(--gran);
+}
+
+.scenario-factor {
+  font-size: 0.72rem;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.scenario-explainer {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  max-width: 44rem;
+}
+
+.energy-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.energy-row {
+  display: grid;
+  grid-template-columns: 13rem minmax(0, 1fr) 6rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+}
+
+.energy-track {
+  height: 1.5rem;
+  background-color: var(--linje);
+  border-radius: var(--radius-s);
+  overflow: hidden;
+}
+
+.energy-track .fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-s);
+  transition: width 0.35s ease;
+}
+
+.energy-track .fill.fossil {
+  background-color: #6b5b45;
+}
+
+.energy-track .fill.renewable {
+  background-color: var(--eple);
+}
+
+.energy-value {
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------------- hinge */
+
+.today-hinge {
+  padding: 1.75rem;
+  background-color: var(--flate);
+  border-radius: var(--radius);
+  border: 1px solid var(--gran);
+  box-shadow: var(--skygge-2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.today-hinge p {
+  max-width: 44rem;
+  line-height: 1.65;
+}
+
+.hinge-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.hinge-actions .primary {
+  background-color: var(--eple);
+  border-color: var(--gran);
+  font-size: 1.05rem;
+  padding: 0.7rem 1.3rem;
+}
+
+/* -------------------------------------------------------------------- mobil */
+
+@media (max-width: 600px) {
+  .today-page {
+    padding: 1.25rem 0.9rem 3rem;
+    gap: 2rem;
+  }
+
+  .contrast {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contrast-versus {
+    text-align: center;
+  }
+
+  .energy-row {
+    grid-template-columns: minmax(0, 1fr) 5rem;
+  }
+
+  /* Radetiketten får sin egen linje over stolpen når plassen er knapp */
+  .energy-label {
+    grid-column: 1 / -1;
+    font-weight: 600;
+  }
+
+  .strip-anchor {
+    font-size: 0.66rem;
+  }
+}

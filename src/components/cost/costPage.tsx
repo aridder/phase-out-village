@@ -68,8 +68,8 @@ export function CostPage() {
       <div className="front-hero">
         <h1>Hva koster det egentlig å fase ut oljen?</h1>
         <div className="subtitle">
-          Mindre enn du tror. Velg tempo og se regnestykket – bygget på åpne
-          tall fra SSB og Norsk Petroleum.
+          Velg tempo og se hva det koster staten – bygget på åpne tall fra SSB
+          og Norsk Petroleum. Forutsetningene står nederst, og du kan endre dem.
         </div>
       </div>
 
@@ -123,9 +123,7 @@ export function CostPage() {
         <div className="big-number">
           {budgets.toLocaleString("nb-NO")} statsbudsjett
         </div>
-        <div className="big-label">
-          fordelt over 15 år. Det er overkommelig.
-        </div>
+        <div className="big-label">fordelt over 15 år</div>
         <div className="sub-numbers">
           <div>
             <div className="value">
@@ -140,10 +138,14 @@ export function CostPage() {
             <div>per innbygger per måned i 2040</div>
           </div>
           <div>
-            <div className="value">0 kr</div>
+            {/* Sto tidligere som «0 kr kuttes fra dagens velferd». Det er
+                ikke riktig: handlingsregelen bruker en andel av fondet, så
+                et mindre fond gir mindre å bruke – bare seinere. */}
+            <div className="value">Seinere</div>
             <div>
-              kuttes fra dagens velferd – oljeinntektene går til sparing i
-              Oljefondet, så det er sparingen som bremses, ikke forbruket
+              treffer regningen. Oljeinntektene går til Oljefondet, ikke rett
+              inn i statsbudsjettet, så et mindre fond kuttes ikke fra neste års
+              velferd – det gir mindre handlingsrom over tid
             </div>
           </div>
         </div>

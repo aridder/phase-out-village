@@ -1,24 +1,32 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { goalCutPercent } from "../../data/gameGoal";
-import { storyIntro } from "../../data/story";
+import { shelfToday } from "../../data/norwayToday";
 import arildHermstad from "./arild-hermstad.png";
 
 /**
- * The cover page as a real title screen: the story opening told as one
- * scene — game name, the player's role, the mission as three cards and a
- * single big call to action. No dialog chrome; the story IS the page.
- * The full economic argument lives on /kostnad where it can be explored.
+ * The title screen.
+ *
+ * It sets up the question the whole thing asks — the shelf is emptying
+ * anyway, so the real decision is about ORDER — and it names the three
+ * acts, so a player knows they are getting an orientation before they are
+ * asked to decide anything.
+ *
+ * What it no longer does is state a pass mark. The old cover said the goal
+ * was to cut at least as much as one party's plan; that turned every screen
+ * after it into an argument with a known right answer, and a player who
+ * disagrees with the premise has no reason to keep playing.
  */
 export function FrontPage() {
   const navigate = useNavigate();
+  const shelf = shelfToday();
+  const declinePercent = Math.round((1 - shelf.remainingIn2040) * 100);
 
   return (
     <div className="hero">
       <div className="hero-kicker">🛢️ Oljespillet</div>
       <h1 className="hero-title">Chill, baby! Chill!</h1>
       <div className="hero-tagline">
-        Spillet om å styre Norge ut av oljealderen
+        Sokkelen tømmes uansett. Spørsmålet er hvem som bestemmer rekkefølgen.
       </div>
 
       <div className="hero-story">
@@ -28,42 +36,46 @@ export function FrontPage() {
           title={"Arild Hermstad, leder i MDG"}
         />
         <p>
-          <strong>{storyIntro.heading}.</strong> {storyIntro.scene.join(" ")}
+          <strong>Du er Norges energiminister fra 2025 til 2040.</strong> Norsk
+          sokkel gir staten {shelf.stateRevenueBnNok} milliarder kroner i året
+          og står for rundt en fjerdedel av Norges utslipp. Og {declinePercent}{" "}
+          % av dagens produksjon er borte innen 2040 uansett hva du gjør –
+          feltene tømmes. Du bestemmer hvilke som går først.
         </p>
       </div>
 
       <div className="hero-mission">
         <div className="mission-card">
-          <div className="mission-emoji">🛢️</div>
-          <div className="mission-label">Oppdraget</div>
+          <div className="mission-emoji">📊</div>
+          <div className="mission-label">Del 1</div>
           <div className="mission-text">
-            Velg hvilke oljefelter som skal stenges – felt for felt
+            Norge i dag – feltene, pengene og forskjellene mellom dem
           </div>
         </div>
         <div className="mission-card">
           <div className="mission-emoji">🗳️</div>
-          <div className="mission-label">Tiden</div>
+          <div className="mission-label">Del 2</div>
           <div className="mission-text">
-            Fire stortingsperioder, fra 2025 til 2040
+            Fire stortingsperioder. Fire ulike spørsmål å svare på
           </div>
         </div>
         <div className="mission-card">
-          <div className="mission-emoji">🎯</div>
-          <div className="mission-label">Målet</div>
+          <div className="mission-emoji">⚖️</div>
+          <div className="mission-label">Del 3</div>
           <div className="mission-text">
-            Kutt utslippene minst {goalCutPercent()} % – like mye som MDGs
-            oljeplan
+            Oppgjøret – planen din mot alternativene, i klima og i kroner
           </div>
         </div>
       </div>
 
-      <button className="hero-cta" onClick={() => navigate("/map")}>
-        🛢️ Start i 2025
+      <button className="hero-cta" onClick={() => navigate("/norge")}>
+        Start med Norge i dag →
       </button>
 
       <p className="hero-more">
-        Lurer du på hva det koster?{" "}
-        <Link to="/kostnad">Se hele regnestykket</Link> · Ny her?{" "}
+        Spillet argumenterer ikke for én konklusjon. Alle tall er hentet fra
+        åpne kilder, og forutsetningene kan du endre underveis.{" "}
+        <Link to="/kostnad">Se regnestykket</Link> ·{" "}
         <Link to="/tutorial">Slik spiller du</Link>
       </p>
     </div>

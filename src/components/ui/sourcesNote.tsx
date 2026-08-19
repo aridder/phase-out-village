@@ -5,8 +5,11 @@ import {
   HOUSEHOLDS_PER_TWH,
   TWH_PER_MILL_SM3_OE,
   TWH_PER_TURBINE_YEAR,
-  USEFUL_ENERGY_FACTOR,
+  usefulEnergyScenarios,
+  DEFAULT_USEFUL_ENERGY_SCENARIO,
 } from "../../data/energyTransition";
+import { OFFSHORE_WIND_GW_TARGET } from "../../data/alternatives";
+import { NORWAY_EMISSIONS_MT } from "../../data/norwayToday";
 import {
   POPULATION_MILLIONS,
   STATE_BUDGET_BN_NOK,
@@ -91,10 +94,19 @@ export function SourcesNote() {
             .
           </li>
           <li>
-            Nytteenergi: ~35 % av fossil energi blir nyttig arbeid (
-            <a href="https://www.iea.org/">IEA</a>-anslag 30–40 %). En 15 MW
-            havvindturbin ≈ 60 GWh/år. En gjennomsnittlig norsk husholdning
-            brukte ~14 700 kWh strøm i 2024 (
+            <strong>Nytteenergi (den mest usikre forutsetningen):</strong> hvor
+            mye ren strøm som trengs for å erstatte fossil energi, avhenger av
+            hva energien brukes til – rundt{" "}
+            {usefulEnergyScenarios[0].factor.toLocaleString("nb-NO")} TWh per
+            TWh drivstoff i motorer, men nærmere{" "}
+            {usefulEnergyScenarios[2].factor.toLocaleString("nb-NO")} for gass
+            til oppvarming og industriråstoff (
+            <a href="https://www.iea.org/">IEA</a> og alminnelige
+            virkningsgrader). Vi regner med{" "}
+            {DEFAULT_USEFUL_ENERGY_SCENARIO.factor.toLocaleString("nb-NO")} der
+            du ikke velger selv, og du kan bytte antakelse på både faktasiden og
+            i oppgjøret. En 15 MW havvindturbin ≈ 60 GWh/år. En gjennomsnittlig
+            norsk husholdning brukte ~14 700 kWh strøm i 2024 (
             <a href="https://www.ssb.no/energi-og-industri/energi/artikler/hva-er-gjennomsnittlig-stromforbruk-i-husholdningene">
               SSB
             </a>
@@ -106,7 +118,37 @@ export function SourcesNote() {
             ).
           </li>
           <li>
-            Verdenshendelsene i perioderapportene:{" "}
+            Feltenes plassering, størrelse, funnår, havområde og operatør:{" "}
+            <a href="https://factpages.sodir.no/">
+              Sokkeldirektoratets faktakart
+            </a>
+            . Kartet tegner hvert felt som en boble i feltets arealvektede
+            midtpunkt – arealet er produksjonen, fargen er utslipp per fat. Når
+            hele sokkelen er i bildet skyves boblene fra hverandre så de ikke
+            overlapper, og en strek viser hvor feltet egentlig ligger.
+          </li>
+          <li>
+            Norges samlede utslipp (
+            {NORWAY_EMISSIONS_MT.toLocaleString("nb-NO")} mill. tonn CO₂e i
+            2024), som sokkelens utslipp måles mot:{" "}
+            <a href="https://www.ssb.no/natur-og-miljo/forurensning-og-klima/statistikk/utslipp-til-luft">
+              SSB
+            </a>
+            . Havvindmålet på {OFFSHORE_WIND_GW_TARGET} GW innen 2040:{" "}
+            <a href="https://www.regjeringen.no/no/tema/energi/landingssider/havvind/">
+              regjeringen.no
+            </a>
+            .
+          </li>
+          <li>
+            <strong>Avviklingskapasiteten per periode</strong> (5, 10, 12 og
+            fritt) er en spillregel, ikke et tall fra en kilde. Den finnes fordi
+            plugging av brønner og fjerning av installasjoner krever rigger og
+            fartøy det er begrenset tilgang på – men selve grensene er satt for
+            at hver periode skal kreve en prioritering.
+          </li>
+          <li>
+            Verdenshendelsene i periodebriefene:{" "}
             <a href="https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism_en">
               EUs karbontoll (CBAM)
             </a>
@@ -138,15 +180,19 @@ export function SourcesNote() {
               {TWH_PER_MILL_SM3_OE}. Én Sm³ oljeekvivalent inneholder ≈ 10 MWh
               kjemisk energi. Kryssjekk via fat: 1 Sm³ ={" "}
               {oilEquivalentToBarrel.toLocaleString("nb-NO")} fat à ≈ 1,7 MWh ≈
-              10,7 MWh. Norsk sokkel på ~240 mill. Sm³ o.e. i året gir da ~2 400
-              TWh – det vanlig siterte tallet.
+              10,7 MWh. Norsk sokkel på ~246 mill. Sm³ o.e. i året gir da ~2 460
+              TWh.
             </li>
             <li>
-              <strong>Fornybar erstatning:</strong> utfaset TWh ×{" "}
-              {USEFUL_ENERGY_FACTOR.toLocaleString("nb-NO")}. Bare rundt en
-              tredjedel av energien i olje og gass blir nyttig arbeid når den
-              brennes – strøm brukes nesten uten tap, så nytten kan erstattes av
-              en tilsvarende mindre strømmengde.
+              <strong>Fornybar erstatning:</strong> utfaset TWh × den valgte
+              nytteenergifaktoren (
+              {usefulEnergyScenarios
+                .map((scenario) => scenario.factor.toLocaleString("nb-NO"))
+                .join(" / ")}
+              , standard{" "}
+              {DEFAULT_USEFUL_ENERGY_SCENARIO.factor.toLocaleString("nb-NO")}).
+              Strøm brukes nesten uten tap, mens fossil energi taper mye i
+              motorer og lite i kjeler – derfor spenner faktoren så vidt.
             </li>
             <li>
               <strong>Havvindturbiner:</strong> erstatnings-TWh ÷{" "}

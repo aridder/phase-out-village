@@ -1,294 +1,337 @@
-/* Feltvelger-dialogen (/phaseout): liste, nøkkeltall og handlingsrad */
+/* ==========================================================================
+   Feltvelgeren
 
-/* Skjemaet skal ikke arve dialogens knappestiler — det er sin egen flate */
-.phaseout-form {
-  all: unset;
-  width: 100%;
-}
+   Én full side, ikke en modal: valget er periodens hovedhandling og skal
+   ha hele skjermen. Kapasitetslinjen ligger øverst fordi den er regelen som
+   former valget, og linsekolonnen (det periodens spørsmål handler om) er
+   kortets største tall.
+   ========================================================================== */
 
-.phaseout-panel {
-  width: 100%;
-  max-width: 1024px;
-  padding: 1rem 1rem 0;
-  background-color: var(--flate);
-  color: var(--skog);
-}
-
-@media (width > 600px) {
-  .phaseout-panel {
-    min-width: 612px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .phaseout-panel {
-    background-color: var(--flate);
-    color: inherit;
-  }
-}
-
-/* Lukkekrysset: fast oppe i hjørnet på mobil (dialogen dekker alt),
-   klistret i headerraden på desktop */
-.phaseout-panel .close-corner-mobile {
-  display: none;
-}
-
-.phaseout-panel .close-corner-desktop {
-  position: sticky;
-  top: 0.25rem;
-  right: 0.25rem;
-  z-index: 3;
-}
-
-@media (width <= 600px) {
-  .phaseout-panel .close-corner-mobile {
-    display: block;
-    position: fixed;
-    top: 0.5rem;
-    right: 0.5rem;
-    z-index: 3;
-  }
-  /* Tittelraden må vike for det faste lukkekrysset — før overlappet
-     de og krysset ble delvis klippet */
-  .phaseout-dialog-header {
-    padding-right: 3rem;
-  }
-  .phaseout-panel .close-corner-desktop {
-    display: none;
-  }
-}
-
-.phaseout-dialog-header {
+.phaseout-page {
+  max-width: 54rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-  padding-left: 1rem;
-}
-
-.phaseout-dialog-header .phaseout-header {
-  margin: 0;
-}
-
-/* Verktøylinjen under tittelen: søk og sortering i én rad, samme
-   pilleform på begge kontrollene */
-.phaseout-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1rem;
-  padding: 0.5rem 1rem 0;
-}
-
-.phaseout-sort-dropdown {
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.phaseout-sort-dropdown select {
-  font: inherit;
-  font-size: 0.9rem;
-  padding: 0.35rem 0.6rem;
-  border-radius: 1rem;
-  border: 1px solid currentColor;
-  background: transparent;
-  color: inherit;
-}
-
-.phaseout-checkboxes {
-  margin-top: 0.75rem;
-  padding-left: 1rem;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .phaseout-header {
-  margin-bottom: 1.5rem;
-}
-
-.phaseout-list {
-  list-style: none;
-  margin: 0.5rem 0 0;
-  padding: 0;
-}
-
-.phaseout-row {
-  border-bottom: 1px solid #cccccc2e;
-}
-
-/* --- Field rows with key data --- */
-.field-row-label {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  width: 100%;
-  padding: 0.45rem 0.5rem;
-  cursor: pointer;
-  border-radius: 0.5rem;
-  transition: background-color 0.1s ease;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-.field-row-label:hover {
-  background: var(--flate-2);
+.phaseout-kicker {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.7;
 }
 
-.field-row-label input[type="checkbox"] {
-  margin-top: 0.3rem;
-  /* 13px-standardboksen er et for lite treffmål og nesten usynlig valgt-
-     indikator på mobil */
-  width: 1.4rem;
-  height: 1.4rem;
-  accent-color: var(--gran);
-  flex-shrink: 0;
+.phaseout-close {
+  padding: 0.3rem 0.6rem;
+  flex: none;
 }
 
-.field-info {
-  flex: 1;
-  min-width: 0;
-}
+/* -------------------------------------------------------------- kapasitet */
 
-.field-name {
-  font-weight: 600;
+.capacity-bar {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.9rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--flate);
+  border: 1px solid var(--linje);
+  border-left: 4px solid var(--period-accent);
+  border-radius: var(--radius-s);
+  box-shadow: var(--skygge-1);
   flex-wrap: wrap;
 }
 
-.field-badge {
-  font-size: 0.72em;
-  font-weight: 600;
-  border: 1px solid var(--rav);
-  color: var(--rav);
-  border-radius: 999px;
-  padding: 0 0.45rem;
-  white-space: nowrap;
+.capacity-bar.full {
+  border-left-color: var(--rav);
 }
 
-.field-stats {
+.capacity-slots {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.1rem;
-  font-size: 0.85em;
-  opacity: 0.9;
-  margin-top: 0.15rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.field-intensity {
-  display: inline-flex;
+  gap: 0.25rem;
   align-items: center;
-  gap: 0.4rem;
 }
 
-.intensity-bar {
-  display: inline-block;
-  width: 72px;
-  height: 8px;
-  border-radius: 4px;
-  background: rgba(128, 128, 128, 0.25);
-  overflow: hidden;
-}
-
-.intensity-bar .fill {
-  display: block;
-  height: 100%;
-  border-radius: 4px;
-  /* Samme rødtone som feltprikkene på kartet */
-  background: #c0392b;
-}
-
-/* Handlingsfeltet ligger klistret i bunnen mens listen scroller — egen
-   tonet flate med tydelig skille, samme «dokk»-språk som kartarket */
-.phaseout-actions {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 0.75rem 1rem 1rem;
-  margin-top: 0.5rem;
-  border-top: 1px solid var(--linje);
+.capacity-slots .slot {
+  width: 0.85rem;
+  height: 1.5rem;
+  border-radius: 3px;
+  border: 1px solid var(--linje);
   background-color: var(--flate-2);
-  box-shadow: 0 -4px 12px rgb(0 0 0 / 0.08);
-  color: var(--skog);
 }
 
-@media (prefers-color-scheme: dark) {
-  .phaseout-actions {
-    color: inherit;
-  }
-}
-
-/* Stabil bredde: dialogens bredde er ellers innholdsstyrt, og når
-   knappe- og effekttekstene skifter med valget, endret hele modalen
-   størrelse og hoppet på skjermen. display: block trengs fordi
-   all: unset øverst i fila gjør skjemaet inline — og inline-elementer
-   ignorerer width */
-.phaseout-form {
-  display: block;
-  width: min(860px, calc(100vw - 3rem));
-}
-
-@media (width <= 600px) {
-  .phaseout-form {
-    width: 100%;
-  }
-}
-
-.phaseout-actions .selection-impact {
-  margin-bottom: 0.5rem;
-  font-size: 0.95em;
-  /* Plass til to linjer på smale skjermer, så høyden aldri endres når
-     teksten skifter mellom hint og effekt */
-  min-height: 2.6em;
-}
-
-.phaseout-actions .impact-hint {
-  opacity: 0.75;
-}
-
-.phaseout-actions .button-row button[type="submit"] {
-  flex: 1;
-}
-
-/* Vedtaket er primærhandlingen: full bredde nederst, nærmest tommelen.
-   Hjelperne (Tøm / 5 verste / MDGs felter) deler raden over, likt
-   dimensjonert i en sekundær størrelse */
-.phaseout-actions .button-row button[type="submit"] {
-  order: 1;
-  flex-basis: 100%;
-}
-
-.phaseout-actions .button-row button[type="button"] {
-  flex: 1 1 auto;
-  font-size: 0.9rem;
-}
-
-/* «Hopp over» (submit uten valg): dempet tekstknapp i stedet for stor
-   grønn primær — å hoppe over en periode skal være mulig, ikke fristende */
-.phaseout-actions .button-row button[type="submit"].skip {
-  background: transparent;
+.capacity-slots .slot.used {
+  background-color: var(--period-accent);
   border-color: transparent;
-  text-decoration: underline;
-  opacity: 0.8;
-  box-shadow: none;
 }
 
-/* Valgte rader skal SE valgt ut — før endret bare 1,4rem-boksen seg */
-.phaseout-row:has(input:checked) {
-  background: color-mix(in srgb, var(--eple) 25%, transparent);
-  border-radius: 0.5rem;
+.capacity-more {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.capacity-text {
+  flex: 1;
+  min-width: 12rem;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.lens-note {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  padding: 0.6rem 0.85rem;
+  background-color: var(--flate-2);
+  border-radius: var(--radius-s);
+}
+
+/* --------------------------------------------------------------- verktøy */
+
+.phaseout-toolbar {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
 }
 
 .phaseout-search {
-  font: inherit;
-  padding: 0.35rem 0.6rem;
-  border: 1px solid currentColor;
-  border-radius: 1rem;
-  background: transparent;
+  flex: 1;
+  min-width: 10rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--linje);
+  border-radius: var(--radius-s);
+  background-color: var(--flate);
   color: inherit;
-  max-width: 12rem;
+  font-size: 0.9rem;
+}
+
+.phaseout-sort select {
+  padding: 0.35rem;
+  border: 1px solid var(--linje);
+  border-radius: var(--radius-s);
+  background-color: var(--flate);
+  color: inherit;
+  font-size: 0.85rem;
+  max-width: 100%;
+}
+
+/* ----------------------------------------------------------------- listen */
+
+.phaseout-list {
+  gap: 0.4rem;
+  list-style: none;
+  padding: 0;
+}
+
+.field-card {
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: start;
+  padding: 0.7rem 0.85rem;
+  background-color: var(--flate);
+  border: 1px solid var(--linje);
+  border-radius: var(--radius-s);
+  box-shadow: var(--skygge-1);
+  cursor: pointer;
+  transition:
+    border-color 0.12s ease,
+    background-color 0.12s ease;
+}
+
+.field-card:hover {
+  border-color: var(--gran);
+}
+
+.field-card.chosen {
+  border-color: var(--period-accent);
+  box-shadow: inset 0 0 0 1px var(--period-accent);
+  background-color: var(--flate-2);
+}
+
+/* Full kapasitet: kortet skal se utilgjengelig ut, ikke ødelagt */
+.field-card.blocked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.field-card input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.1rem;
+  accent-color: var(--period-accent);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.card-name {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.lens-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-size: 1rem;
+}
+
+.lens-value small {
+  font-weight: 500;
+  font-size: 0.7rem;
+  opacity: 0.75;
+}
+
+/* Utslipp per fat får fargen fra kartets skala, så tall og kart stemmer */
+.lens-value.intensity {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  color: #12300a;
+  border: 1px solid rgb(19 54 0 / 0.3);
+}
+
+.lens-value.intensity small {
+  opacity: 0.85;
+}
+
+.card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+.phaseout-empty {
+  padding: 1.5rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* -------------------------------------------------------------- handlinger */
+
+.phaseout-actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem;
+  background-color: var(--flate);
+  border: 1px solid var(--linje);
+  border-radius: var(--radius);
+  box-shadow: var(--skygge-2);
+}
+
+.selection-impact {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  min-height: 2.6rem;
+}
+
+.impact-hint {
+  opacity: 0.65;
+}
+
+.phaseout-actions .button-row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.phaseout-actions .primary {
+  background-color: var(--period-accent);
+  color: #fff;
+  border-color: transparent;
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+}
+
+/* Uten valg er submit et «hopp over» — den skal hverken se ut som eller
+   ligge der hovedhandlingen gjør */
+.phaseout-actions .skip {
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+  .phaseout-page {
+    padding: 1rem 0.8rem 2.5rem;
+    gap: 0.7rem;
+  }
+
+  /* På telefon spiste kapasitetslinjen, linseforklaringen og verktøyene
+     hele skjermen, så bare ett feltkort var synlig. Alt over listen
+     komprimeres. */
+  .phaseout-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .capacity-bar {
+    padding: 0.55rem 0.7rem;
+    gap: 0.55rem;
+  }
+
+  .capacity-slots .slot {
+    width: 0.6rem;
+    height: 1.1rem;
+  }
+
+  .capacity-text {
+    font-size: 0.78rem;
+    min-width: 8rem;
+  }
+
+  .lens-note {
+    font-size: 0.78rem;
+    padding: 0.45rem 0.6rem;
+  }
+
+  .selection-impact {
+    min-height: 0;
+    font-size: 0.8rem;
+  }
+
+  .card-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
+  .card-stats {
+    gap: 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .phaseout-actions .button-row {
+    justify-content: stretch;
+  }
+
+  .phaseout-actions .button-row button {
+    flex: 1;
+  }
 }

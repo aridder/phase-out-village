@@ -1,112 +1,107 @@
 import React, { useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
-import { gameData, sumOverYears, totalProduction } from "../../data/gameData";
-import { goalCutPercent } from "../../data/gameGoal";
-import { chapterForRound } from "../../data/story";
+import { gameData } from "../../data/gameData";
+import { periodForRound, periods } from "../../data/periods";
+import { cumulativeEmissions } from "../../analysis/fieldStats";
+import { scheduledShare } from "../../analysis/periodAnalysis";
 import "./statusBar.css";
 
 /**
- * The game's status strip: a journey rather than a percentage.
+ * The game's status strip: where you are in the four periods, and what the
+ * plan has done so far.
  *
- * Shows the four parliamentary-term periods 2025–2040 as a segmented
- * timeline with a finish flag, the player's accumulated impact (fields
- * retired, emission cut), and a narrative line that changes with the phase
- * of the game. Replaces the old year chip + "Runde 1/5" + grey progress bar.
+ * It deliberately does NOT show a pass mark. The old bar measured the
+ * player against one party's phase-out plan every second of the game,
+ * which made the whole thing read as an argument with a right answer.
+ * These are the player's own figures; the comparison against other plans
+ * belongs in Act 3, once they have made their own choices.
  */
 export function StatusBar() {
   const { year, phaseOut, getCurrentRound } = useContext(ApplicationContext);
   const navigate = useNavigate();
 
-  const round = getCurrentRound(); // 1–4 during play, 5 when finished
-  const periods = gameData.gamePeriods;
+  const round = getCurrentRound();
   const finished = year === "2040";
+  const period = periodForRound(round);
 
-  const fieldsClosed = Object.keys(phaseOut).length;
+  const fieldsScheduled = Object.keys(phaseOut).length;
   const fieldsTotal = gameData.allFields.length;
 
-  const cutPercent = useMemo(() => {
-    const baseline = sumOverYears(totalProduction({}), "emission");
-    const current = sumOverYears(totalProduction(phaseOut), "emission");
-    return Math.round(((baseline - current) / baseline) * 100);
-  }, [phaseOut]);
-
-  const chapter = chapterForRound(round);
-  const periodLabel = finished
-    ? "🏁 2040 – historien er ferdig"
-    : chapter
-      ? `📖 Kapittel ${round} av ${periods.length}: ${chapter.name} · ${chapter.period}`
-      : `${periods[round - 1].years[0]}–${periods[round - 1].years[periods[round - 1].years.length - 1]}`;
-
-  const goal = goalCutPercent();
-  const story = finished
-    ? `Du ga ${fieldsClosed} felter en sluttdato og kuttet utslippene ${cutPercent} %.`
-    : fieldsClosed === 0
-      ? `Oppdraget: kutt utslippene minst ${goal} % innen 2040.`
-      : `${fieldsClosed} felter har fått sluttdato. Du har kuttet ${cutPercent} % – målet er ${goal} %.`;
+  const avoidedMt = useMemo(
+    () => (cumulativeEmissions({}) - cumulativeEmissions(phaseOut)) / 1_000_000,
+    [phaseOut],
+  );
+  const share = useMemo(() => scheduledShare(phaseOut), [phaseOut]);
 
   return (
-    <div className="status-bar" role="status">
+    <div
+      className="status-bar"
+      role="status"
+      style={{ ["--period-accent" as string]: period.accent }}
+    >
       <div className="status-top">
-        <span className="status-period">{periodLabel}</span>
-        <span className="status-story">{story}</span>
-        {finished ? (
-          <span className="status-cta">
-            <button onClick={() => navigate("/summary")}>
-              🏆 Se resultatet
-            </button>
+        <span className="status-period">
+          {finished ? (
+            <>🏁 2040 – perioden er over</>
+          ) : (
+            <>
+              <span className="status-glyph">{period.glyph}</span>
+              {period.name} · {period.label}
+            </>
+          )}
+        </span>
+
+        <span className="status-stats" key={`${fieldsScheduled}-${avoidedMt}`}>
+          <span title="Felt som har fått en vedtatt sluttdato">
+            🛢️{" "}
+            <strong>
+              {fieldsScheduled}/{fieldsTotal}
+            </strong>{" "}
+            felt
           </span>
-        ) : (
-          <span
-            className="status-stats"
-            /* key: nytt vedtak → elementet remountes → puls-animasjonen
-               spilles én gang, så spranget i tallene får et blink */
-            key={`${fieldsClosed}-${cutPercent}`}
-          >
-            <span title="Felter med vedtatt sluttdato">
-              🛢️{" "}
-              <strong>
-                {fieldsClosed}/{fieldsTotal}
-              </strong>{" "}
-              felter
-            </span>
-            <span
-              title={`Kutt i samlede utslipp 2025–2040 med planen din. Målet er minst ${goal} % – like mye som MDG-planen.`}
-            >
-              🌍 <strong>{cutPercent > 0 ? `−${cutPercent}` : "0"} %</strong>
-              <span className="status-goal"> av 🎯 −{goal} %</span>
-            </span>
+          <span title="Andel av 2025-produksjonen som har fått sluttdato">
+            📅 <strong>{Math.round(share * 100)} %</strong> av produksjonen
+          </span>
+          <span title="Samlede utslipp 2025–2040 unngått med planen din">
+            🌍{" "}
+            <strong>
+              {avoidedMt.toLocaleString("nb-NO", { maximumFractionDigits: 0 })}{" "}
+              Mt
+            </strong>{" "}
+            CO₂ spart
+          </span>
+        </span>
+
+        {finished && (
+          <span className="status-cta">
+            <button onClick={() => navigate("/summary")}>Se oppgjøret</button>
           </span>
         )}
       </div>
 
-      <div className="status-timeline" aria-label={periodLabel}>
-        {periods.map((period, index) => {
+      <div className="status-timeline" aria-label={`Periode ${round} av 4`}>
+        {periods.map((p) => {
           const state = finished
             ? "done"
-            : index + 1 < round
+            : p.round < round
               ? "done"
-              : index + 1 === round
+              : p.round === round
                 ? "current"
                 : "future";
           return (
             <div
-              key={period.years[0]}
+              key={p.round}
               className={`status-segment ${state}`}
-              title={`${period.years[0]}–${period.years[period.years.length - 1]}`}
+              style={{ ["--segment" as string]: p.accent }}
+              title={`${p.label} – ${p.name}`}
             >
               <div className="fill" />
+              <span className="segment-label">{p.name}</span>
             </div>
           );
         })}
         <span className={`status-flag ${finished ? "reached" : ""}`}>🏁</span>
-      </div>
-
-      <div className="status-years">
-        {periods.map((period) => (
-          <span key={period.years[0]}>{period.years[0]}</span>
-        ))}
-        <span>2040</span>
       </div>
     </div>
   );

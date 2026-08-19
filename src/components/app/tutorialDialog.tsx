@@ -1,13 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { goalCutPercent } from "../../data/gameGoal";
+import { periods } from "../../data/periods";
 import "./tutorial.css";
 
 /**
- * The help card: one scannable screen instead of the old six-step wizard —
- * twelve sentences never needed five "Neste" clicks. The in-game footer and
- * period reports teach the loop while playing; this card only has to get a
- * new player started.
+ * The help card: one scannable screen.
+ *
+ * It now describes the three acts and, crucially, says that the four
+ * periods ask four different questions — the single thing players most
+ * often missed about the old version, where every round looked the same.
  */
 export function TutorialDialog({ onClose }: { onClose?: () => void }) {
   return (
@@ -23,29 +24,58 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
         <h3>🎯 Oppdraget</h3>
         <ul>
           <li>
-            Du er energiminister. Gi oljefeltene en <b>sluttdato</b> og kutt
-            utslippene minst <b>{goalCutPercent()} %</b> innen 2040.
+            Du er energiminister fra 2025 til 2040. Sokkelen tømmes uansett –
+            jobben din er å bestemme <b>hvilke felt som går først</b>.
+          </li>
+          <li>
+            Det finnes ingen fasit her. Du får se hva hvert valg kutter og hva
+            det koster, og til slutt settes planen din opp mot tre andre.
           </li>
         </ul>
 
-        <h3>🕹️ Slik spiller du</h3>
+        <h3>🕹️ Tre deler</h3>
         <ul>
           <li>
-            Historien har <b>fire kapitler</b> – ett per stortingsperiode. I
-            hvert kapittel: trykk <b>«Velg felter»</b>, huk av feltene som skal
-            stenges, og trykk <b>«Avvikle»</b>.
+            <b>Del 1 – Norge i dag:</b> tallene før du bestemmer noe.
           </li>
           <li>
-            Mellom kapitlene får du vite <b>hvordan det går</b> – og hva som
-            skjer i verden. I 2040 kommer dommen.
+            <b>Del 2 – fire stortingsperioder:</b> hver periode åpner med en
+            brief, så velger du felt, så får du en rapport.
           </li>
+          <li>
+            <b>Del 3 – oppgjøret:</b> hva planen din gjorde, hva den kostet, og
+            hva som kan erstatte energien.
+          </li>
+        </ul>
+
+        <h3>⚖️ Periodene er ikke like</h3>
+        <ul>
+          <li>
+            Hver periode har sin egen <b>kapasitet</b> (hvor mange felt du
+            rekker), sitt eget <b>tall å vurdere</b> og sitt eget{" "}
+            <b>mål å måles på</b>:
+          </li>
+          {periods.map((period) => (
+            <li key={period.round}>
+              <b>
+                {period.label} {period.name}:
+              </b>{" "}
+              inntil{" "}
+              {period.capacity >= 34
+                ? "fritt antall"
+                : `${period.capacity} felt`}
+              , vurdert på {period.lensLabel.toLowerCase()}, målt på{" "}
+              {period.measure.name.toLowerCase()}.
+            </li>
+          ))}
         </ul>
 
         <h3>💡 Trenger du hjelp?</h3>
         <ul>
           <li>
-            De verste feltene ligger øverst i feltvelgeren. <b>Rådgiveren</b>{" "}
-            gir deg en dom underveis, og alle tallene ligger i{" "}
+            På <b>kartet</b> er hver boble et felt: størrelsen er produksjonen,
+            fargen er utslipp per fat. <b>Rådgiveren</b> analyserer planen din
+            underveis, og alle tallene ligger i{" "}
             <Link to="/data">dataoversikten</Link>.
           </li>
         </ul>

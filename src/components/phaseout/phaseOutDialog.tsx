@@ -1,67 +1,41 @@
-import { DataField, Year } from "../../data/types";
-
 import React, { FormEvent, useContext, useMemo, useState } from "react";
-import { ApplicationContext } from "../../applicationContext";
 import { useNavigate } from "react-router-dom";
-import "./phaseOut.css";
-import { mdgPlan } from "../../generated/dataMdg";
+import { ApplicationContext } from "../../applicationContext";
 import { fromEntries } from "../../data/fromEntries";
-import {
-  DatasetForAllFields,
-  gameData,
-  OilfieldName,
-  periodLabel,
-} from "../../data/gameData";
+import { gameData, OilfieldName } from "../../data/gameData";
+import { periodForRound } from "../../data/periods";
+import { availableFields, FieldOutlook } from "../../analysis/periodAnalysis";
+import { intensityClassFor } from "../map/fieldScales";
+import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
 import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
+import "./phaseOut.css";
 
-/** Keys that can be used to sort oil fields in PhaseOutDialog. */
+/** How the field list can be ordered. */
 type SortKey =
-  | "recommended"
+  | "lens"
   | "alphabetical"
   | "totalProduction"
   | "emission"
   | "emissionIntensity";
 
 /**
- * Sums values of a given data field for a set of oil fields in a given year.
+ * The field selector for one period.
  *
- * @param data - The dataset containing all fields and years
- * @param fields - List of oil fields to sum
- * @param year - Year for which to sum values
- * @param dataField - The type of data to sum (productionOil, productionGas, or emission)
- * @returns Total value rounded to 2 decimals
+ * Two things make this different from the old version, which showed the
+ * same list with the same columns and the same sort in all four periods:
+ *
+ *   - The period's LENS gets its own column and its own default sort. In
+ *     period 1 that is emissions per barrel, in period 2 the kroner the
+ *     field carries, in period 3 how many years it would have run anyway,
+ *     in period 4 how much of it is still going in 2040.
+ *   - Capacity is finite. You cannot close everything at once, so the list
+ *     is a ranking problem rather than a checklist.
+ *
+ * The old "select MDG's fields" button is gone. Handing the player a
+ * party's answer key in the middle of their own decision was the single
+ * loudest signal that the game wanted one particular answer.
  */
-function sumFieldValues(
-  data: DatasetForAllFields,
-  fields: OilfieldName[],
-  year: Year,
-  dataField: DataField,
-) {
-  const value = fields
-    .map((field) => data[field]?.[year]?.[dataField]?.value ?? 0)
-    .reduce((sum, value) => sum + value, 0);
-  return Math.round(value * 100) / 100; // Round to two decimals
-}
-
-/**
- * Dialog for selecting which oil fields to phase out in the current 4-year period.
- *
- * Features:
- * - Sort oil fields by alphabetical order, total production, emissions, or emission intensity
- * - Select/deselect fields to add them to the draft phase-out plan
- * - View charts for the most recently selected field
- * - Display totals for oil/gas production reduction and emission reduction
- *
- * @param close - Function to close the dialog
- * @param from - Path to navigate back to after closing
- */
-export function PhaseOutDialog({
-  close,
-  from,
-}: {
-  close: () => void;
-  from: string;
-}) {
+export function PhaseOutDialog({ from }: { from: string }) {
   const {
     year,
     commitDraft,
@@ -71,415 +45,323 @@ export function PhaseOutDialog({
     getCurrentRound,
   } = useContext(ApplicationContext);
 
-  // Draft selection state for the current period
-  const draft = phaseOutDraft;
-  const setDraft = setPhaseOutDraft;
   const navigate = useNavigate();
   const isSmall = useIsSmallScreen();
+  const dark = usePrefersDarkMode();
 
-  const [sortKey, setSortKey] = useState<SortKey>("recommended");
+  const period = periodForRound(getCurrentRound());
+  const draft = phaseOutDraft;
+  const draftCount = Object.keys(draft).length;
+  const remaining = period.capacity - draftCount;
+  const atCapacity = remaining <= 0;
+
+  const [sortKey, setSortKey] = useState<SortKey>("lens");
   const [query, setQuery] = useState("");
 
-  // Handles submission: commitDraft() retires the fields, records the
-  // decision and navigates to the period report (or the final summary).
-  // Deliberately does NOT call close(): closing the native dialog fires its
-  // "close" event asynchronously, and the route's onClose would navigate
-  // back and override commitDraft's navigation. Navigating away unmounts
-  // the dialog without firing the event.
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    commitDraft();
-  }
+  const rows = useMemo(
+    () => availableFields(phaseOut, period),
+    [phaseOut, period],
+  );
 
-  const periodEnd = (parseInt(year) + 3).toString();
-
-  // Fills draft selection with fields according to MDG plan
-  function handleMdgPlanClick(e: FormEvent) {
-    e.preventDefault();
-    const period = [
-      year,
-      (parseInt(year) + 1).toString(),
-      (parseInt(year) + 2).toString(),
-      periodEnd,
-    ];
-
-    const fields = fromEntries(
-      Object.entries(mdgPlan).filter(
-        ([_, year]) => year && period.includes(year),
-      ),
-    );
-    setDraft(fields);
-    revealSelection();
-  }
-
-  // Quick pick: adds the five worst remaining fields (size + inefficiency
-  // combined — the same score behind the recommended sort) to the draft
-  function handleWorstClick(e: FormEvent) {
-    e.preventDefault();
-    const worst = [...fieldRows]
-      .sort((a, b) => b.score - a.score)
-      .filter((r) => !draft[r.field])
-      .slice(0, 5);
-    setDraft((d) => ({
-      ...d,
-      ...fromEntries(worst.map((r) => [r.field, year])),
-    }));
-    revealSelection();
-  }
-
-  // Quick picks select rows the user may have scrolled past — bring the
-  // list back into view so the choice is visibly confirmed
-  function revealSelection() {
-    document
-      .querySelector(".phaseout-list")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  // Removes a field from the draft plan
-  function removeField(field: OilfieldName) {
-    setDraft((d) =>
-      fromEntries(Object.entries(d).filter(([f]) => f !== field)),
-    );
-  }
-
-  // Adds a field to the draft plan
-  function addField(field: OilfieldName) {
-    setDraft((d) => ({ ...d, [field]: year }));
-  }
-
-  // Toggles a field on/off in the draft plan
-  function toggle(field: OilfieldName, checked: boolean) {
-    if (checked) {
-      addField(field);
-    } else {
-      removeField(field);
-    }
-  }
-
-  // Key figures per field for the current year, plus a "worst first" score
-  // that combines size (emissions) and inefficiency (emissions per barrel)
-  const fieldRows = useMemo(() => {
-    const rows = Object.keys(gameData.data)
-      .filter((k) => !(k in phaseOut))
-      .map((k) => {
-        const d = gameData.data[k]?.[year];
-        return {
-          field: k as OilfieldName,
-          emission: d?.emission?.value ?? 0,
-          production: d?.totalProduction?.value ?? 0,
-          intensity: d?.emissionIntensity?.value ?? 0,
-        };
-      });
-    const maxEmission = Math.max(1, ...rows.map((r) => r.emission));
-    const maxIntensity = Math.max(1, ...rows.map((r) => r.intensity));
-    // Shelf average intensity in kg CO2 per barrel, for the versting badge
-    const totalEmissionAll = rows.reduce((sum, r) => sum + r.emission, 0);
-    const totalProductionAll = rows.reduce((sum, r) => sum + r.production, 0);
-    const shelfAvgIntensity =
-      totalProductionAll > 0
-        ? (totalEmissionAll * 1000) / (totalProductionAll * 6.2898 * 1_000_000)
-        : 0;
-    return rows.map((r) => ({
-      ...r,
-      score: r.emission / maxEmission + r.intensity / maxIntensity,
-      intensityShare: r.intensity / maxIntensity,
-      // 2,5× sokkel-snittet: med 1,5× fikk 13 av 34 felter merket og
-      // «versting» mistet all signalverdi
-      isWorst: r.intensity > shelfAvgIntensity * 2.5,
-    }));
-  }, [phaseOut, year]);
-
-  const sortedRows = useMemo(() => {
+  const sorted = useMemo(() => {
     const matching = query
-      ? fieldRows.filter((r) =>
-          r.field.toLowerCase().includes(query.toLowerCase()),
+      ? rows.filter((r) =>
+          r.field.toLowerCase().includes(query.toLowerCase().trim()),
         )
-      : fieldRows;
+      : rows;
     return [...matching].sort((a, b) => {
       switch (sortKey) {
         case "alphabetical":
-          return a.field.localeCompare(b.field);
+          return a.field.localeCompare(b.field, "nb");
         case "totalProduction":
-          return b.production - a.production;
+          return b.forgoneProduction - a.forgoneProduction;
         case "emission":
-          return b.emission - a.emission;
+          return b.avoidedEmission - a.avoidedEmission;
         case "emissionIntensity":
           return b.intensity - a.intensity;
         default:
-          return b.score - a.score;
+          return byLens(a, b);
       }
     });
-  }, [fieldRows, sortKey, query]);
+  }, [rows, sortKey, query, period]);
 
-  // Calculate total production/emission reductions for draft fields
-  const totalOilProduction = sumFieldValues(
-    gameData.data,
-    Object.keys(draft),
-    year,
-    "productionOil",
-  );
-  const totalGasProduction = sumFieldValues(
-    gameData.data,
-    Object.keys(draft),
-    year,
-    "productionGas",
-  );
-  const totalEmission = sumFieldValues(
-    gameData.data,
-    Object.keys(draft),
-    year,
-    "emission",
-  );
-
-  function capitalizeFirst(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
-  function getSortKeyTranslation(str: string) {
-    let translation = str;
-    switch (str) {
-      case "alphabetical":
-        translation = "Alfabetisk";
-        break;
-      case "totalProduction":
-        translation = "Total produksjon";
-        break;
-      case "emission":
-        translation = "Utslipp";
-        break;
-      case "emissionIntensity":
-        translation = "Utslippsintensitet";
-        break;
+  /** The ordering the period's own question implies. */
+  function byLens(a: FieldOutlook, b: FieldOutlook): number {
+    switch (period.lens) {
+      case "economy":
+        return (
+          b.avoidedEmission / Math.max(b.forgoneRevenueBnNok, 0.001) -
+          a.avoidedEmission / Math.max(a.forgoneRevenueBnNok, 0.001)
+        );
+      case "additionality":
+        return b.yearsRemaining - a.yearsRemaining;
+      case "legacy":
+        return b.avoidedEmission - a.avoidedEmission;
       default:
-        break;
-    }
-    return translation;
-  }
-
-  function getMeasurementUnit(str: string) {
-    let measurement = "";
-    switch (str) {
-      case "alphabetical":
-        measurement = "";
-        break;
-      case "totalProduction":
-        measurement = "Sm³";
-        break;
-      case "emission":
-        measurement = "tonn CO₂";
-        break;
-      case "emissionIntensity":
-        measurement = "kg CO₂e/Sm³";
-        break;
-      default:
-        break;
-    }
-    return measurement;
-  }
-
-  function formatValue(value: number, key: SortKey) {
-    switch (key) {
-      case "totalProduction":
-        return `${value.toLocaleString("no-NO")} Sm³`;
-      case "emission":
-        return `${value.toFixed(1)} tonn CO₂`;
-      case "emissionIntensity":
-        return `${value.toFixed(2)} kg CO₂e/Sm³`;
-      default:
-        return "";
+        return b.intensity - a.intensity;
     }
   }
+
+  function toggle(field: OilfieldName, checked: boolean) {
+    setPhaseOutDraft((current) => {
+      if (!checked) {
+        return fromEntries(
+          Object.entries(current).filter(([name]) => name !== field),
+        );
+      }
+      if (Object.keys(current).length >= period.capacity) return current;
+      return { ...current, [field]: year };
+    });
+  }
+
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    commitDraft();
+  }
+
+  const totals = useMemo(() => {
+    const chosen = rows.filter((r) => draft[r.field]);
+    return {
+      emissionMt: chosen.reduce((s, r) => s + r.avoidedEmission, 0) / 1_000_000,
+      production: chosen.reduce((s, r) => s + r.forgoneProduction, 0),
+      revenue: chosen.reduce((s, r) => s + r.forgoneRevenueBnNok, 0),
+    };
+  }, [rows, draft]);
 
   return (
-    <form className="phaseout-form" onSubmit={handleSubmit}>
-      <div className="phaseout-panel">
-        <div className="close-corner-mobile">
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              navigate(from);
-            }}
-            title="Tilbake"
-            aria-label="Lukk feltvelgeren"
+    <form
+      className="phaseout-page"
+      onSubmit={handleSubmit}
+      style={{ ["--period-accent" as string]: period.accent }}
+    >
+      <header className="phaseout-header">
+        <div>
+          <div className="phaseout-kicker">
+            {period.label} · {period.name}
+          </div>
+          <h1>Velg felt som skal få sluttdato</h1>
+        </div>
+        <button
+          type="button"
+          className="phaseout-close"
+          onClick={() => navigate(from)}
+          aria-label="Lukk feltvelgeren"
+        >
+          ✕
+        </button>
+      </header>
+
+      {/* Kapasiteten er periodens viktigste regel og står derfor øverst,
+          ikke som en feilmelding når man treffer taket */}
+      <div className={`capacity-bar ${atCapacity ? "full" : ""}`}>
+        <div className="capacity-slots" aria-hidden="true">
+          {Array.from({ length: Math.min(period.capacity, 12) }, (_, i) => (
+            <span key={i} className={i < draftCount ? "slot used" : "slot"} />
+          ))}
+          {period.capacity > 12 && (
+            <span className="capacity-more">+{period.capacity - 12}</span>
+          )}
+        </div>
+        <div className="capacity-text">
+          <strong>
+            {draftCount} av {period.capacity}
+          </strong>{" "}
+          plasser brukt.{" "}
+          {atCapacity
+            ? "Kapasiteten er full – fjern et felt for å bytte."
+            : period.capacityReason}
+        </div>
+      </div>
+
+      <div className="lens-note">
+        <strong>{period.lensLabel}:</strong> {period.lensExplainer}
+      </div>
+
+      <div className="phaseout-toolbar">
+        <input
+          type="search"
+          className="phaseout-search"
+          placeholder="🔎 Finn felt …"
+          aria-label="Søk etter felt"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <label className="phaseout-sort">
+          Sorter:{" "}
+          <select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value as SortKey)}
           >
-            ✕
-          </button>
-        </div>
+            <option value="lens">{period.lensLabel} (periodens mål)</option>
+            <option value="emission">Størst kutt fram mot 2040</option>
+            <option value="emissionIntensity">Mest utslipp per fat</option>
+            <option value="totalProduction">Størst produksjon</option>
+            <option value="alphabetical">Alfabetisk</option>
+          </select>
+        </label>
+      </div>
 
-        {/* Tittel og lukkekryss først — verktøyene under, ikke over,
-            overskriften de gjelder for */}
-        <div className="phaseout-dialog-header">
-          <h3 className="phaseout-header">
-            Velg felter for avvikling {periodLabel(getCurrentRound())}
-          </h3>
-
-          <div className="close-corner-desktop">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigate(from);
-              }}
-              title="Tilbake"
-              aria-label="Lukk feltvelgeren"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <div className="phaseout-toolbar">
-          <input
-            type="search"
-            className="phaseout-search"
-            placeholder="🔎 Finn felt …"
-            aria-label="Søk etter oljefelt"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
-          />
-          <label className="phaseout-sort-dropdown">
-            Sorter etter:{" "}
-            <select
-              value={sortKey}
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) => setSortKey(e.target.value as SortKey)}
-            >
-              <option value="recommended">
-                Størst og mest ineffektiv først (anbefalt)
-              </option>
-              <option value="emission">Størst utslipp</option>
-              <option value="emissionIntensity">Mest utslipp per fat</option>
-              <option value="totalProduction">Størst produksjon</option>
-              <option value="alphabetical">Alfabetisk</option>
-            </select>
-          </label>
-        </div>
-
-        <div className="phaseout-checkboxes">
-          <ul className="phaseout-list">
-            {sortedRows.map((row) => (
-              <li key={row.field} className="phaseout-row">
-                <label className="field-row-label">
-                  <input
-                    type="checkbox"
-                    onChange={(e) => toggle(row.field, e.target.checked)}
-                    checked={!!draft[row.field]}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  <div className="field-info">
-                    <div className="field-name">
-                      {row.field}
-                      {row.isWorst && (
-                        <span
-                          className="field-badge"
-                          title="Utslipp per fat langt over sokkel-snittet"
-                        >
-                          🔥 versting
-                        </span>
-                      )}
-                    </div>
-                    <div className="field-stats">
-                      <span title={`Utslipp i ${year}`}>
-                        🏭{" "}
-                        {Math.round(row.emission / 1000).toLocaleString(
-                          "nb-NO",
-                        )}{" "}
-                        kt CO₂/år
-                      </span>
-                      <span title={`Produksjon i ${year}`}>
-                        🛢️ {row.production.toLocaleString("nb-NO")} mill. Sm³/år
-                      </span>
-                      <span
-                        className="field-intensity"
-                        title="Utslipp per fat, målt mot det verste feltet"
-                      >
-                        <span className="intensity-bar">
-                          <span
-                            className="fill"
-                            style={{
-                              width: `${Math.max(3, Math.round(row.intensityShare * 100))}%`,
-                            }}
-                          />
-                        </span>
-                        {Math.round(row.intensity).toLocaleString("nb-NO")}{" "}
-                        kg/fat
-                      </span>
-                    </div>
+      <ul className="phaseout-list">
+        {sorted.map((row) => {
+          const checked = !!draft[row.field];
+          const blocked = !checked && atCapacity;
+          return (
+            <li key={row.field}>
+              <label
+                className={`field-card ${checked ? "chosen" : ""} ${blocked ? "blocked" : ""}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  disabled={blocked}
+                  onChange={(e) => toggle(row.field, e.target.checked)}
+                />
+                <div className="card-body">
+                  <div className="card-title">
+                    <span className="card-name">{row.field}</span>
+                    <LensValue row={row} period={period} dark={dark} />
                   </div>
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
+                  <div className="card-stats">
+                    <span title="Produksjon i året">
+                      🛢️{" "}
+                      {(
+                        gameData.data[row.field]?.[year]?.totalProduction
+                          ?.value ?? 0
+                      ).toLocaleString("nb-NO", {
+                        maximumFractionDigits: 1,
+                      })}{" "}
+                      mill. Sm³/år
+                    </span>
+                    <span title="Samlet kutt fram mot 2040 hvis feltet stenges nå">
+                      🌍{" "}
+                      {(row.avoidedEmission / 1_000_000).toLocaleString(
+                        "nb-NO",
+                        { maximumFractionDigits: 1 },
+                      )}{" "}
+                      mill. t CO₂ spart
+                    </span>
+                    <span title="Statsinntekter feltet bærer fram mot 2040">
+                      💰{" "}
+                      {row.forgoneRevenueBnNok.toLocaleString("nb-NO", {
+                        maximumFractionDigits: 0,
+                      })}{" "}
+                      mrd kr
+                    </span>
+                  </div>
+                </div>
+              </label>
+            </li>
+          );
+        })}
+        {sorted.length === 0 && (
+          <li className="phaseout-empty">
+            {rows.length === 0
+              ? "Alle felt har allerede fått en sluttdato."
+              : `Ingen felt matcher «${query}».`}
+          </li>
+        )}
+      </ul>
 
-        <div className="phaseout-actions">
-          {/* Alltid rendret med stabil høyde: når linjen kom og gikk med
-              valget, endret hele modalen størrelse og hoppet på skjermen */}
-          <div className="selection-impact">
-            {Object.keys(draft).length > 0 ? (
-              <>
-                Valget fjerner{" "}
-                <strong>
-                  ~{Math.round(totalEmission / 1000).toLocaleString("nb-NO")} kt
-                  CO₂
-                </strong>{" "}
-                og{" "}
-                <strong>
-                  {(
-                    Math.round((totalOilProduction + totalGasProduction) * 10) /
-                    10
-                  ).toLocaleString("nb-NO")}{" "}
-                  mill. Sm³
-                </strong>{" "}
-                produksjon per år.
-              </>
-            ) : (
-              <span className="impact-hint">
-                Huk av felter for å se hva valget fjerner av utslipp og
-                produksjon.
-              </span>
-            )}
-          </div>
-          <div className="button-row">
-            {/* type="button" er viktig: uten den er knappene submit-knapper
-                i skjemaet, og «Tøm» ville tømt utvalget OG avsluttet
-                perioden i samme klikk */}
-            <button
-              type="button"
-              onClick={() => setPhaseOutDraft({})}
-              disabled={Object.keys(phaseOutDraft).length < 1}
-            >
-              Tøm
-            </button>
-            <button
-              type="button"
-              onClick={handleWorstClick}
-              title="Legg til de fem feltene med størst utslipp og dårligst effektivitet"
-            >
-              {isSmall ? `⚡ 5 verste` : `⚡ Velg de 5 verste`}
-            </button>
-            <button type="button" onClick={handleMdgPlanClick}>
-              {isSmall ? `📋 Velg MDGs felter` : `📋 Velg felter fra MDGs plan`}
-            </button>
-            <button
-              type="submit"
-              /* Uten valg er submit et «hopp over»: da skal knappen hverken
-                 se ut som eller ligge der hovedhandlingen gjør — en stor
-                 grønn «Hopp over» ble trykket i vanvare */
-              className={
-                Object.keys(phaseOutDraft).length === 0 ? "skip" : "primary"
-              }
-              disabled={year === "2040"}
-            >
-              {Object.keys(phaseOutDraft).length === 0
-                ? "⏭ Hopp over perioden"
-                : `♻ Avvikle ${Object.keys(phaseOutDraft).length} ${isSmall ? "felt" : "oljefelt"}`}
-            </button>
-          </div>
+      <div className="phaseout-actions">
+        <div className="selection-impact">
+          {draftCount > 0 ? (
+            <>
+              Valget kutter{" "}
+              <strong>
+                {totals.emissionMt.toLocaleString("nb-NO", {
+                  maximumFractionDigits: 1,
+                })}{" "}
+                mill. tonn CO₂
+              </strong>{" "}
+              fram mot 2040, og koster staten omtrent{" "}
+              <strong>
+                {totals.revenue.toLocaleString("nb-NO", {
+                  maximumFractionDigits: 0,
+                })}{" "}
+                mrd kr
+              </strong>{" "}
+              i samme periode.
+            </>
+          ) : (
+            <span className="impact-hint">
+              Huk av felt for å se hva valget kutter og hva det koster.
+            </span>
+          )}
+        </div>
+        <div className="button-row">
+          <button
+            type="button"
+            onClick={() => setPhaseOutDraft({})}
+            disabled={draftCount === 0}
+          >
+            Tøm
+          </button>
+          <button
+            type="submit"
+            className={draftCount === 0 ? "skip" : "primary"}
+          >
+            {draftCount === 0
+              ? "Hopp over perioden"
+              : `Vedta sluttdato for ${draftCount} ${isSmall ? "felt" : draftCount === 1 ? "felt" : "felt"} →`}
+          </button>
         </div>
       </div>
     </form>
   );
+}
+
+/**
+ * The one figure this period asks the player to weigh, rendered as the
+ * card's headline number so it cannot be missed.
+ */
+function LensValue({
+  row,
+  period,
+  dark,
+}: {
+  row: FieldOutlook;
+  period: ReturnType<typeof periodForRound>;
+  dark: boolean;
+}) {
+  switch (period.lens) {
+    case "economy":
+      return (
+        <span className="lens-value">
+          {row.forgoneRevenueBnNok.toLocaleString("nb-NO", {
+            maximumFractionDigits: 0,
+          })}{" "}
+          <small>mrd kr</small>
+        </span>
+      );
+    case "additionality":
+      return (
+        <span className="lens-value">
+          {row.yearsRemaining} <small>år igjen</small>
+        </span>
+      );
+    case "legacy":
+      return (
+        <span className="lens-value">
+          {(row.avoidedEmission / 1_000_000).toLocaleString("nb-NO", {
+            maximumFractionDigits: 1,
+          })}{" "}
+          <small>mill. t igjen</small>
+        </span>
+      );
+    default: {
+      const cls = intensityClassFor(row.intensity);
+      return (
+        <span
+          className="lens-value intensity"
+          style={{ backgroundColor: dark ? cls.dark : cls.light }}
+          title={`${cls.label} utslipp per fat`}
+        >
+          {row.intensity.toLocaleString("nb-NO", {
+            maximumFractionDigits: 1,
+          })}{" "}
+          <small>kg/fat</small>
+        </span>
+      );
+    }
+  }
 }

@@ -9,7 +9,7 @@ import { PhaseOutRoute } from "../phaseout/phaseOutRoute";
 import { ProductionRoute } from "../production/productionRoute";
 import { useSessionState } from "../../hooks/useSessionState";
 import { EmissionRoute } from "../emissions/emissionRoute";
-import { GameOverDialog } from "./gameOverDialog";
+import { VerdictRoute } from "../verdict/verdictRoute";
 import { SiteLayout } from "./siteLayout";
 import { GameLayout } from "./gameLayout";
 import { PlanRoute } from "../plan/planRoute";
@@ -19,6 +19,8 @@ import { PhaseOutSchedule } from "../../data/gameData";
 import { TutorialRoute } from "./tutorialRoute";
 import { AdvisorRoute } from "../advisor/advisorRoute";
 import { TransitionRoute } from "../transition/transitionRoute";
+import { TodayRoute } from "../today/todayRoute";
+import { PeriodBriefRoute } from "../period/periodBriefRoute";
 
 /**
  * All routes, organized as two layout routes that each own their chrome:
@@ -51,6 +53,8 @@ function ApplicationRoutes() {
       <Routes>
         <Route element={<SiteLayout />}>
           <Route path={"/"} element={<FrontPage />} />
+          {/* Akt 1 — orienteringen, før noe valg tas */}
+          <Route path={"/norge"} element={<TodayRoute />} />
           <Route path={"/kostnad"} element={<CostPage />} />
           <Route path={"/tutorial"} element={<TutorialRoute />} />
           <Route path={"*"} element={<h2>Not Found</h2>} />
@@ -60,14 +64,18 @@ function ApplicationRoutes() {
             spillerne skal beholde statuslinjen og neste-steg-footeren */}
           <Route path={"/transition"} element={<TransitionRoute />} />
           <Route path={"/advisor"} element={<AdvisorRoute />} />
-          <Route path={"/map/*"} element={<MapRoute />} />
+          <Route path={"/map"} element={<MapRoute />} />
+          <Route path={"/map/:slug"} element={<MapRoute />} />
+          {/* Akt 2 — hver periode åpner med sin egen brief */}
+          <Route path={"/periode"} element={<PeriodBriefRoute />} />
           <Route path={"/phaseout"} element={<PhaseOutRoute />} />
           <Route path={"/plan/*"} element={<PlanRoute />} />
           <Route path={"/emissions/*"} element={<EmissionRoute />} />
           <Route path={"/production/*"} element={<ProductionRoute />} />
           <Route path={"/data/*"} element={<DataViewRoute />} />
           <Route path={"/report"} element={<PeriodReportRoute />} />
-          <Route path={"/summary"} element={<GameOverDialog />} />
+          {/* Akt 3 — oppgjøret */}
+          <Route path={"/summary"} element={<VerdictRoute />} />
         </Route>
       </Routes>
     </>

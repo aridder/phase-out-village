@@ -16,9 +16,27 @@
 }
 
 .status-bar .status-period {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   font-weight: 700;
   font-size: 1.05em;
   white-space: nowrap;
+}
+
+/* Periodens tall, i periodens egen farge — det samme merket som brief-en
+   og rapporten bruker, så man alltid vet hvilket kapittel man er i */
+.status-bar .status-glyph {
+  display: grid;
+  place-items: center;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background-color: var(--period-accent);
+  color: #fff;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
 }
 
 .status-bar .status-story {
@@ -59,11 +77,34 @@
   overflow: hidden;
 }
 
+/* Navnet på perioden ligger i selve segmentet — tidligere sto det bare
+   årstall der, og de fire periodene var umulige å skille fra hverandre */
+.status-segment .segment-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #e0ffb2;
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.status-segment.done .segment-label,
+.status-segment.current .segment-label {
+  color: #fff;
+  opacity: 1;
+}
+
 .status-segment .fill {
   position: absolute;
   inset: 0;
   border-radius: 7px;
-  background: linear-gradient(to right, #79b83a, var(--eple));
+  background-color: var(--segment);
   transform-origin: left;
   transform: scaleX(0);
   transition: transform 0.8s ease;
