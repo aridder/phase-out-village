@@ -1,55 +1,20 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { LuCoins, LuLightbulb, LuPlay, LuWind } from "react-icons/lu";
-import { MainButton } from "../ui/mainButton";
-import { Brand } from "./brand";
+import { AppNav } from "./appNav";
 
 /**
- * Layout for everything OUTSIDE the game: the front page calculator, the
- * transition page, the advisor and the tutorial.
+ * Layout for the pages outside the game loop: the title screen, Act 1, the
+ * cost calculator and the tutorial.
  *
- * A slim brand header with one highlighted entry point into the game —
- * no status timeline, no game navigation, no action footer. This layout
- * owns its chrome entirely; changing it never touches the game's cockpit.
+ * It shares its navigation with the game (see {@link AppNav}) and differs
+ * only in what it leaves out — no status bar, no next-step footer. That is
+ * the whole distinction now; the header itself is identical everywhere.
  */
 export function SiteLayout() {
   return (
     <>
       <header>
-        <div className="header-bar">
-          <Brand />
-          <div className="header-nav">
-            <MainButton
-              icon={<LuCoins />}
-              label={"Hva koster det?"}
-              labelSmall={"Kostnad"}
-              title="Se hva utfasing koster – og hva vi får igjen"
-              to="/kostnad"
-            />
-            <MainButton
-              icon={<LuWind />}
-              label={"Omstilling"}
-              labelSmall={"Grønt"}
-              title="Se hva som erstatter oljen"
-              to="/transition"
-            />
-            <MainButton
-              icon={<LuLightbulb />}
-              label={"Rådgiver"}
-              labelSmall={"Råd"}
-              title="Få analyse av og forslag til planen din"
-              to="/advisor"
-            />
-            <MainButton
-              icon={<LuPlay />}
-              label={"Spill Oljespillet"}
-              labelSmall={"Spill"}
-              title="Lag din egen utfasingsplan"
-              to="/map"
-              primary
-            />
-          </div>
-        </div>
+        <AppNav />
       </header>
       <main>
         <Outlet />

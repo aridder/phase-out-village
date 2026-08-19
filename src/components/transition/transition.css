@@ -15,24 +15,26 @@
 
 .transition-steps {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-5);
   counter-reset: transition-step;
 }
 
+/* Hårstrek over, ikke ramme rundt — de tre stegene er tekst, ikke objekter */
 .transition-step {
-  border: 1px solid currentColor;
-  border-radius: 0.75rem;
-  padding: 1rem;
+  border-top: 2px solid var(--linje);
+  padding-top: var(--space-3);
   counter-increment: transition-step;
 }
 
-.transition-step .step-emoji {
-  font-size: 2em;
+.transition-step h4 {
+  margin: 0.5rem 0 0.3rem;
+  font-size: 1rem;
 }
 
-.transition-step h4 {
-  margin: 0.5rem 0;
+.transition-step div {
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
 .transition-step h4::before {

@@ -1,33 +1,20 @@
 import React, { useContext } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-/* Ett ikonsett. Headeren blandet tidligere fa, md, bi, rx og fc — inkludert
-   ett fullfarget ikon (FcViewDetails) som ikke fulgte tekstfargen i det hele
-   tatt. Lucide har én strektykkelse og ingen fyll. */
-import {
-  LuChartNoAxesColumn,
-  LuCircleHelp,
-  LuLightbulb,
-  LuMap,
-  LuPencil,
-  LuRotateCcw,
-  LuScrollText,
-  LuTrendingDown,
-  LuWind,
-  LuX,
-} from "react-icons/lu";
+import { LuPencil, LuScrollText, LuX } from "react-icons/lu";
 import { ApplicationContext } from "../../applicationContext";
 import { MainButton } from "../ui/mainButton";
 import { StatusBar } from "../ui/statusBar";
+import { AppNav } from "./appNav";
 import { periodForRound } from "../../data/periods";
-import { Brand } from "./brand";
 
 /**
- * Layout for the game itself: map, field selection, plan, emissions,
- * production, data and the final summary.
+ * Layout for the game itself: map, period brief, field selection, report
+ * and the final reckoning.
  *
- * Owns the full cockpit — game navigation, the journey StatusBar and the
- * guided next-step footer. The site pages never see any of this, and this
- * file can be reshaped freely without touching the site chrome.
+ * It adds exactly two things to the shared chrome — the journey StatusBar
+ * and the guided next-step footer. The navigation is the same one the rest
+ * of the app uses, so moving between a site page and a game page no longer
+ * reshuffles the header.
  */
 export function GameLayout() {
   return (
@@ -42,70 +29,12 @@ export function GameLayout() {
 }
 
 function GameHeader() {
-  const { year, restart } = useContext(ApplicationContext);
-  const gameEnded = year === "2040";
-
   return (
     <header>
       <div>
-        <div className="header-bar">
-          <Brand />
-          <div className="header-nav">
-            <MainButton
-              icon={<LuMap />}
-              label={"Kart"}
-              labelSmall={"Kart"}
-              to="/map"
-            />
-            <MainButton
-              icon={<LuChartNoAxesColumn />}
-              label={"Plan"}
-              labelSmall={"Plan"}
-              to="/plan"
-            />
-            {/* Akt 1 skal være tilgjengelig midt i spillet — spørsmålet
-                «hvor stort var dette feltet igjen?» kommer underveis */}
-            <MainButton
-              icon={<LuTrendingDown />}
-              label={"Norge i dag"}
-              labelSmall={"Fakta"}
-              title="Tallene for sokkelen slik den står i dag"
-              to="/norge"
-            />
-            <MainButton
-              icon={<LuLightbulb />}
-              label={"Rådgiver"}
-              labelSmall={"Råd"}
-              title="Få analyse av og forslag til planen din"
-              to="/advisor"
-            />
-            <MainButton
-              icon={<LuWind />}
-              label={"Omstilling"}
-              labelSmall={"Grønt"}
-              title="Se hva som erstatter oljen"
-              to="/transition"
-            />
-            {gameEnded || (
-              <MainButton
-                icon={<LuCircleHelp />}
-                label={"Hjelp"}
-                labelSmall={"Hjelp"}
-                title="Hjelp"
-                to="/tutorial"
-              />
-            )}
-            <div className="nav-divider"></div>
-            <MainButton
-              icon={<LuRotateCcw />}
-              label={"Restart"}
-              labelSmall={"Ny"}
-              title="Start på nytt"
-              onClick={restart}
-            />
-          </div>
-        </div>
-
+        {/* Samme navigasjon som resten av appen. Spillet legger bare
+            statuslinjen under — headeren skifter aldri form. */}
+        <AppNav />
         <StatusBar />
       </div>
     </header>
