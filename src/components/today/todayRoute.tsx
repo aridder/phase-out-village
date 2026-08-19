@@ -8,6 +8,7 @@ import {
   DEFAULT_USEFUL_ENERGY_SCENARIO,
 } from "../../data/energyTransition";
 import { OIL_FUND_BN_NOK } from "../../data/norwayFacts";
+import { Illustration } from "../ui/illustrations";
 import { IntensityStrip } from "./intensityStrip";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./today.css";
@@ -67,7 +68,7 @@ export function TodayRoute() {
     <article className="today-page">
       {/* ---------------------------------------------------------- 1. The shelf */}
       <header className="today-hero">
-        <div className="today-act">Del 1 av 3</div>
+        <div className="kicker">Del 1 av 3</div>
         <h1>Norge i dag</h1>
         <p className="today-lead">
           Før du bestemmer noe som helst: dette er sokkelen slik den står i{" "}
@@ -78,7 +79,7 @@ export function TodayRoute() {
 
       <section className="today-section">
         <h2>Maskinen</h2>
-        <div className="figure-row">
+        <div className="stats has-lead">
           <Figure
             value={shelf.production.toLocaleString("nb-NO")}
             unit="mill. Sm³ o.e."
@@ -132,7 +133,7 @@ export function TodayRoute() {
           </span>
         </div>
 
-        <div className="figure-row">
+        <div className="stats has-lead">
           <Figure
             value={shelf.revenuePerCapitaKr.toLocaleString("nb-NO")}
             unit="kroner"
@@ -170,29 +171,19 @@ export function TodayRoute() {
         <IntensityStrip />
 
         <div className="contrast">
-          <div className="contrast-card clean">
-            <div className="contrast-name">{contrast.clean.field}</div>
-            <div className="contrast-figure">
-              {contrast.clean.intensity.toLocaleString("nb-NO")} kg CO₂/fat
+          {[contrast.clean, contrast.dirty].map((field) => (
+            <div key={field.field}>
+              <h3>{field.field}</h3>
+              <p className="num">
+                {field.intensity.toLocaleString("nb-NO")}{" "}
+                <small className="unit">kg CO₂/fat</small>
+              </p>
+              <p className="label">
+                {field.production.toLocaleString("nb-NO")} mill. Sm³ o.e./år ·{" "}
+                {field.sea} · funnet {field.discovered}
+              </p>
             </div>
-            <div className="contrast-meta">
-              {contrast.clean.production.toLocaleString("nb-NO")} mill. Sm³
-              o.e./år · {contrast.clean.sea} · funnet{" "}
-              {contrast.clean.discovered}
-            </div>
-          </div>
-          <div className="contrast-versus">mot</div>
-          <div className="contrast-card dirty">
-            <div className="contrast-name">{contrast.dirty.field}</div>
-            <div className="contrast-figure">
-              {contrast.dirty.intensity.toLocaleString("nb-NO")} kg CO₂/fat
-            </div>
-            <div className="contrast-meta">
-              {contrast.dirty.production.toLocaleString("nb-NO")} mill. Sm³
-              o.e./år · {contrast.dirty.sea} · funnet{" "}
-              {contrast.dirty.discovered}
-            </div>
-          </div>
+          ))}
         </div>
         <p className="today-punchline">
           {contrast.dirty.field} produserer{" "}
@@ -202,13 +193,15 @@ export function TodayRoute() {
         </p>
 
         <h3>Hvorfor er forskjellen så stor?</h3>
-        <div className="reason-grid">
+        <div className="reasons">
           {intensityReasons.map((reason) => (
-            <div key={reason.title} className="reason">
-              <div className="reason-emoji">{reason.emoji}</div>
-              <h4>{reason.title}</h4>
-              <p>{reason.text}</p>
-            </div>
+            <article key={reason.title} className="reason">
+              <Illustration name={reason.illustration} size={40} />
+              <div>
+                <h3>{reason.title}</h3>
+                <p>{reason.text}</p>
+              </div>
+            </article>
           ))}
         </div>
       </section>
@@ -282,7 +275,7 @@ export function TodayRoute() {
           Ingen av tallene over er stabile. Reservoarene tømmes, og produksjonen
           faller av seg selv – uten at Stortinget vedtar noe som helst.
         </p>
-        <div className="figure-row">
+        <div className="stats has-lead">
           <Figure
             value={`−${Math.round((1 - shelf.remainingIn2040) * 100)} %`}
             unit="produksjon"
@@ -343,6 +336,11 @@ export function TodayRoute() {
   );
 }
 
+/**
+ * One statistic: number and unit on the same line, then the sentence that
+ * explains it. No box — emphasis is carried by weight, with the siblings
+ * dimmed (see `.stats.has-lead` in application.css).
+ */
 function Figure({
   value,
   unit,
@@ -355,10 +353,11 @@ function Figure({
   highlight?: boolean;
 }) {
   return (
-    <div className={highlight ? "figure highlight" : "figure"}>
-      <div className="figure-value">{value}</div>
-      <div className="figure-unit">{unit}</div>
-      <div className="figure-label">{label}</div>
+    <div className={highlight ? "lead" : undefined}>
+      <p className="num">
+        {value} <small className="unit">{unit}</small>
+      </p>
+      <p className="label">{label}</p>
     </div>
   );
 }

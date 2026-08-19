@@ -87,10 +87,10 @@ export function PlanSummary() {
           four baseline charts with no hint about what to do next */}
       {!isSharedView && planIsEmpty && (
         <div className="plan-empty">
-          📝 Planen din er tom foreløpig. Grafene viser hva som skjer uten
-          inngrep – feltene tømmes sakte av seg selv.{" "}
+          Planen din er tom foreløpig. Grafene viser hva som skjer uten inngrep
+          – feltene tømmes sakte av seg selv.{" "}
           <button className="primary" onClick={() => navigate("/phaseout")}>
-            ✏️ Velg de første feltene
+            Velg de første feltene
           </button>
         </div>
       )}
@@ -98,7 +98,7 @@ export function PlanSummary() {
       {isSharedView ? (
         <div className="shared-banner">
           <div className="message">
-            📬 Noen har delt en utfasingsplan med deg! Den avvikler{" "}
+            Noen har delt en utfasingsplan med deg! Den avvikler{" "}
             <strong>{Object.keys(sharedPlan!).length} felter</strong>. Du kan
             gjøre den til din egen plan, eller fortsette med din egen.
           </div>
@@ -225,7 +225,7 @@ export function PlanSummary() {
             onClick={sharePlan}
             title="Kopier en delbar lenke til planen din"
           >
-            {copied ? "✅ Lenke kopiert!" : "📤 Del planen din"}
+            {copied ? "Lenke kopiert!" : "Del planen din"}
           </button>
         </div>
       )}

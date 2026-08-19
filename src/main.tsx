@@ -4,10 +4,13 @@ import { createRoot } from "react-dom/client";
 import "./application.css";
 import { HashRouter } from "react-router-dom";
 import { Application } from "./components/app/application";
+import { IconDefaults } from "./components/ui/icons";
 
 createRoot(document.getElementById("app")!).render(
   <HashRouter>
-    <Application />
+    <IconDefaults>
+      <Application />
+    </IconDefaults>
   </HashRouter>,
 );
 

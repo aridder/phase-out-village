@@ -31,27 +31,20 @@
   gap: 1rem;
 }
 
+/* Periodens tall. Var en fylt 3,5rem-skive med skygge — den ropte høyere
+   enn overskriften den sto ved siden av. */
 .brief-glyph {
   display: grid;
   place-items: center;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
   flex: none;
+  border: 2px solid var(--period-accent);
   border-radius: 50%;
-  background-color: var(--period-accent);
-  color: #fff;
-  font-size: 1.15rem;
+  color: var(--period-accent);
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  box-shadow: var(--skygge-2);
-}
-
-.brief-kicker {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.7;
 }
 
 /* -------------------------------------------------------------- fremdrift */
@@ -119,11 +112,12 @@
 .brief-body {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: var(--space-3);
   font-size: 1.05rem;
   line-height: 1.65;
-  border-left: 4px solid var(--period-accent);
-  padding-left: 1.1rem;
+  max-width: var(--measure);
+  border-left: 2px solid var(--period-accent);
+  padding-left: var(--space-4);
 }
 
 /* ------------------------------------------------------------- status nå */
@@ -134,99 +128,40 @@
   margin-bottom: 0.6rem;
 }
 
-.changed-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: 0.6rem;
-}
-
-.changed-row > div {
-  padding: 0.7rem 0.85rem;
-  background-color: var(--flate);
-  border: 1px solid var(--linje);
-  border-radius: var(--radius-s);
-  box-shadow: var(--skygge-1);
-}
-
-.changed-value {
-  font-size: 1.45rem;
-  font-weight: 700;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-}
-
-.changed-label {
-  font-size: 0.75rem;
-  opacity: 0.75;
-  line-height: 1.35;
-}
-
 /* --------------------------------------------------------- reglene i akten */
 
+/* Reglene er en definisjonsliste (.defs i application.css). Her trengs bare
+   plasseringen — kapasitet, linse og måltall side om side når det er plass. */
 .brief-rules {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 0.7rem;
-}
-
-.rule {
-  padding: 0.9rem;
-  background-color: var(--flate);
-  border-radius: var(--radius);
-  border: 1px solid var(--linje);
-  border-top: 4px solid var(--period-accent);
-  box-shadow: var(--skygge-1);
-}
-
-.rule-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.65;
-}
-
-.rule-value {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0.15rem 0 0.35rem;
-}
-
-.rule p {
-  font-size: 0.82rem;
-  line-height: 1.5;
-  opacity: 0.8;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  column-gap: var(--space-5);
 }
 
 /* ----------------------------------------------------------------- verden */
 
 .brief-world ul {
-  gap: 0.5rem;
+  gap: 0;
   list-style: none;
   padding: 0;
 }
 
+/* Ren tekstliste med hårstrek mellom punktene. Sto tidligere som et
+   to-kolonners grid med plass til et ikon; da ikonet forsvant, havnet
+   hvert ORD i den 1,6rem brede kolonnen. */
 .brief-world li {
-  display: grid;
-  grid-template-columns: 1.6rem minmax(0, 1fr);
-  gap: 0.5rem;
-  align-items: start;
   font-size: 0.92rem;
-  line-height: 1.5;
-}
-
-.event-emoji {
-  font-size: 1.05rem;
+  line-height: 1.55;
+  max-width: var(--measure);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--linje);
 }
 
 .brief-stake {
-  padding: 0.9rem 1.1rem;
-  background-color: var(--flate);
-  border-left: 4px solid var(--rav);
-  border-radius: 0 var(--radius-s) var(--radius-s) 0;
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--linje);
   font-size: 0.95rem;
   line-height: 1.55;
-  box-shadow: var(--skygge-1);
+  max-width: var(--measure);
 }
 
 .brief-actions {
@@ -235,10 +170,11 @@
   gap: 0.6rem;
 }
 
+/* Primærknappen er alltid den samme grønne. Da den skiftet farge med
+   perioden, måtte spilleren lete etter «knappen» på nytt hver gang. */
 .brief-actions .primary {
-  background-color: var(--period-accent);
-  color: #fff;
-  border-color: transparent;
+  background-color: var(--eple);
+  border-color: var(--gran);
   font-size: 1.02rem;
   padding: 0.7rem 1.3rem;
 }
@@ -254,14 +190,11 @@
 }
 
 .report-decision {
-  padding: 1rem 1.15rem;
-  background-color: var(--flate);
-  border-radius: var(--radius);
-  border: 1px solid var(--linje);
-  border-left: 4px solid var(--period-accent);
-  box-shadow: var(--skygge-1);
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--period-accent);
   font-size: 1rem;
   line-height: 1.6;
+  max-width: var(--measure);
 }
 
 .decided-fields {
@@ -283,14 +216,11 @@
 
 /* Måltallet for perioden, satt opp mot det beste som var mulig */
 .report-measure {
-  padding: 1.1rem;
-  background-color: var(--flate);
-  border-radius: var(--radius);
-  border: 1px solid var(--linje);
-  box-shadow: var(--skygge-1);
+  padding: var(--space-4) 0;
+  border-block: 1px solid var(--linje);
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: var(--space-3);
 }
 
 .measure-head {
@@ -361,40 +291,12 @@
 }
 
 /* Effekten av å vente, og hva som står igjen */
-.report-figures {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: 0.6rem;
-}
-
-.report-figures > div {
-  padding: 0.8rem 0.9rem;
-  background-color: var(--flate);
-  border: 1px solid var(--linje);
-  border-radius: var(--radius-s);
-  box-shadow: var(--skygge-1);
-}
-
-.report-figures .value {
-  font-size: 1.4rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-}
-
-.report-figures .label {
-  font-size: 0.75rem;
-  opacity: 0.75;
-  line-height: 1.4;
-}
-
 .report-next {
-  padding: 1rem 1.15rem;
-  background-color: var(--flate);
-  border-radius: var(--radius);
-  border: 1px dashed var(--gran);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--linje);
   font-size: 0.95rem;
   line-height: 1.6;
+  max-width: var(--measure);
 }
 
 .report-actions {
@@ -404,9 +306,8 @@
 }
 
 .report-actions .primary {
-  background-color: var(--period-accent);
-  color: #fff;
-  border-color: transparent;
+  background-color: var(--eple);
+  border-color: var(--gran);
   font-size: 1.02rem;
   padding: 0.7rem 1.3rem;
 }

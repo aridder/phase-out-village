@@ -38,21 +38,18 @@
 
 /* -------------------------------------------------------------- kapasitet */
 
+/* Regelen for perioden, ikke et objekt — hårstrek og luft, ingen boks */
 .capacity-bar {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  padding: 0.75rem 1rem;
-  background-color: var(--flate);
-  border: 1px solid var(--linje);
-  border-left: 4px solid var(--period-accent);
-  border-radius: var(--radius-s);
-  box-shadow: var(--skygge-1);
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-block: 1px solid var(--linje);
   flex-wrap: wrap;
 }
 
-.capacity-bar.full {
-  border-left-color: var(--rav);
+.capacity-bar.full .capacity-text strong {
+  color: var(--rav);
 }
 
 .capacity-slots {
@@ -89,9 +86,8 @@
 .lens-note {
   font-size: 0.88rem;
   line-height: 1.55;
-  padding: 0.6rem 0.85rem;
-  background-color: var(--flate-2);
-  border-radius: var(--radius-s);
+  max-width: var(--measure);
+  opacity: 0.85;
 }
 
 /* --------------------------------------------------------------- verktøy */
@@ -133,16 +129,16 @@
   padding: 0;
 }
 
+/* Feltkortet BEHOLDER rektangelet sitt — det er et klikkmål, og et klikkmål
+   skal ha en kant du kan sikte på. Men uten skygge og uten egen flate. */
 .field-card {
   display: grid;
   grid-template-columns: 1.4rem minmax(0, 1fr);
-  gap: 0.7rem;
+  gap: var(--space-3);
   align-items: start;
-  padding: 0.7rem 0.85rem;
-  background-color: var(--flate);
+  padding: var(--space-3);
   border: 1px solid var(--linje);
   border-radius: var(--radius-s);
-  box-shadow: var(--skygge-1);
   cursor: pointer;
   transition:
     border-color 0.12s ease,
@@ -155,7 +151,7 @@
 
 .field-card.chosen {
   border-color: var(--period-accent);
-  box-shadow: inset 0 0 0 1px var(--period-accent);
+  border-left-width: 3px;
   background-color: var(--flate-2);
 }
 
@@ -205,11 +201,25 @@
 }
 
 /* Utslipp per fat får fargen fra kartets skala, så tall og kart stemmer */
+/* Intensiteten bruker kartets fargeskala, men som en liten prikk foran
+   tallet i stedet for en fylt pille — fem fylte piller nedover en liste
+   var det eneste øyet så */
 .lens-value.intensity {
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  color: #12300a;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  background: none !important;
+  color: inherit;
+}
+
+.lens-value.intensity::before {
+  content: "";
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background-color: var(--chip);
   border: 1px solid rgb(19 54 0 / 0.3);
+  align-self: center;
 }
 
 .lens-value.intensity small {
@@ -264,9 +274,8 @@
 }
 
 .phaseout-actions .primary {
-  background-color: var(--period-accent);
-  color: #fff;
-  border-color: transparent;
+  background-color: var(--eple);
+  border-color: var(--gran);
   font-size: 1rem;
   padding: 0.6rem 1.2rem;
 }

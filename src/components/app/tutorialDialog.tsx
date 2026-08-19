@@ -1,3 +1,4 @@
+import { Icon } from "../ui/icons";
 import React from "react";
 import { Link } from "react-router-dom";
 import { periods } from "../../data/periods";
@@ -16,12 +17,12 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
       <div className="top-bar">
         <h2>Slik spiller du</h2>
         <button onClick={onClose} className="close-button" title="Lukk">
-          ✕
+          <Icon name="lukk" size={16} />
         </button>
       </div>
 
       <div className="tutorial-card">
-        <h3>🎯 Oppdraget</h3>
+        <h3>Oppdraget</h3>
         <ul>
           <li>
             Du er energiminister fra 2025 til 2040. Sokkelen tømmes uansett –
@@ -33,7 +34,7 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
           </li>
         </ul>
 
-        <h3>🕹️ Tre deler</h3>
+        <h3>Tre deler</h3>
         <ul>
           <li>
             <b>Del 1 – Norge i dag:</b> tallene før du bestemmer noe.
@@ -48,7 +49,7 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
           </li>
         </ul>
 
-        <h3>⚖️ Periodene er ikke like</h3>
+        <h3>Periodene er ikke like</h3>
         <ul>
           <li>
             Hver periode har sin egen <b>kapasitet</b> (hvor mange felt du
@@ -70,7 +71,7 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
           ))}
         </ul>
 
-        <h3>💡 Trenger du hjelp?</h3>
+        <h3>Trenger du hjelp?</h3>
         <ul>
           <li>
             På <b>kartet</b> er hver boble et felt: størrelsen er produksjonen,
@@ -83,7 +84,7 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
 
       <div className="button-row">
         <button className="primary" onClick={onClose}>
-          Jeg er klar 🛢️
+          Jeg er klar
         </button>
       </div>
     </div>

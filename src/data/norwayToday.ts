@@ -13,6 +13,7 @@ import {
   STATE_NET_CASH_FLOW_BN_NOK,
 } from "./petroleumEconomy";
 import { Year } from "./types";
+import { IllustrationKey } from "../components/ui/illustrations";
 
 /**
  * Act 1 — «Norge i dag».
@@ -227,24 +228,28 @@ export function shelfToday(): ShelfToday {
  * intensity spread reads as engineering, not as a moral ranking of
  * operators.
  */
-export const intensityReasons = [
+export const intensityReasons: {
+  illustration: IllustrationKey;
+  title: string;
+  text: string;
+}[] = [
   {
-    emoji: "🔌",
+    illustration: "kraftnett",
     title: "Strøm fra land",
     text: "Noen felt får strømmen sin fra kraftnettet på land. Da står gassturbinene stille, og utslippene per fat faller nesten til null.",
   },
   {
-    emoji: "🏭",
+    illustration: "gassturbin",
     title: "Egne gassturbiner",
     text: "De fleste eldre plattformer lager sin egen strøm ved å brenne gass ute i havet. Det er den største utslippskilden på sokkelen.",
   },
   {
-    emoji: "💧",
+    illustration: "modentFelt",
     title: "Alderen på feltet",
     text: "Et gammelt felt gir mest vann og lite olje. Energien går med til å pumpe og skille vann – utslippene per fat stiger år for år.",
   },
   {
-    emoji: "🌊",
+    illustration: "havbunnTilLand",
     title: "Havbunn til land",
     text: "Felt uten plattform sender brønnstrømmen rett til et anlegg på land. Utslippene fra prosesseringen havner da i fastlandsregnskapet, ikke sokkelens.",
   },

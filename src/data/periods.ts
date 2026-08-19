@@ -67,8 +67,14 @@ export type Period = {
     /** What a good result means, in one sentence */
     explainer: string;
   };
-  /** What happens in the world during the period */
-  events: { emoji: string; text: string }[];
+  /**
+   * What happens in the world during the period.
+   *
+   * Deliberately text only. These used to carry one emoji each — twelve
+   * one-off pictograms decorating prose bullets, which added no meaning
+   * and made the brief look like a chat message.
+   */
+  events: string[];
   /**
    * The period's accent colour, as a CSS colour. Each period looks
    * different from the moment it opens — the header, the timeline segment
@@ -105,18 +111,9 @@ export const periods: Period[] = [
         "Hvor mye CO₂ du kuttet for hvert fat produksjon du ga fra deg. Høyt tall betyr at du traff de ineffektive feltene.",
     },
     events: [
-      {
-        emoji: "🛢️",
-        text: "33 felt er i drift. Til sammen produserer de energi tilsvarende 2 464 TWh i året.",
-      },
-      {
-        emoji: "📊",
-        text: "Utslippsregnskapet per felt legges fram. Forskjellene er større enn noen hadde ventet.",
-      },
-      {
-        emoji: "🗳️",
-        text: "Stortinget gir deg fullmakt til å sette sluttdato på felt – men ikke på mange om gangen.",
-      },
+      "33 felt er i drift. Til sammen produserer de energi tilsvarende 2 464 TWh i året.",
+      "Utslippsregnskapet per felt legges fram. Forskjellene er større enn noen hadde ventet.",
+      "Stortinget gir deg fullmakt til å sette sluttdato på felt – men ikke på mange om gangen.",
     ],
     accent: "#3d8bd6",
     glyph: "I",
@@ -146,18 +143,9 @@ export const periods: Period[] = [
         "Hvor mye CO₂ du kuttet per milliard kroner staten ga fra seg. Høyt tall betyr at du kuttet billig.",
     },
     events: [
-      {
-        emoji: "🇪🇺",
-        text: "EUs karbontoll gjør varer laget med fossil energi dyrere å selge inn i Europa.",
-      },
-      {
-        emoji: "🌬️",
-        text: "Den første store norske havvindparken leverer strøm inn på nettet.",
-      },
-      {
-        emoji: "💶",
-        text: "Gassprisen holder seg. Oljeprisen svinger mer enn den har gjort på et tiår.",
-      },
+      "EUs karbontoll gjør varer laget med fossil energi dyrere å selge inn i Europa.",
+      "Den første store norske havvindparken leverer strøm inn på nettet.",
+      "Gassprisen holder seg. Oljeprisen svinger mer enn den har gjort på et tiår.",
     ],
     accent: "#c77400",
     glyph: "II",
@@ -187,18 +175,9 @@ export const periods: Period[] = [
         "Hvor stor del av kuttet ditt som ikke ville kommet av seg selv. Høy andel betyr at vedtakene dine gjorde en forskjell.",
     },
     events: [
-      {
-        emoji: "📉",
-        text: "Verdens oljeetterspørsel har passert toppen. Prisen legger seg lavere enn på 2020-tallet.",
-      },
-      {
-        emoji: "🛢️",
-        text: "Sokkelen produserer nå under halvparten av det den gjorde i 2025 – uten at noe er vedtatt.",
-      },
-      {
-        emoji: "🇳🇴",
-        text: "Norges klimamål for 2035 nærmer seg forfall. Sokkelen teller med i regnskapet.",
-      },
+      "Verdens oljeetterspørsel har passert toppen. Prisen legger seg lavere enn på 2020-tallet.",
+      "Sokkelen produserer nå under halvparten av det den gjorde i 2025 – uten at noe er vedtatt.",
+      "Norges klimamål for 2035 nærmer seg forfall. Sokkelen teller med i regnskapet.",
     ],
     accent: "#7b4bc4",
     glyph: "III",
@@ -228,18 +207,9 @@ export const periods: Period[] = [
         "Hvor stor del av produksjonen som har fått en vedtatt sluttdato når du går av. Resten er overlatt til den neste.",
     },
     events: [
-      {
-        emoji: "⚡",
-        text: "Havvind, vannkraft og nett er bygget ut. Kraften står klar til å ta over.",
-      },
-      {
-        emoji: "🔥",
-        text: "Feltene som fortsatt går på gassturbiner slipper ut mer per fat for hvert år som går.",
-      },
-      {
-        emoji: "🏁",
-        text: "I 2040 gjøres regnskapet opp – for klimaet, for kronene og for det du etterlater.",
-      },
+      "Havvind, vannkraft og nett er bygget ut. Kraften står klar til å ta over.",
+      "Feltene som fortsatt går på gassturbiner slipper ut mer per fat for hvert år som går.",
+      "I 2040 gjøres regnskapet opp – for klimaet, for kronene og for det du etterlater.",
     ],
     accent: "#2e9e6b",
     glyph: "IV",

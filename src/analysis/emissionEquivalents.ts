@@ -11,13 +11,16 @@
  * - A spruce tree binds roughly 0.5 tonnes CO₂ over its first 100 years.
  */
 
+import { IconKey } from "../components/ui/icons";
+
 const TONNES_PER_CAR_YEAR = 2;
 const TONNES_PER_OSLO_NY_ROUND_TRIP = 1;
 const NORWAY_ANNUAL_EMISSIONS_TONNES = 44_600_000;
 const TONNES_PER_TREE_LIFETIME = 0.5;
 
 export type EmissionEquivalent = {
-  emoji: string;
+  /** Absent where no icon says it better than the words do */
+  icon?: IconKey;
   /** Formatted quantity, e.g. "1,2 millioner" */
   amount: string;
   /** Norwegian description, e.g. "bensinbiler av veien i ett år" */
@@ -46,28 +49,28 @@ function formatDecimal(value: number): string {
  */
 export function emissionEquivalents(tonnesCo2: number): EmissionEquivalent[] {
   if (tonnesCo2 <= 0) return [];
-  return [
+  const equivalents: EmissionEquivalent[] = [
     {
-      emoji: "🚗",
+      icon: "bil",
       amount: formatCompactNumber(tonnesCo2 / TONNES_PER_CAR_YEAR),
       label: "bensinbiler tatt av veien i ett år",
     },
     {
-      emoji: "✈️",
+      icon: "fly",
       amount: formatCompactNumber(tonnesCo2 / TONNES_PER_OSLO_NY_ROUND_TRIP),
       label: "flyreiser tur/retur Oslo–New York",
     },
     {
-      emoji: "🇳🇴",
       amount: formatDecimal(tonnesCo2 / NORWAY_ANNUAL_EMISSIONS_TONNES),
       label: "år med Norges totale utslipp",
     },
     {
-      emoji: "🌲",
+      icon: "tre",
       amount: formatCompactNumber(tonnesCo2 / TONNES_PER_TREE_LIFETIME),
       label: "grantrær som vokser i 100 år",
     },
-    // A small plan makes some quantities round to zero ("0 år med Norges
-    // totale utslipp") — an equivalent that shows nothing says nothing
-  ].filter((equivalent) => equivalent.amount !== "0");
+  ];
+  // A small plan makes some quantities round to zero ("0 år med Norges
+  // totale utslipp") — an equivalent that shows nothing says nothing
+  return equivalents.filter((equivalent) => equivalent.amount !== "0");
 }

@@ -29,7 +29,7 @@ export function SourcesNote() {
           ikke dominere — utbrettet var kildelisten 43 % av perioderapporten */}
       <details>
         <summary>
-          <strong>📚 Kilder for tallene</strong>
+          <strong>Kilder for tallene</strong>
         </summary>
         <ul>
           <li>

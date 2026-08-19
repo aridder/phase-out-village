@@ -30,7 +30,7 @@ function ProductionHome() {
   const fieldsClosed = Object.keys(phaseOut).length;
   return (
     <div className="production-home">
-      <h2>🛢️ Produksjon</h2>
+      <h2>Produksjon</h2>
       <p className="page-lead">
         Så mye olje og gass produserer feltene hvert år frem mot 2040 –{" "}
         {fieldsClosed > 0

@@ -1,6 +1,8 @@
 import { energyData } from "../generated/energyData";
 import { RESERVOIR_CAPACITY_TWH } from "./norwayFacts";
 import { TWH_PER_TURBINE_YEAR } from "./energyTransition";
+import { IllustrationKey } from "../components/ui/illustrations";
+import { IconKey } from "../components/ui/icons";
 
 /**
  * What could take over — and, just as importantly, what each option cannot
@@ -17,7 +19,13 @@ import { TWH_PER_TURBINE_YEAR } from "./energyTransition";
  */
 
 export type Alternative = {
-  emoji: string;
+  /**
+   * The drawing that heads the entry. Four of the five are domain
+   * concepts with their own line illustration; the mainland export entry
+   * is the one case where a plain icon says it better.
+   */
+  illustration?: IllustrationKey;
+  icon?: IconKey;
   name: string;
   /** The headline figure */
   value: string;
@@ -40,7 +48,7 @@ export const OFFSHORE_WIND_TWH =
 export function alternatives(): Alternative[] {
   return [
     {
-      emoji: "🌬️",
+      illustration: "havvind",
       name: "Havvind",
       value: Math.round(OFFSHORE_WIND_TWH).toLocaleString("nb-NO"),
       unit: "TWh i året",
@@ -49,7 +57,7 @@ export function alternatives(): Alternative[] {
         "Ingenting av dette er bygget ennå, og flytende havvind er i dag dyrere per kWh enn både vannkraft og bunnfast vind. Uten nett og uten kunder blir det ikke bygget.",
     },
     {
-      emoji: "💧",
+      illustration: "vannmagasin",
       name: "Vannkraften vi har",
       value: RESERVOIR_CAPACITY_TWH.toLocaleString("nb-NO"),
       unit: "TWh lagring",
@@ -58,7 +66,7 @@ export function alternatives(): Alternative[] {
         "Lagring er ikke ny produksjon. Batteriet gjør europeisk vindkraft mer verdt, men det lager ikke én ekstra TWh selv.",
     },
     {
-      emoji: "🔌",
+      illustration: "plattform",
       name: "Strømmen plattformene bruker",
       value:
         energyData.electricity.oilGasConsumptionTwh.toLocaleString("nb-NO"),
@@ -68,7 +76,7 @@ export function alternatives(): Alternative[] {
         "Kraften frigjøres der feltene ligger, og en del av den kommer fra kabler bygget for nettopp den bruken. Nytten avhenger av at nettet på land tåler å ta den imot.",
     },
     {
-      emoji: "🏭",
+      illustration: "kraftnett",
       name: "Industri og eksport av kraft",
       value: energyData.trade.exportValueBnNok.toLocaleString("nb-NO"),
       unit: "mrd kr i året",
@@ -77,7 +85,7 @@ export function alternatives(): Alternative[] {
         "Kraft er langt mindre verdt per enhet energi enn olje og gass. Krafteksport alene erstatter ikke petroleumsinntektene, uansett hvor mye vi bygger.",
     },
     {
-      emoji: "🐟",
+      icon: "fisk",
       name: "Det fastlandet allerede selger",
       value: "766",
       unit: "mrd kr i året",
@@ -95,9 +103,14 @@ export function alternatives(): Alternative[] {
  * the difference between a decline that is scheduled and one that is not,
  * and they hold whichever end date a reader prefers.
  */
-export const plannedVsUnplanned = [
+export const plannedVsUnplanned: {
+  icon: IconKey;
+  title: string;
+  planned: string;
+  unplanned: string;
+}[] = [
   {
-    emoji: "🧭",
+    icon: "kompass",
     title: "Rekkefølgen er gratis å velge",
     planned:
       "Med en plan kan de mest utslippsintensive feltene stenges først. Kuttet per tapt fat blir da mange ganger større.",
@@ -105,7 +118,7 @@ export const plannedVsUnplanned = [
       "Uten plan bestemmer oljeprisen rekkefølgen, og prisen bryr seg ikke om utslipp per fat.",
   },
   {
-    emoji: "🔧",
+    icon: "verktoy",
     title: "Leverandørindustrien trenger varsel",
     planned:
       "Verft, rederier og kommuner kan planlegge når de vet hvilke felt som stenger når. Kompetansen kan flyttes over i havvind, karbonlagring og industri.",
@@ -113,7 +126,7 @@ export const plannedVsUnplanned = [
       "En brå nedgang treffer som en permittering. Kompetansen forsvinner ut av landet i stedet for over i noe nytt.",
   },
   {
-    emoji: "💰",
+    icon: "penger",
     title: "Staten kan spare i forkant",
     planned:
       "Et kjent inntektsfall kan møtes med sparing og omstilling i forkant. Det er nettopp det Oljefondet er bygget for.",
@@ -121,7 +134,7 @@ export const plannedVsUnplanned = [
       "Et uventet inntektsfall må håndteres i budsjettet det året det skjer.",
   },
   {
-    emoji: "🏗️",
+    icon: "hjelm",
     title: "Opprydding koster uansett",
     planned:
       "Plugging av brønner og fjerning av installasjoner tar år og krever rigger. Med en plan kan arbeidet fordeles jevnt.",

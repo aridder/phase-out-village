@@ -23,7 +23,7 @@ export function FrontPage() {
 
   return (
     <div className="hero">
-      <div className="hero-kicker">🛢️ Oljespillet</div>
+      <div className="hero-kicker">Oljespillet</div>
       <h1 className="hero-title">Chill, baby! Chill!</h1>
       <div className="hero-tagline">
         Sokkelen tømmes uansett. Spørsmålet er hvem som bestemmer rekkefølgen.
@@ -44,29 +44,22 @@ export function FrontPage() {
         </p>
       </div>
 
-      <div className="hero-mission">
-        <div className="mission-card">
-          <div className="mission-emoji">📊</div>
-          <div className="mission-label">Del 1</div>
-          <div className="mission-text">
-            Norge i dag – feltene, pengene og forskjellene mellom dem
-          </div>
-        </div>
-        <div className="mission-card">
-          <div className="mission-emoji">🗳️</div>
-          <div className="mission-label">Del 2</div>
-          <div className="mission-text">
-            Fire stortingsperioder. Fire ulike spørsmål å svare på
-          </div>
-        </div>
-        <div className="mission-card">
-          <div className="mission-emoji">⚖️</div>
-          <div className="mission-label">Del 3</div>
-          <div className="mission-text">
-            Oppgjøret – planen din mot alternativene, i klima og i kroner
-          </div>
-        </div>
-      </div>
+      {/* Tre bokser på en tittelskjerm er tre bokser for mye — en nummerert
+          liste sier det samme og lar typografien gjøre jobben */}
+      <ol className="hero-mission">
+        <li>
+          <span className="kicker">Del 1</span>
+          Norge i dag – feltene, pengene og forskjellene mellom dem
+        </li>
+        <li>
+          <span className="kicker">Del 2</span>
+          Fire stortingsperioder. Fire ulike spørsmål å svare på
+        </li>
+        <li>
+          <span className="kicker">Del 3</span>
+          Oppgjøret – planen din mot alternativene, i klima og i kroner
+        </li>
+      </ol>
 
       <button className="hero-cta" onClick={() => navigate("/norge")}>
         Start med Norge i dag →

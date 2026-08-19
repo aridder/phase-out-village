@@ -1,3 +1,4 @@
+import { Icon } from "../ui/icons";
 import React from "react";
 import { OilfieldName } from "../../data/gameData";
 import { fieldGeometry } from "../../generated/fieldGeometry";
@@ -49,7 +50,7 @@ export function FieldProfile({
         />
         <h3>{datum.field}</h3>
         <button type="button" onClick={onClose} aria-label="Lukk feltvisning">
-          ✕
+          <Icon name="lukk" size={16} />
         </button>
       </div>
 

@@ -60,6 +60,21 @@
     --radius: 1rem;
     --radius-s: 0.625rem;
 
+    /* Avstandsskala — 4/8/12/16/24/40/64. CSS-en her inne brukte tidligere
+       0,7 / 0,75 / 0,85 / 0,9rem om hverandre, valgt per komponent, og det
+       er hovedgrunnen til at sidene ikke føltes ryddige. Bruk KUN disse. */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2.5rem;
+    --space-7: 4rem;
+
+    /* Lesebredder: brødtekst ~62 tegn, ikke 80 */
+    --measure: 34rem;
+    --measure-narrow: 30rem;
+
     color-scheme: light dark;
     background-color: var(--lime);
     color: var(--skog);
@@ -106,8 +121,10 @@
   }
 
   h2 {
-    font-size: clamp(1.3rem, 1.05rem + 0.9vw, 1.7rem);
-    line-height: 1.2;
+    /* Nådde tidligere 1,7rem og konkurrerte med h1 på samme skjerm */
+    font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.45rem);
+    font-weight: 650;
+    line-height: 1.25;
     letter-spacing: -0.01em;
   }
 
@@ -618,76 +635,63 @@
     margin-bottom: 1.75rem;
   }
 
-  /* Historien i én pust: bilde + scenetekst side om side i et kort */
+  /* Historien i én pust: bilde + scenetekst side om side. Ingen kortflate —
+     på en tittelskjerm er det ingenting å skille den fra. */
   .hero-story {
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    max-width: 640px;
+    max-width: 38rem;
     text-align: left;
-    background: var(--flate);
-    border-radius: var(--radius);
-    box-shadow: var(--skygge-1);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.5rem;
+    padding: var(--space-4) 0;
+    border-block: 1px solid var(--linje);
+    margin-bottom: var(--space-5);
   }
 
   .hero-story img {
-    width: 84px;
-    height: 84px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
   }
 
   .hero-story p {
-    font-size: 1.05rem;
-    line-height: 1.5;
+    font-size: 1.02rem;
+    line-height: 1.55;
   }
 
-  /* Oppdraget som tre små kort — rolle, oppgave, mål */
+  /* De tre delene som en nummerert liste. Var tre kort; på en tittelskjerm
+     er tre bokser tre bokser for mye. */
   .hero-mission {
     display: grid;
-    grid-template-columns: repeat(3, minmax(150px, 200px));
-    gap: 0.9rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    max-width: 44rem;
+    width: 100%;
+    margin-bottom: var(--space-6);
+    padding: 0;
+    list-style: none;
+    counter-reset: del;
+    text-align: left;
+  }
+
+  .hero-mission li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: 0.95rem;
+    line-height: 1.45;
+    padding-top: var(--space-3);
+    border-top: 2px solid var(--linje);
   }
 
   @media (width <= 600px) {
     .hero-mission {
       grid-template-columns: 1fr;
-      width: 100%;
-      max-width: 420px;
+      gap: var(--space-3);
+      max-width: 26rem;
     }
-  }
-
-  .hero-mission .mission-card {
-    background: var(--flate);
-    border-radius: var(--radius);
-    box-shadow: var(--skygge-1);
-    padding: 1rem 0.9rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.3rem;
-  }
-
-  .hero-mission .mission-emoji {
-    font-size: 1.9rem;
-    line-height: 1;
-  }
-
-  .hero-mission .mission-label {
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    opacity: 0.65;
-  }
-
-  .hero-mission .mission-text {
-    font-size: 0.98rem;
-    line-height: 1.35;
   }
 
   .hero-cta {
@@ -805,12 +809,13 @@
     gap: 2rem;
   }
 
-  /* Diagrammene ligger på kortflater så de leses som enheter */
+  /* Diagrammene trenger en egen grunn, men en hårstrek holder — skyggen
+     gjorde hvert diagram til enda et kort på sider som allerede var fulle */
   .chart-frame {
     background: var(--flate);
-    border-radius: var(--radius);
-    box-shadow: var(--skygge-1);
-    padding: 1rem;
+    border: 1px solid var(--linje);
+    border-radius: var(--radius-s);
+    padding: var(--space-4);
   }
 
   /* Liten lenkeblokk med nøkkeltall (kartdetaljene) */
@@ -822,5 +827,134 @@
   .info-tag {
     cursor: help;
     border-bottom: 1px dotted currentColor;
+  }
+
+  /* ========================================================================
+     DELTE PRIMITIVER
+
+     Disse tre erstatter mesteparten av kortene i appen. Tidligere hadde
+     hver side sin egen boksede variant av samme tre ting — en etikett i
+     majuskler, et stort tall, og en rad med nøkkeltall — med hver sin
+     bakgrunn, radius og skygge. Nå finnes hver av dem én gang.
+     ======================================================================== */
+
+  /* Liten etikett over en overskrift. Fantes før som .today-act,
+     .hero-kicker, .brief-kicker, .phaseout-kicker, .verdict-act og
+     .rule-label — seks nesten like regler. */
+  .kicker {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+
+  /* Et nøkkeltall. Enheten står på SAMME linje som tallet: da leses det som
+     én opplysning, mens verdi/enhet/etikett stablet i tre blokker leses som
+     tre. */
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    font-size: clamp(1.6rem, 1.2rem + 1.3vw, 2.2rem);
+  }
+
+  .num .unit {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    opacity: 0.7;
+    margin-left: 0.3ch;
+  }
+
+  /* Rad med nøkkeltall, delt av hårstreker i stedet for kort. Erstatter
+     .figure, .changed-row > div, .report-figures > div, .stat-tile og
+     .replacement > div. Ingen bakgrunn, ingen radius, ingen skygge. */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0;
+    border-block: 1px solid var(--linje);
+  }
+
+  .stats > * {
+    padding: var(--space-4) var(--space-5);
+    border-left: 1px solid var(--linje);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .stats > *:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  /* Uthevet nøkkeltall er ikke en ramme, men vekt: søsknene dempes */
+  .stats.has-lead > *:not(.lead) {
+    opacity: 0.72;
+  }
+
+  .stats .label {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    opacity: 0.75;
+    max-width: 22rem;
+  }
+
+  /* Definisjonsliste med hårstreker — for «tre regler»-oppsett der en
+     etikett hører til en verdi og en forklaring. */
+  .defs {
+    display: grid;
+    gap: 0;
+  }
+
+  .defs > div {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--linje);
+  }
+
+  .defs dt {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+
+  .defs dd {
+    margin: 0;
+  }
+
+  .defs .defs-value {
+    font-weight: 650;
+    font-size: 1.1rem;
+  }
+
+  .defs .defs-note {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    opacity: 0.8;
+    max-width: var(--measure-narrow);
+  }
+
+  /* Ikoner arver alltid tekstfargen og skal aldri bære mening alene */
+  .icon {
+    flex: none;
+    vertical-align: -0.15em;
+  }
+
+  .icon-muted {
+    opacity: 0.55;
+  }
+
+  /* Strektegningene: én familie, 48-rutenett, strek 2, ingen fyll bortsett
+     fra vannflaten. Se ui/illustrations.tsx. */
+  .illu {
+    flex: none;
+    color: inherit;
   }
 }

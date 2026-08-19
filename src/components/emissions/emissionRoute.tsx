@@ -18,7 +18,7 @@ function EmissionsHome() {
   const fieldsClosed = Object.keys(phaseOut).length;
   return (
     <div className="emissions-home">
-      <h2>🏭 Utslipp</h2>
+      <h2>Utslipp</h2>
       <p className="page-lead">
         Så mye CO₂ slipper sokkelen ut hvert år frem mot 2040 –{" "}
         {fieldsClosed > 0

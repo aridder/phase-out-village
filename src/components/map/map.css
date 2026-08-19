@@ -410,21 +410,27 @@
   opacity: 0.75;
 }
 
+/* Nøkkeltallene i feltprofilen: hårstreker i stedet for fire små flater */
 .profile-figures {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: 0;
+  border-top: 1px solid var(--linje);
 }
 
 .profile-figures > div {
-  padding: 0.5rem 0.6rem;
-  background-color: var(--flate-2);
-  border-radius: var(--radius-s);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--linje);
+}
+
+.profile-figures > div:nth-child(even) {
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--linje);
 }
 
 .profile-figures .value {
   font-size: 1.2rem;
-  font-weight: 700;
+  font-weight: 650;
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
 }
@@ -441,14 +447,13 @@
 }
 
 .profile-status {
-  padding: 0.45rem 0.6rem;
-  border-radius: var(--radius-s);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--gran);
   font-size: 0.8rem;
-  border: 1px dashed var(--gran);
 }
 
 .profile-status.retired {
-  border-style: solid;
+  border-left-color: var(--linje);
   opacity: 0.8;
 }
 

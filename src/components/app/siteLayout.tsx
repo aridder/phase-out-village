@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { FaCoins, FaLightbulb, FaPlay, FaWind } from "react-icons/fa";
+import { LuCoins, LuLightbulb, LuPlay, LuWind } from "react-icons/lu";
 import { MainButton } from "../ui/mainButton";
 import { Brand } from "./brand";
 
@@ -20,28 +20,28 @@ export function SiteLayout() {
           <Brand />
           <div className="header-nav">
             <MainButton
-              icon={<FaCoins />}
+              icon={<LuCoins />}
               label={"Hva koster det?"}
               labelSmall={"Kostnad"}
               title="Se hva utfasing koster – og hva vi får igjen"
               to="/kostnad"
             />
             <MainButton
-              icon={<FaWind />}
+              icon={<LuWind />}
               label={"Omstilling"}
               labelSmall={"Grønt"}
               title="Se hva som erstatter oljen"
               to="/transition"
             />
             <MainButton
-              icon={<FaLightbulb />}
+              icon={<LuLightbulb />}
               label={"Rådgiver"}
               labelSmall={"Råd"}
               title="Få analyse av og forslag til planen din"
               to="/advisor"
             />
             <MainButton
-              icon={<FaPlay />}
+              icon={<LuPlay />}
               label={"Spill Oljespillet"}
               labelSmall={"Spill"}
               title="Lag din egen utfasingsplan"

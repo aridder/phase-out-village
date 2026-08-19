@@ -1,12 +1,24 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { FaLightbulb } from "react-icons/fa";
+import { LuLightbulb } from "react-icons/lu";
 import { ApplicationContext } from "../../applicationContext";
 import { analyzePlan } from "../../analysis/advisorEngine";
 import { optimizePlan, OptimizerStrategy } from "../../analysis/planOptimizer";
 import { Year } from "../../data/types";
 import { EmissionStackedBarChart } from "../emissions/emissionStackedBarChart";
 import { ProductionReductionChart } from "../production/productionReductionChart";
+import { Icon, IconKey } from "../ui/icons";
 import "./advisor.css";
+
+/**
+ * Three states, three icons. Each insight used to carry its own emoji,
+ * which produced six different pictograms for what the model already
+ * distinguishes as `kind`.
+ */
+function insightIcon(kind: string): IconKey {
+  if (kind === "warning") return "advarsel";
+  if (kind === "success") return "ok";
+  return "kompass";
+}
 
 /**
  * Reveals a text with a typewriter effect, character by character.
@@ -34,7 +46,7 @@ function useTypewriter(text: string, speedMs: number = 12) {
 function ThinkingIndicator() {
   return (
     <div className="advisor-thinking">
-      <FaLightbulb className="bulb" />
+      <LuLightbulb className="bulb" size={20} />
       <span>
         Analyserer planen din<span className="dot">.</span>
         <span className="dot">.</span>
@@ -76,9 +88,7 @@ export function AdvisorRoute() {
 
   return (
     <div className="advisor-page">
-      <h2 className="advisor-title">
-        <FaLightbulb /> Klimarådgiveren
-      </h2>
+      <h2 className="advisor-title">Klimarådgiveren</h2>
 
       {thinking ? (
         <ThinkingIndicator />
@@ -111,7 +121,8 @@ export function AdvisorRoute() {
                     className={`advisor-insight kind-${insight.kind}`}
                   >
                     <h4>
-                      {insight.emoji} {insight.title}
+                      <Icon name={insightIcon(insight.kind)} size={16} muted />
+                      {insight.title}
                     </h4>
                     <div>{insight.text}</div>
                   </div>
@@ -171,7 +182,7 @@ function PlanOptimizer() {
 
   return (
     <div className="advisor-optimizer">
-      <h3>🎯 Få forslag til en plan</h3>
+      <h3>Få forslag til en plan</h3>
       <div>
         Velg et klimamål, så finner optimalisereren utfasingsplanen som når
         målet med minst mulig produksjonstap.
@@ -228,9 +239,9 @@ function PlanOptimizer() {
 
       {!plan.targetReached && (
         <div>
-          ⚠️ Målet på {target} % er ikke mulig å nå fra {year} – selv full
-          utfasing gir {plan.reductionPercent} %. Jo tidligere man starter, jo
-          mer er mulig.
+          Målet på {target} % er ikke mulig å nå fra {year} – selv full utfasing
+          gir {plan.reductionPercent} %. Jo tidligere man starter, jo mer er
+          mulig.
         </div>
       )}
 
@@ -270,7 +281,7 @@ function PlanOptimizer() {
           <div>
             <button className="apply-button" onClick={applyToDraft}>
               {applied
-                ? "✅ Lagt til i utvalget ditt!"
+                ? "Lagt til i utvalget ditt"
                 : `Bruk forslaget for perioden ${year}`}
             </button>
           </div>

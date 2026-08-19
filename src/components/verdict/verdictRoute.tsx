@@ -16,6 +16,8 @@ import { alternatives, plannedVsUnplanned } from "../../data/alternatives";
 import { shelfToday } from "../../data/norwayToday";
 import { OIL_FUND_BN_NOK } from "../../data/norwayFacts";
 import { emissionEquivalents } from "../../analysis/emissionEquivalents";
+import { Icon } from "../ui/icons";
+import { Illustration } from "../ui/illustrations";
 import { SourcesNote } from "../ui/sourcesNote";
 import "../today/today.css";
 import "./verdict.css";
@@ -92,7 +94,7 @@ export function VerdictRoute() {
   return (
     <article className="verdict-page">
       <header className="verdict-hero">
-        <div className="verdict-act">Del 3 av 3 · 2040</div>
+        <div className="kicker">Del 3 av 3 · 2040</div>
         <h1>Oppgjøret</h1>
         <p className="verdict-lead">
           Femten år er gått. Dette er hva planen din gjorde – og hva den kostet.
@@ -102,42 +104,43 @@ export function VerdictRoute() {
       {/* ------------------------------------------------------ 1. The result */}
       <section className="verdict-section">
         <h2>Planen din, i tall</h2>
-        <div className="verdict-figures">
-          <div className="figure highlight">
-            <div className="figure-value">
+        <div className="stats has-lead">
+          <div className="lead">
+            <p className="num">
               {(avoidedTonnes / 1_000_000).toLocaleString("nb-NO", {
                 maximumFractionDigits: 0,
-              })}
-            </div>
-            <div className="figure-unit">mill. tonn CO₂</div>
-            <div className="figure-label">
+              })}{" "}
+              <small className="unit">mill. tonn CO₂</small>
+            </p>
+            <p className="label">
               unngått i alt 2025–2040 – et kutt på{" "}
               {mine.cut.toLocaleString("nb-NO", { maximumFractionDigits: 0 })} %
               av de samlede utslippene
-            </div>
+            </p>
           </div>
-          <div className="figure">
-            <div className="figure-value">
-              {fieldsClosed} av {fieldsTotal}
-            </div>
-            <div className="figure-unit">felt</div>
-            <div className="figure-label">fikk en vedtatt sluttdato</div>
+          <div>
+            <p className="num">
+              {fieldsClosed}{" "}
+              <small className="unit">av {fieldsTotal} felt</small>
+            </p>
+            <p className="label">fikk en vedtatt sluttdato</p>
           </div>
-          <div className="figure">
-            <div className="figure-value">{Math.round(share * 100)} %</div>
-            <div className="figure-unit">av produksjonen</div>
-            <div className="figure-label">
-              målt i 2025-nivå, har fått en sluttdato
-            </div>
+          <div>
+            <p className="num">
+              {Math.round(share * 100)} <small className="unit">%</small>
+            </p>
+            <p className="label">
+              av produksjonen, målt i 2025-nivå, har fått en sluttdato
+            </p>
           </div>
-          <div className="figure">
-            <div className="figure-value">
-              {energy.phasedOutTwh.toLocaleString("nb-NO")}
-            </div>
-            <div className="figure-unit">TWh fossil energi</div>
-            <div className="figure-label">
-              er ute av produksjon i 2040 som følge av planen
-            </div>
+          <div>
+            <p className="num">
+              {energy.phasedOutTwh.toLocaleString("nb-NO")}{" "}
+              <small className="unit">TWh</small>
+            </p>
+            <p className="label">
+              fossil energi er ute av produksjon i 2040 som følge av planen
+            </p>
           </div>
         </div>
 
@@ -194,40 +197,38 @@ export function VerdictRoute() {
       {/* ------------------------------------------------------------ 3. Cost */}
       <section className="verdict-section">
         <h2>Regningen</h2>
-        <div className="verdict-figures">
-          <div className="figure">
-            <div className="figure-value">
-              {economy.cumulativeLostStateRevenueBnNok.toLocaleString("nb-NO")}
-            </div>
-            <div className="figure-unit">mrd kr</div>
-            <div className="figure-label">
+        <div className="stats">
+          <div>
+            <p className="num">
+              {economy.cumulativeLostStateRevenueBnNok.toLocaleString("nb-NO")}{" "}
+              <small className="unit">mrd kr</small>
+            </p>
+            <p className="label">
               mindre til staten over hele perioden, i dagens priser
-            </div>
+            </p>
           </div>
-          <div className="figure">
-            <div className="figure-value">
-              {economy.stateBudgetMultiple.toLocaleString("nb-NO")}
-            </div>
-            <div className="figure-unit">statsbudsjett</div>
-            <div className="figure-label">
+          <div>
+            <p className="num">
+              {economy.stateBudgetMultiple.toLocaleString("nb-NO")}{" "}
+              <small className="unit">statsbudsjett</small>
+            </p>
+            <p className="label">
               er det samme beløpet, fordelt over femten år
-            </div>
+            </p>
           </div>
-          <div className="figure">
-            <div className="figure-value">
-              {perCapitaMonthly.toLocaleString("nb-NO")}
-            </div>
-            <div className="figure-unit">kr per innbygger</div>
-            <div className="figure-label">per måned i 2040</div>
+          <div>
+            <p className="num">
+              {perCapitaMonthly.toLocaleString("nb-NO")}{" "}
+              <small className="unit">kr</small>
+            </p>
+            <p className="label">per innbygger per måned i 2040</p>
           </div>
-          <div className="figure">
-            <div className="figure-value">
-              {OIL_FUND_BN_NOK.toLocaleString("nb-NO")}
-            </div>
-            <div className="figure-unit">mrd kr</div>
-            <div className="figure-label">
-              står i Oljefondet til sammenligning
-            </div>
+          <div>
+            <p className="num">
+              {OIL_FUND_BN_NOK.toLocaleString("nb-NO")}{" "}
+              <small className="unit">mrd kr</small>
+            </p>
+            <p className="label">står i Oljefondet til sammenligning</p>
           </div>
         </div>
         <p className="verdict-note">
@@ -266,42 +267,46 @@ export function VerdictRoute() {
           ))}
         </div>
 
-        <div className="replacement">
+        <div className="stats">
           <div>
-            <div className="replacement-value">
-              {energy.replacementTwh.toLocaleString("nb-NO")} TWh
-            </div>
-            <div className="replacement-label">
+            <p className="num">
+              {energy.replacementTwh.toLocaleString("nb-NO")}{" "}
+              <small className="unit">TWh</small>
+            </p>
+            <p className="label">
               ren strøm i året gir samme nytte som det planen din faset ut
-            </div>
+            </p>
           </div>
           <div>
-            <div className="replacement-value">
-              {energy.turbines.toLocaleString("nb-NO")}
-            </div>
-            <div className="replacement-label">
+            <p className="num">{energy.turbines.toLocaleString("nb-NO")}</p>
+            <p className="label">
               havvindturbiner på 15 MW ville produsert den strømmen
-            </div>
+            </p>
           </div>
         </div>
 
         <div className="alternatives">
           {alternatives().map((alternative) => (
-            <div key={alternative.name} className="alternative">
-              <div className="alternative-head">
-                <span className="alternative-emoji">{alternative.emoji}</span>
-                <div>
-                  <div className="alternative-name">{alternative.name}</div>
-                  <div className="alternative-value">
-                    {alternative.value} <small>{alternative.unit}</small>
-                  </div>
-                </div>
+            <article key={alternative.name} className="alternative">
+              <div className="alternative-mark">
+                {alternative.illustration ? (
+                  <Illustration name={alternative.illustration} size={40} />
+                ) : (
+                  alternative.icon && <Icon name={alternative.icon} size={20} />
+                )}
               </div>
-              <p>{alternative.text}</p>
-              <p className="alternative-limit">
-                <strong>Men:</strong> {alternative.limit}
-              </p>
-            </div>
+              <div>
+                <h3>{alternative.name}</h3>
+                <p className="num alternative-value">
+                  {alternative.value}{" "}
+                  <small className="unit">{alternative.unit}</small>
+                </p>
+                <p>{alternative.text}</p>
+                <p className="alternative-limit">
+                  <strong>Men:</strong> {alternative.limit}
+                </p>
+              </div>
+            </article>
           ))}
         </div>
       </section>
@@ -323,24 +328,29 @@ export function VerdictRoute() {
           Her er hvorfor.
         </p>
 
-        <div className="planned-grid">
-          {plannedVsUnplanned.map((item) => (
-            <div key={item.title} className="planned">
-              <div className="planned-head">
-                <span>{item.emoji}</span>
-                <h3>{item.title}</h3>
-              </div>
-              <div className="planned-case with">
-                <span className="case-label">Med plan</span>
-                {item.planned}
-              </div>
-              <div className="planned-case without">
-                <span className="case-label">Uten plan</span>
-                {item.unplanned}
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Dette ER sammenlignbare data, og hører hjemme i en tabell —
+            før var det fire kort som hver inneholdt to kort til */}
+        <table className="planned-table">
+          <thead>
+            <tr>
+              <th scope="col">Spørsmålet</th>
+              <th scope="col">Med plan</th>
+              <th scope="col">Uten plan</th>
+            </tr>
+          </thead>
+          <tbody>
+            {plannedVsUnplanned.map((item) => (
+              <tr key={item.title}>
+                <th scope="row">
+                  <Icon name={item.icon} size={16} muted />
+                  {item.title}
+                </th>
+                <td>{item.planned}</td>
+                <td>{item.unplanned}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
         <p className="verdict-close">
           Feltene stenger uansett. Forskjellen mellom en plan og ingen plan er

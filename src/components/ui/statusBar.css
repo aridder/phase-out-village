@@ -190,3 +190,16 @@
     transform: scale(1.08);
   }
 }
+
+/* På telefon er det ikke plass til fire periodenavn i tidslinjen – de ble
+   klippet midt i ordet ("Etterspørselen sn"). Navnet på perioden man er i
+   står uansett i linjen over. */
+@media (max-width: 600px) {
+  .status-segment .segment-label {
+    display: none;
+  }
+
+  .status-segment {
+    height: 8px;
+  }
+}

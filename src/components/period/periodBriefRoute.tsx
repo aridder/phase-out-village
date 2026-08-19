@@ -68,7 +68,7 @@ export function PeriodBriefRoute() {
         <div className="brief-chapter">
           <span className="brief-glyph">{period.glyph}</span>
           <div>
-            <div className="brief-kicker">
+            <div className="kicker">
               {period.kicker} · {period.label}
             </div>
             <h1>{period.name}</h1>
@@ -130,36 +130,35 @@ export function PeriodBriefRoute() {
         </section>
       )}
 
-      <section className="brief-rules">
-        <div className="rule capacity">
-          <div className="rule-label">Kapasitet denne perioden</div>
-          <div className="rule-value">
+      {/* Tre definisjoner er bokstavelig talt en definisjonsliste — det var
+          tre kort før, med hver sin ramme rundt to linjer tekst */}
+      <dl className="defs brief-rules">
+        <div>
+          <dt>Kapasitet denne perioden</dt>
+          <dd className="defs-value">
             {period.capacity >= available.length
               ? "Ingen grense"
               : `${period.capacity} felt`}
-          </div>
-          <p>{period.capacityReason}</p>
+          </dd>
+          <dd className="defs-note">{period.capacityReason}</dd>
         </div>
-        <div className="rule lens">
-          <div className="rule-label">Det du får se</div>
-          <div className="rule-value">{period.lensLabel}</div>
-          <p>{period.lensExplainer}</p>
+        <div>
+          <dt>Det du får se</dt>
+          <dd className="defs-value">{period.lensLabel}</dd>
+          <dd className="defs-note">{period.lensExplainer}</dd>
         </div>
-        <div className="rule measure">
-          <div className="rule-label">Det du måles på</div>
-          <div className="rule-value">{period.measure.name}</div>
-          <p>{period.measure.explainer}</p>
+        <div>
+          <dt>Det du måles på</dt>
+          <dd className="defs-value">{period.measure.name}</dd>
+          <dd className="defs-note">{period.measure.explainer}</dd>
         </div>
-      </section>
+      </dl>
 
       <section className="brief-world">
         <h2>Dette skjer i {period.label}</h2>
         <ul>
           {period.events.map((event) => (
-            <li key={event.text}>
-              <span className="event-emoji">{event.emoji}</span>
-              {event.text}
-            </li>
+            <li key={event}>{event}</li>
           ))}
         </ul>
       </section>

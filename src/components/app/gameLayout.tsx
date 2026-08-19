@@ -1,17 +1,20 @@
 import React, { useContext } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+/* Ett ikonsett. Headeren blandet tidligere fa, md, bi, rx og fc — inkludert
+   ett fullfarget ikon (FcViewDetails) som ikke fulgte tekstfargen i det hele
+   tatt. Lucide har én strektykkelse og ingen fyll. */
 import {
-  FaChartBar,
-  FaLightbulb,
-  FaMap,
-  FaRecycle,
-  FaRedo,
-  FaWind,
-} from "react-icons/fa";
-import { MdEdit, MdHelp } from "react-icons/md";
-import { BiSolidBarChartAlt2 } from "react-icons/bi";
-import { RxReset } from "react-icons/rx";
-import { FcViewDetails } from "react-icons/fc";
+  LuChartNoAxesColumn,
+  LuCircleHelp,
+  LuLightbulb,
+  LuMap,
+  LuPencil,
+  LuRotateCcw,
+  LuScrollText,
+  LuTrendingDown,
+  LuWind,
+  LuX,
+} from "react-icons/lu";
 import { ApplicationContext } from "../../applicationContext";
 import { MainButton } from "../ui/mainButton";
 import { StatusBar } from "../ui/statusBar";
@@ -49,13 +52,13 @@ function GameHeader() {
           <Brand />
           <div className="header-nav">
             <MainButton
-              icon={<FaMap />}
+              icon={<LuMap />}
               label={"Kart"}
               labelSmall={"Kart"}
               to="/map"
             />
             <MainButton
-              icon={<BiSolidBarChartAlt2 />}
+              icon={<LuChartNoAxesColumn />}
               label={"Plan"}
               labelSmall={"Plan"}
               to="/plan"
@@ -63,21 +66,21 @@ function GameHeader() {
             {/* Akt 1 skal være tilgjengelig midt i spillet — spørsmålet
                 «hvor stort var dette feltet igjen?» kommer underveis */}
             <MainButton
-              icon={<FaChartBar />}
+              icon={<LuTrendingDown />}
               label={"Norge i dag"}
               labelSmall={"Fakta"}
               title="Tallene for sokkelen slik den står i dag"
               to="/norge"
             />
             <MainButton
-              icon={<FaLightbulb />}
+              icon={<LuLightbulb />}
               label={"Rådgiver"}
               labelSmall={"Råd"}
               title="Få analyse av og forslag til planen din"
               to="/advisor"
             />
             <MainButton
-              icon={<FaWind />}
+              icon={<LuWind />}
               label={"Omstilling"}
               labelSmall={"Grønt"}
               title="Se hva som erstatter oljen"
@@ -85,7 +88,7 @@ function GameHeader() {
             />
             {gameEnded || (
               <MainButton
-                icon={<MdHelp />}
+                icon={<LuCircleHelp />}
                 label={"Hjelp"}
                 labelSmall={"Hjelp"}
                 title="Hjelp"
@@ -94,7 +97,7 @@ function GameHeader() {
             )}
             <div className="nav-divider"></div>
             <MainButton
-              icon={<FaRedo />}
+              icon={<LuRotateCcw />}
               label={"Restart"}
               labelSmall={"Ny"}
               title="Start på nytt"
@@ -135,10 +138,10 @@ function GameFooter() {
       <footer>
         <div className="footer-row spread">
           <div className="footer-note">
-            🏁 2040. Planen din er ferdig – nå gjøres regnskapet opp.
+            2040. Planen din er ferdig – nå gjøres regnskapet opp.
           </div>
           <MainButton
-            icon={<FcViewDetails />}
+            icon={<LuScrollText />}
             label={"Se oppgjøret"}
             labelSmall={"Oppgjør"}
             to="/summary"
@@ -168,7 +171,7 @@ function GameFooter() {
             {period.name}, {period.label}
           </div>
           <MainButton
-            icon={<MdEdit />}
+            icon={<LuPencil />}
             label={`Åpne ${period.label}`}
             labelSmall={"Åpne"}
             title="Gå til periodens brief"
@@ -190,7 +193,7 @@ function GameFooter() {
         </div>
 
         <MainButton
-          icon={<MdEdit />}
+          icon={<LuPencil />}
           label={"Endre"}
           labelSmall={"Endre"}
           title="Endre utvalget"
@@ -198,7 +201,7 @@ function GameFooter() {
         />
 
         <MainButton
-          icon={<RxReset />}
+          icon={<LuX />}
           label={"Tøm"}
           labelSmall={"Tøm"}
           title="Tilbakestill valgte felt"
@@ -206,8 +209,8 @@ function GameFooter() {
         />
 
         <MainButton
-          icon={<FaRecycle />}
-          label={"Vedta og gå videre ➜"}
+          icon={<LuScrollText />}
+          label={"Vedta og gå videre"}
           labelSmall={"Vedta"}
           title={`Vedta sluttdato for ${draftCount} felt og gå til neste periode`}
           count={draftCount}

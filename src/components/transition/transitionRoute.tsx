@@ -11,6 +11,7 @@ import {
   USEFUL_ENERGY_FACTOR,
 } from "../../data/energyTransition";
 import { energyData } from "../../generated/energyData";
+import { Illustration } from "../ui/illustrations";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./transition.css";
 
@@ -50,7 +51,7 @@ export function TransitionRoute() {
 
   return (
     <div className="transition-page">
-      <h2>🔋 Fra svart til grønn energi</h2>
+      <h2>Fra svart til grønn energi</h2>
       <div className="transition-intro">
         Hva skjer egentlig med energien når oljen fases ut? Mindre enn du skulle
         tro – og her er hvorfor.
@@ -58,7 +59,7 @@ export function TransitionRoute() {
 
       <div className="transition-steps">
         <div className="transition-step">
-          <div className="step-emoji">🛢️</div>
+          <Illustration name="plattform" size={40} />
           <h4>Sokkelen er en energigigant</h4>
           <div>
             Norske olje- og gassfelt produserer rundt{" "}
@@ -69,7 +70,7 @@ export function TransitionRoute() {
           </div>
         </div>
         <div className="transition-step">
-          <div className="step-emoji">🔥</div>
+          <Illustration name="gassturbin" size={40} />
           <h4>En del går opp i røyk</h4>
           <div>
             Hvor mye av energien som blir til nytte, avhenger av bruken: rundt{" "}
@@ -79,7 +80,7 @@ export function TransitionRoute() {
           </div>
         </div>
         <div className="transition-step">
-          <div className="step-emoji">🌬️</div>
+          <Illustration name="havvind" size={40} />
           <h4>Derfor er erstatningen mindre enn energien</h4>
           <div>
             Strøm brukes nesten uten tap. Med et blandet bruksmønster kan hver
@@ -117,7 +118,6 @@ export function TransitionRoute() {
       <h3>Slik ser regnestykket ut i 2040</h3>
       <div className="stat-tiles">
         <div className="stat-tile">
-          <div className="emoji">🛢️</div>
           <div className="value">
             {summary.phasedOutTwh.toLocaleString("nb-NO")} TWh
           </div>
@@ -127,7 +127,6 @@ export function TransitionRoute() {
           </div>
         </div>
         <div className="stat-tile highlight">
-          <div className="emoji">⚡</div>
           <div className="value">
             {summary.replacementTwh.toLocaleString("nb-NO")} TWh
           </div>
@@ -138,14 +137,12 @@ export function TransitionRoute() {
           </div>
         </div>
         <div className="stat-tile">
-          <div className="emoji">🌬️</div>
           <div className="value">
             {summary.turbines.toLocaleString("nb-NO")}
           </div>
           <div>moderne havvindturbiner (15 MW) kan produsere den strømmen</div>
         </div>
         <div className="stat-tile">
-          <div className="emoji">🏠</div>
           <div className="value">
             {(summary.households / 1_000_000).toLocaleString("nb-NO", {
               maximumFractionDigits: 1,
@@ -159,7 +156,7 @@ export function TransitionRoute() {
       <h3>Norge selger allerede energi til Europa – bare i feil form</h3>
       <div className="transition-steps">
         <div className="transition-step">
-          <div className="step-emoji">🔌</div>
+          <Illustration name="kraftnett" size={40} />
           <h4>Strøm er allerede eksportvare</h4>
           <div>
             Det siste året eksporterte Norge{" "}
@@ -176,7 +173,7 @@ export function TransitionRoute() {
           </div>
         </div>
         <div className="transition-step">
-          <div className="step-emoji">🌬️</div>
+          <Illustration name="havvind" size={40} />
           <h4>Er det realistisk? Sammenlign med i dag</h4>
           <div>
             Norsk vindkraft produserer allerede{" "}
@@ -200,7 +197,7 @@ export function TransitionRoute() {
           </div>
         </div>
         <div className="transition-step">
-          <div className="step-emoji">⚖️</div>
+          <Illustration name="vannmagasin" size={40} />
           <h4>Vi har allerede overskudd</h4>
           <div>
             Norge produserer{" "}
@@ -225,7 +222,7 @@ export function TransitionRoute() {
       {/* Pengespørsmålet eies av /kostnad — her lenker vi dit i stedet for
           å gjenta hele regnestykket (siden var 7 skjermer lang) */}
       <div className="transition-economy-link">
-        💰 <strong>Hva med pengene?</strong> Tapte inntekter, fondet og hva
+        <strong>Hva med pengene?</strong> Tapte inntekter, fondet og hva
         omstillingen koster – <Link to="/kostnad">se hele regnestykket</Link>.
       </div>
 

@@ -68,7 +68,7 @@ export function FieldList({
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="🔎 Finn felt …"
+          placeholder="Finn felt …"
           aria-label="Søk etter felt"
         />
         <label>

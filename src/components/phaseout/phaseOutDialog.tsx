@@ -1,3 +1,4 @@
+import { Icon } from "../ui/icons";
 import React, { FormEvent, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
@@ -147,7 +148,7 @@ export function PhaseOutDialog({ from }: { from: string }) {
           onClick={() => navigate(from)}
           aria-label="Lukk feltvelgeren"
         >
-          ✕
+          <Icon name="lukk" size={16} />
         </button>
       </header>
 
@@ -181,7 +182,7 @@ export function PhaseOutDialog({ from }: { from: string }) {
         <input
           type="search"
           className="phaseout-search"
-          placeholder="🔎 Finn felt …"
+          placeholder="Finn felt …"
           aria-label="Søk etter felt"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -223,7 +224,6 @@ export function PhaseOutDialog({ from }: { from: string }) {
                   </div>
                   <div className="card-stats">
                     <span title="Produksjon i året">
-                      🛢️{" "}
                       {(
                         gameData.data[row.field]?.[year]?.totalProduction
                           ?.value ?? 0
@@ -233,7 +233,6 @@ export function PhaseOutDialog({ from }: { from: string }) {
                       mill. Sm³/år
                     </span>
                     <span title="Samlet kutt fram mot 2040 hvis feltet stenges nå">
-                      🌍{" "}
                       {(row.avoidedEmission / 1_000_000).toLocaleString(
                         "nb-NO",
                         { maximumFractionDigits: 1 },
@@ -241,7 +240,6 @@ export function PhaseOutDialog({ from }: { from: string }) {
                       mill. t CO₂ spart
                     </span>
                     <span title="Statsinntekter feltet bærer fram mot 2040">
-                      💰{" "}
                       {row.forgoneRevenueBnNok.toLocaleString("nb-NO", {
                         maximumFractionDigits: 0,
                       })}{" "}
@@ -302,7 +300,7 @@ export function PhaseOutDialog({ from }: { from: string }) {
           >
             {draftCount === 0
               ? "Hopp over perioden"
-              : `Vedta sluttdato for ${draftCount} ${isSmall ? "felt" : draftCount === 1 ? "felt" : "felt"} →`}
+              : `Vedta sluttdato for ${draftCount} felt`}
           </button>
         </div>
       </div>
@@ -353,7 +351,7 @@ function LensValue({
       return (
         <span
           className="lens-value intensity"
-          style={{ backgroundColor: dark ? cls.dark : cls.light }}
+          style={{ ["--chip" as string]: dark ? cls.dark : cls.light }}
           title={`${cls.label} utslipp per fat`}
         >
           {row.intensity.toLocaleString("nb-NO", {

@@ -37,7 +37,7 @@ export type FieldGeometry = {
 };
 
 export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
-  "Alvheim": {
+  Alvheim: {
     lon: 2.0166,
     lat: 59.5171,
     spread: [1.8037, 59.6535],
@@ -49,7 +49,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1973,
     operator: "Aker BP ASA",
   },
-  "Balder": {
+  Balder: {
     lon: 2.412,
     lat: 59.246,
     spread: [2.0682, 59.3183],
@@ -61,7 +61,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1967,
     operator: "Vår Energi ASA",
   },
-  "Brage": {
+  Brage: {
     lon: 3.0671,
     lat: 60.5606,
     spread: [3.1479, 60.5198],
@@ -73,7 +73,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1980,
     operator: "OKEA ASA",
   },
-  "Draugen": {
+  Draugen: {
     lon: 7.7506,
     lat: 64.3365,
     spread: [7.7544, 64.3371],
@@ -97,7 +97,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1997,
     operator: "Aker BP ASA",
   },
-  "Ekofisk": {
+  Ekofisk: {
     lon: 3.0945,
     lat: 56.6831,
     spread: [3.1523, 56.7537],
@@ -109,7 +109,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1968,
     operator: "ConocoPhillips Skandinavia AS",
   },
-  "Eldfisk": {
+  Eldfisk: {
     lon: 3.2537,
     lat: 56.372,
     spread: [2.9696, 56.3172],
@@ -121,7 +121,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1970,
     operator: "ConocoPhillips Skandinavia AS",
   },
-  "Gjøa": {
+  Gjøa: {
     lon: 3.7686,
     lat: 61.3241,
     spread: [3.7832, 61.4943],
@@ -133,7 +133,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1981,
     operator: "Vår Energi ASA",
   },
-  "Goliat": {
+  Goliat: {
     lon: 22.2903,
     lat: 71.2733,
     spread: [22.2903, 71.2733],
@@ -145,7 +145,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 2000,
     operator: "Vår Energi ASA",
   },
-  "Grane": {
+  Grane: {
     lon: 2.5209,
     lat: 59.2023,
     spread: [2.8559, 59.2793],
@@ -157,7 +157,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1991,
     operator: "Equinor Energy AS",
   },
-  "Gullfaks": {
+  Gullfaks: {
     lon: 2.1759,
     lat: 61.1862,
     spread: [2.6583, 60.8775],
@@ -169,7 +169,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1978,
     operator: "Equinor Energy AS",
   },
-  "Heidrun": {
+  Heidrun: {
     lon: 7.2611,
     lat: 65.3949,
     spread: [7.3337, 65.44],
@@ -205,7 +205,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 2010,
     operator: "Equinor Energy AS",
   },
-  "Kristin": {
+  Kristin: {
     lon: 6.7157,
     lat: 64.9045,
     spread: [6.393, 64.6815],
@@ -217,7 +217,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1983,
     operator: "Equinor Energy AS",
   },
-  "Kvitebjørn": {
+  Kvitebjørn: {
     lon: 2.4018,
     lat: 61.0596,
     spread: [2.1082, 61.2477],
@@ -241,7 +241,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1978,
     operator: "Equinor Energy AS",
   },
-  "Njord": {
+  Njord: {
     lon: 7.1818,
     lat: 64.2586,
     spread: [7.178, 64.258],
@@ -253,7 +253,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1986,
     operator: "Equinor Energy AS",
   },
-  "Norne": {
+  Norne: {
     lon: 7.9009,
     lat: 66.0204,
     spread: [8.0719, 66.1365],
@@ -277,7 +277,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1997,
     operator: "A/S Norske Shell",
   },
-  "Oseberg": {
+  Oseberg: {
     lon: 2.7992,
     lat: 60.4766,
     spread: [2.2455, 60.3071],
@@ -289,7 +289,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1979,
     operator: "Equinor Energy AS",
   },
-  "Skarv": {
+  Skarv: {
     lon: 7.5963,
     lat: 65.7802,
     spread: [7.5624, 65.8543],
@@ -301,7 +301,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1998,
     operator: "Aker BP ASA",
   },
-  "Sleipner": {
+  Sleipner: {
     lon: 1.7788,
     lat: 58.4754,
     spread: [1.5163, 58.3472],
@@ -313,7 +313,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1974,
     operator: "Equinor Energy AS",
   },
-  "Snorre": {
+  Snorre: {
     lon: 2.1466,
     lat: 61.4513,
     spread: [2.0391, 61.6663],
@@ -325,7 +325,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1979,
     operator: "Equinor Energy AS",
   },
-  "Snøhvit": {
+  Snøhvit: {
     lon: 21.0112,
     lat: 71.4982,
     spread: [21.0112, 71.4982],
@@ -337,7 +337,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1984,
     operator: "Equinor Energy AS",
   },
-  "Statfjord": {
+  Statfjord: {
     lon: 1.888,
     lat: 61.2915,
     spread: [1.4163, 61.3548],
@@ -349,7 +349,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1974,
     operator: "Equinor Energy AS",
   },
-  "Troll": {
+  Troll: {
     lon: 3.689,
     lat: 60.7472,
     spread: [4.5095, 60.7654],
@@ -361,7 +361,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1979,
     operator: "Equinor Energy AS",
   },
-  "Ula": {
+  Ula: {
     lon: 2.7289,
     lat: 56.9694,
     spread: [2.6165, 57.0403],
@@ -373,7 +373,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1976,
     operator: "Aker BP ASA",
   },
-  "Valhall": {
+  Valhall: {
     lon: 3.3009,
     lat: 56.4238,
     spread: [3.6396, 56.3352],
@@ -385,7 +385,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1974,
     operator: "Aker BP ASA",
   },
-  "Visund": {
+  Visund: {
     lon: 2.5005,
     lat: 61.3814,
     spread: [2.8565, 61.4156],
@@ -397,7 +397,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1986,
     operator: "Equinor Energy AS",
   },
-  "Yggdrasil": {
+  Yggdrasil: {
     lon: 2.5352,
     lat: 59.9832,
     spread: [2.7108, 59.7585],
@@ -409,7 +409,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1975,
     operator: "Aker BP ASA",
   },
-  "Yme": {
+  Yme: {
     lon: 4.4448,
     lat: 57.7993,
     spread: [4.4448, 57.7993],
@@ -421,7 +421,7 @@ export const fieldGeometry: Record<OilfieldName, FieldGeometry> = {
     discovered: 1987,
     operator: "Repsol Norge AS",
   },
-  "Åsgard": {
+  Åsgard: {
     lon: 6.896,
     lat: 65.044,
     spread: [7.0089, 65.0221],

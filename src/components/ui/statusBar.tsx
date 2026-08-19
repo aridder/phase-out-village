@@ -43,7 +43,7 @@ export function StatusBar() {
       <div className="status-top">
         <span className="status-period">
           {finished ? (
-            <>🏁 2040 – perioden er over</>
+            <>2040 – perioden er over</>
           ) : (
             <>
               <span className="status-glyph">{period.glyph}</span>
@@ -54,17 +54,15 @@ export function StatusBar() {
 
         <span className="status-stats" key={`${fieldsScheduled}-${avoidedMt}`}>
           <span title="Felt som har fått en vedtatt sluttdato">
-            🛢️{" "}
             <strong>
               {fieldsScheduled}/{fieldsTotal}
             </strong>{" "}
             felt
           </span>
           <span title="Andel av 2025-produksjonen som har fått sluttdato">
-            📅 <strong>{Math.round(share * 100)} %</strong> av produksjonen
+            <strong>{Math.round(share * 100)} %</strong> av produksjonen
           </span>
           <span title="Samlede utslipp 2025–2040 unngått med planen din">
-            🌍{" "}
             <strong>
               {avoidedMt.toLocaleString("nb-NO", { maximumFractionDigits: 0 })}{" "}
               Mt
@@ -101,7 +99,6 @@ export function StatusBar() {
             </div>
           );
         })}
-        <span className={`status-flag ${finished ? "reached" : ""}`}>🏁</span>
       </div>
     </div>
   );

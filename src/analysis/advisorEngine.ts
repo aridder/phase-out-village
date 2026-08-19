@@ -12,8 +12,12 @@ import { formatCompactNumber } from "./emissionEquivalents";
 
 /** A single piece of generated advice or analysis. */
 export type Insight = {
+  /**
+   * The insight's state. The icon is derived from this in the UI rather
+   * than stored here: each insight used to carry its own emoji, which
+   * meant six different pictograms for what are really three states.
+   */
   kind: "success" | "warning" | "tip" | "info";
-  emoji: string;
   title: string;
   text: string;
 };
@@ -126,7 +130,6 @@ export function analyzePlan(
     const worst = stats.slice(0, 3);
     insights.push({
       kind: "tip",
-      emoji: "🧭",
       title: "Start med verstingene",
       text:
         `Ingen felter er faset ut ennå. De mest forurensende feltene per fat er ` +
@@ -150,7 +153,6 @@ export function analyzePlan(
       .reduce((a, b) => a + b, 0);
     insights.push({
       kind: "warning",
-      emoji: "⚠️",
       title: "Utslippsverstinger går fortsatt for fullt",
       text:
         dirtyRunning.map((s) => s.field).join(", ") +
@@ -174,7 +176,6 @@ export function analyzePlan(
       .reduce((a, b) => a + b, 0);
     insights.push({
       kind: "success",
-      emoji: "✅",
       title: "Godt valg av felter",
       text:
         `Du har faset ut ${goodChoices.map((s) => `${s.field} (${phaseOut[s.field]})`).join(", ")} – ` +
@@ -190,7 +191,6 @@ export function analyzePlan(
     const example = cleanPhasedOut[0];
     insights.push({
       kind: "tip",
-      emoji: "⚖️",
       title: "Prioriter skitne felter først",
       text:
         `${example.field} er blant de renere feltene (${example.avgIntensity.toLocaleString("nb-NO")} kg CO₂/fat), men er faset ut mens ${dirtyRunning[0].field} ` +
@@ -218,7 +218,6 @@ export function analyzePlan(
     const d = divergences[0];
     insights.push({
       kind: "info",
-      emoji: "📊",
       title: `MDG faser ut ${d.stat.field} tidligere`,
       text:
         `I MDGs plan avvikles ${d.stat.field} i ${d.mdgYear}` +
@@ -241,7 +240,6 @@ export function analyzePlan(
     const forgonePercent = Math.round((forgone / baselineProduction) * 100);
     insights.push({
       kind: "info",
-      emoji: "🛢️",
       title: "Klimaeffekt per fat",
       text:
         `Planen din kutter ${reductionPercent} % av utslippene mot 2040, men bare ${forgonePercent} % av produksjonen. ` +
