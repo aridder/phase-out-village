@@ -7,9 +7,11 @@
    variabelen, så en ny periodefarge er én endring i data, ikke i CSS.
    ========================================================================== */
 
+/* Samme spalte som resten av spillet. Tekst og måler-søyler deler bredde,
+   så høyrekanten er én linje og ikke to. */
 .period-brief,
 .period-report {
-  max-width: 54rem;
+  max-width: var(--spalte);
   margin: 0 auto;
   padding: 1.75rem 1.25rem 3rem;
   display: flex;
@@ -117,7 +119,6 @@
   gap: var(--space-3);
   font-size: 1.05rem;
   line-height: 1.65;
-  max-width: var(--measure);
   border-left: 2px solid var(--period-accent);
   padding-left: var(--space-4);
 }
@@ -153,7 +154,6 @@
 .brief-world li {
   font-size: 0.92rem;
   line-height: 1.55;
-  max-width: var(--measure);
   padding: var(--space-2) 0;
   border-top: 1px solid var(--linje);
 }
@@ -163,7 +163,6 @@
   border-left: 2px solid var(--linje);
   font-size: 0.95rem;
   line-height: 1.55;
-  max-width: var(--measure);
 }
 
 .brief-actions {
@@ -196,11 +195,14 @@
   border-left: 2px solid var(--period-accent);
   font-size: 1rem;
   line-height: 1.6;
-  max-width: var(--measure);
 }
 
+/* flex-direction: row må stå her. Basen setter ALLE ul-er til kolonne, så
+   uten den ble hvert feltnavn en full bredde hvit stripe i stedet for en
+   chip, og tolv vedtatte felt fylte halve skjermen. */
 .decided-fields {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   gap: 0.35rem;
   margin-top: 0.6rem;
@@ -298,7 +300,6 @@
   border-top: 1px solid var(--linje);
   font-size: 0.95rem;
   line-height: 1.6;
-  max-width: var(--measure);
 }
 
 .report-actions {

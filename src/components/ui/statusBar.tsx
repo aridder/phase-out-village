@@ -1,5 +1,4 @@
 import React, { useContext, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
 import { gameData } from "../../data/gameData";
 import { periodForRound, periods } from "../../data/periods";
@@ -19,7 +18,6 @@ import "./statusBar.css";
  */
 export function StatusBar() {
   const { year, phaseOut, getCurrentRound } = useContext(ApplicationContext);
-  const navigate = useNavigate();
 
   const round = getCurrentRound();
   const finished = year === "2040";
@@ -72,12 +70,6 @@ export function StatusBar() {
             CO₂ spart
           </span>
         </span>
-
-        {finished && (
-          <span className="status-cta">
-            <button onClick={() => navigate("/summary")}>Se oppgjøret</button>
-          </span>
-        )}
       </div>
 
       <div className="status-timeline" aria-label={`Periode ${round} av 4`}>

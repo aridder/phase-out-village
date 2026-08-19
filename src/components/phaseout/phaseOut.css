@@ -8,7 +8,7 @@
    ========================================================================== */
 
 .phaseout-page {
-  max-width: 54rem;
+  max-width: var(--spalte);
   margin: 0 auto;
   padding: 1.5rem 1.25rem 3rem;
   display: flex;
@@ -86,7 +86,6 @@
 .lens-note {
   font-size: 0.88rem;
   line-height: 1.55;
-  max-width: var(--measure);
   opacity: 0.85;
 }
 

@@ -195,26 +195,29 @@ export function PeriodReportRoute() {
         </section>
       )}
 
-      <section className="report-figures">
+      {/* .stats, ikke .report-figures: den klassen forsvant da kortene ble
+          fjernet, så tallene mistet rutenettet og stablet seg loddrett */}
+      <section className="stats">
         <div>
-          <div className="value">{Object.keys(phaseOut).length}</div>
-          <div className="label">felt har sluttdato i planen din</div>
+          <p className="num">{Object.keys(phaseOut).length}</p>
+          <p className="label">felt har sluttdato i planen din</p>
         </div>
         <div>
-          <div className="value">
-            {avoidedMt.toLocaleString("nb-NO", { maximumFractionDigits: 1 })}
-          </div>
-          <div className="label">mill. tonn CO₂ unngått 2025–2040 så langt</div>
+          <p className="num">
+            {avoidedMt.toLocaleString("nb-NO", { maximumFractionDigits: 1 })}{" "}
+            <small className="unit">mill. tonn</small>
+          </p>
+          <p className="label">CO₂ unngått 2025–2040 så langt</p>
         </div>
         {nextPeriod && (
           <div>
-            <div className="value">
-              {Math.round(waiting / 1_000_000).toLocaleString("nb-NO")}
-            </div>
-            <div className="label">
-              mill. tonn CO₂ slipper feltene som står igjen ut i{" "}
-              {nextPeriod.label}
-            </div>
+            <p className="num">
+              {Math.round(waiting / 1_000_000).toLocaleString("nb-NO")}{" "}
+              <small className="unit">mill. tonn</small>
+            </p>
+            <p className="label">
+              CO₂ slipper feltene som står igjen ut i {nextPeriod.label}
+            </p>
           </div>
         )}
       </section>

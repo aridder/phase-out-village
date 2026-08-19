@@ -62,6 +62,10 @@ function GameFooter() {
   const draftCount = draftNames.length;
   const period = periodForRound(getCurrentRound());
 
+  // Oppgjørssiden har sine egne knapper nederst. En footer som tilbyr «Se
+  // oppgjøret» mens du står på oppgjøret, gjør ingenting når man trykker.
+  if (location.pathname === "/summary") return null;
+
   if (gameEnded)
     return (
       <footer>

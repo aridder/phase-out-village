@@ -71,9 +71,11 @@
     --space-6: 2.5rem;
     --space-7: 4rem;
 
-    /* Lesebredder: brødtekst ~62 tegn, ikke 80 */
-    --measure: 34rem;
-    --measure-narrow: 30rem;
+    /* Sidebredde. Én bredde per side, ikke én for prosa og en annen for
+       grafikk: da tekstblokkene ble kappet på 34rem inne i en 54–60rem
+       spalte, stoppet annenhver blokk et annet sted enn søylene ved siden
+       av. 48rem er fortsatt en lesbar linjelengde. */
+    --spalte: 48rem;
 
     color-scheme: light dark;
     background-color: var(--lime);
@@ -730,6 +732,15 @@
     margin-top: 1.5rem;
   }
 
+  /* På fortellingssidene styrer spalten bredden. Uten dette stoppet
+     kildeblokken 130 px før alt annet, og høyrekanten fikk en knekk
+     nederst på siden. */
+  .today-page .sources-note,
+  .verdict-page .sources-note,
+  .period-report .sources-note {
+    max-width: none;
+  }
+
   .sources-note ul {
     margin: 0.4rem 0 0.4rem 1.2rem;
     padding: 0;
@@ -1008,7 +1019,6 @@
     font-size: 0.85rem;
     line-height: 1.5;
     opacity: 0.8;
-    max-width: var(--measure-narrow);
   }
 
   /* --------------------------------------------------------------- primær

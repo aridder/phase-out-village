@@ -4,10 +4,15 @@
    En lesbar artikkelside, ikke et dashbord: én spalte med maks lesebredde,
    store tall der de bærer et poeng, og god luft mellom seksjonene. Alt som
    er en påstand står som brødtekst; alt som er et tall står som tall.
+
+   Én spalte for alt (--spalte). Da prosaen ble kappet på 34rem inne i en
+   60rem-spalte, sluttet annenhver blokk et annet sted enn søylene og
+   tabellene ved siden av, og høyrekanten så tilfeldig ut. Nå deler tekst
+   og grafikk samme bredde.
    ========================================================================== */
 
 .today-page {
-  max-width: 60rem;
+  max-width: var(--spalte);
   margin: 0 auto;
   padding: 2rem 1.25rem 4rem;
   display: flex;
@@ -46,7 +51,6 @@
 .today-body,
 .today-note,
 .today-punchline {
-  max-width: var(--measure);
   line-height: 1.6;
 }
 
@@ -57,7 +61,6 @@
 .today-note {
   font-size: 0.88rem;
   opacity: 0.78;
-  max-width: var(--measure-narrow);
 }
 
 /* Uthevet setning, ikke et kort: én strek og litt større grad holder */
@@ -316,7 +319,6 @@
   font-size: 0.9rem;
   line-height: 1.55;
   opacity: 0.82;
-  max-width: var(--measure);
 }
 
 /* --------------------------------------------------------------- energitap */
@@ -349,7 +351,6 @@
 .scenario-explainer {
   font-size: 0.9rem;
   line-height: 1.55;
-  max-width: var(--measure);
 }
 
 .energy-compare {
@@ -412,7 +413,6 @@
 }
 
 .today-hinge p {
-  max-width: var(--measure);
   line-height: 1.65;
 }
 

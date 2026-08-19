@@ -162,11 +162,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.status-bar .status-cta button {
-  font-size: 1em;
-  padding: 0.35rem 0.8rem;
-}
-
 @media (width <= 600px) {
   .status-bar .status-story {
     display: none;
