@@ -31,10 +31,16 @@ export type EmissionEquivalent = {
 export function formatCompactNumber(value: number): string {
   if (value >= 1_000_000_000)
     return `${formatDecimal(value / 1_000_000_000)} milliarder`;
-  if (value >= 1_000_000)
-    return `${formatDecimal(value / 1_000_000)} millioner`;
-  if (value >= 1_000) return `${Math.round(value / 1_000)} 000`;
-  return `${Math.round(value)}`;
+  if (value >= 1_000_000) {
+    const millions = value / 1_000_000;
+    return `${formatDecimal(millions)} ${millions < 1.05 ? "million" : "millioner"}`;
+  }
+  // Rounded to the nearest thousand, then formatted properly. Building the
+  // string as `${Math.round(value / 1000)} 000` produced "1000 000" for
+  // anything from 999 500 up, and dropped the grouping entirely.
+  if (value >= 1_000)
+    return (Math.round(value / 1_000) * 1_000).toLocaleString("nb-NO");
+  return Math.round(value).toLocaleString("nb-NO");
 }
 
 function formatDecimal(value: number): string {

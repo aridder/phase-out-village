@@ -64,8 +64,11 @@ function ApplicationRoutes() {
             spillerne skal beholde statuslinjen og neste-steg-footeren */}
           <Route path={"/transition"} element={<TransitionRoute />} />
           <Route path={"/advisor"} element={<AdvisorRoute />} />
-          <Route path={"/map"} element={<MapRoute />} />
-          <Route path={"/map/:slug"} element={<MapRoute />} />
+          {/* ONE route with an optional param, not two routes rendering the
+              same element: two separate <Route>s made React remount MapRoute
+              when a field was opened, which reset the ref holding the row to
+              return keyboard focus to. */}
+          <Route path={"/map/:slug?"} element={<MapRoute />} />
           {/* Akt 2 — hver periode åpner med sin egen brief */}
           <Route path={"/periode"} element={<PeriodBriefRoute />} />
           <Route path={"/phaseout"} element={<PhaseOutRoute />} />

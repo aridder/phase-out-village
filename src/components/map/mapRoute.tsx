@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
 import { gameData, OilfieldName } from "../../data/gameData";
@@ -10,6 +10,16 @@ import { MapLegend } from "./mapLegend";
 import { FieldProfile } from "./fieldProfile";
 import { fieldMapData } from "./fieldScales";
 import "./map.css";
+
+/**
+ * Which field's row should get focus back when the profile closes.
+ *
+ * Module scope, not a ref: the row lives in a list that is unmounted while
+ * the profile is open, and the surrounding component is itself remounted by
+ * the router on the way in and out — a ref does not survive that, and the
+ * focus restore silently did nothing.
+ */
+let returnFocusTo: OilfieldName | undefined;
 
 /**
  * The shelf page: the map, the field list and the field profile as one
@@ -33,14 +43,13 @@ export function MapRoute() {
     [slug],
   );
 
-  // The map shows committed decisions AND the draft for this period, so a
-  // field you just ticked is visibly part of the plan before you commit
-  const schedule = useMemo(
-    () => ({ ...phaseOut, ...phaseOutDraft }),
-    [phaseOut, phaseOutDraft],
+  // The draft is passed separately, not merged: a field you have ticked but
+  // not yet voted through is drawn as decided-but-still-running, which is a
+  // different thing from one that has actually closed
+  const data = useMemo(
+    () => fieldMapData(phaseOut, phaseOutDraft, year),
+    [phaseOut, phaseOutDraft, year],
   );
-
-  const data = useMemo(() => fieldMapData(schedule, year), [schedule, year]);
   const selectedDatum = data.find((d) => d.field === selected);
   const period = periodForRound(getCurrentRound());
 
@@ -48,11 +57,36 @@ export function MapRoute() {
   const scheduled = data.filter((d) => d.state === "scheduled").length;
 
   function select(field: OilfieldName | undefined) {
+    if (field) returnFocusTo = field;
     navigate(field ? `/map/${slugify(field)}` : "/map");
   }
 
+  /**
+   * Put keyboard focus back on the row the profile was opened from.
+   *
+   * This has to run from an effect, after React has committed the list back
+   * into the DOM. Doing it inline in the close handler focused a node that
+   * the very next commit replaced, so focus ended up on <body> anyway.
+   */
+  useEffect(() => {
+    if (selected || !returnFocusTo) return;
+    const field = returnFocusTo;
+    returnFocusTo = undefined;
+    const row = document.querySelector<HTMLButtonElement>(
+      `[data-field="${CSS.escape(field)}"]`,
+    );
+    row?.focus();
+    row?.scrollIntoView({ block: "nearest" });
+  }, [selected]);
+
   return (
     <div className="shelf-page">
+      {/* Kartsiden har ingen synlig overskrift — årstallet og feltlisten
+          forteller en seende bruker hvor de er. Dokumentet trenger den
+          likevel, ellers starter sidens struktur på nivå to. */}
+      <h1 className="visually-hidden">
+        Norsk sokkel – kart over feltene i {year}
+      </h1>
       <div className="shelf-map-pane">
         <ShelfMap
           data={data}
@@ -72,7 +106,7 @@ export function MapRoute() {
             </span>
             {scheduled > 0 && (
               <span>
-                <strong>{scheduled}</strong> med sluttdato
+                <strong>{scheduled}</strong> valgt nå
               </span>
             )}
             {retired > 0 && (
@@ -92,18 +126,21 @@ export function MapRoute() {
           />
         ) : (
           <>
-            <div className="shelf-tabs" role="tablist">
+            {/* Ikke role="tablist". Det annonserte «fane 1 av 2» og lovet
+                piltast-navigering og tabpanel-er som ikke fantes. To vanlige
+                av/på-knapper med aria-pressed er ærligere og fungerer. */}
+            <div className="shelf-tabs">
               <button
-                role="tab"
-                aria-selected={panel === "list"}
+                type="button"
+                aria-pressed={panel === "list"}
                 className={panel === "list" ? "active" : ""}
                 onClick={() => setPanel("list")}
               >
                 Feltene
               </button>
               <button
-                role="tab"
-                aria-selected={panel === "legend"}
+                type="button"
+                aria-pressed={panel === "legend"}
                 className={panel === "legend" ? "active" : ""}
                 onClick={() => setPanel("legend")}
               >

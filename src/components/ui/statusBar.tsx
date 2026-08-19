@@ -34,10 +34,12 @@ export function StatusBar() {
   );
   const share = useMemo(() => scheduledShare(phaseOut), [phaseOut]);
 
+  // NB: no role="status" on the bar itself. It made every change
+  // re-announce the period name and all three figures; only the figures are
+  // live, and they are polite rather than remounted on each change.
   return (
     <div
       className="status-bar"
-      role="status"
       style={{ ["--period-accent" as string]: period.accent }}
     >
       <div className="status-top">
@@ -52,7 +54,7 @@ export function StatusBar() {
           )}
         </span>
 
-        <span className="status-stats" key={`${fieldsScheduled}-${avoidedMt}`}>
+        <span className="status-stats" role="status" aria-live="polite">
           <span title="Felt som har fått en vedtatt sluttdato">
             <strong>
               {fieldsScheduled}/{fieldsTotal}

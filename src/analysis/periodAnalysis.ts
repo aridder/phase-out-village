@@ -22,9 +22,27 @@ import { STATE_NET_CASH_FLOW_BN_NOK } from "../data/petroleumEconomy";
  * and nothing they learn in round 1 changes what they do in round 2.
  */
 
+/**
+ * Shelf production per year, computed once.
+ *
+ * `revenueShare` used to call `totalProduction({}, [year])` itself, which
+ * re-sums all 34 fields — 544 full-shelf sums per `availableFields()` call,
+ * making the field selector and the period report 10–20× slower than
+ * everything around them. The baseline never depends on the player's plan,
+ * so it can be built once.
+ */
+const shelfProductionByYear: Partial<Record<Year, number>> = (() => {
+  const totals = totalProduction({});
+  const result: Partial<Record<Year, number>> = {};
+  for (const year of gameData.gameYears) {
+    result[year] = totals[year]?.totalProduction?.value ?? 0;
+  }
+  return result;
+})();
+
 /** Rough share of the state's petroleum revenue a field carries in a year. */
 function revenueShare(field: OilfieldName, year: Year): number {
-  const shelf = totalProduction({}, [year])[year]?.totalProduction?.value ?? 0;
+  const shelf = shelfProductionByYear[year] ?? 0;
   const own = gameData.data[field]?.[year]?.totalProduction?.value ?? 0;
   return shelf > 0 ? own / shelf : 0;
 }
@@ -40,6 +58,13 @@ export type FieldOutlook = {
   forgoneRevenueBnNok: number;
   /** Emissions per barrel at the moment of the decision @unit kg/barrel */
   intensity: number;
+  /**
+   * False where the field reports no emissions for this year at all.
+   * Without it, a missing value and a measured zero both arrive as 0 and
+   * the selector ranks fields with no data as the cleanest on the shelf —
+   * which is exactly what period 1 asks the player to act on.
+   */
+  hasEmissionData: boolean;
   /** The last year the field produces if left alone */
   lastProductionYear: Year | undefined;
   /** How many more years the field would have run */
@@ -85,6 +110,7 @@ export function fieldOutlook(
     forgoneProduction,
     forgoneRevenueBnNok,
     intensity: dataset[fromYear]?.emissionIntensity?.value ?? 0,
+    hasEmissionData: !!dataset[fromYear]?.emission?.value,
     lastProductionYear,
     yearsRemaining: lastProductionYear
       ? parseInt(lastProductionYear) - from + 1

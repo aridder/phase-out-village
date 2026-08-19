@@ -225,6 +225,8 @@ export function TodayRoute() {
           {usefulEnergyScenarios.map((option) => (
             <button
               key={option.key}
+              type="button"
+              aria-pressed={scenario.key === option.key}
               className={scenario.key === option.key ? "active" : ""}
               onClick={() => setScenario(option)}
             >

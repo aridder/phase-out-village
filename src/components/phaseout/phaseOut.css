@@ -226,6 +226,12 @@
   opacity: 0.85;
 }
 
+/* Manglende tall skal ikke se ut som et lavt tall */
+.lens-value.no-data {
+  font-weight: 500;
+  opacity: 0.7;
+}
+
 .card-stats {
   display: flex;
   flex-wrap: wrap;

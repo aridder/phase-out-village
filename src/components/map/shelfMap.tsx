@@ -311,9 +311,8 @@ export function ShelfMap({
     });
     mapRef.current = map;
     setZoom(map.getView().getZoom() ?? 5);
-    map.getView().on("change:resolution", () => {
-      setZoom(map.getView().getZoom() ?? 5);
-    });
+    const onResolution = () => setZoom(map.getView().getZoom() ?? 5);
+    map.getView().on("change:resolution", onResolution);
 
     // The mobile bottom sheet resizes the container without a window resize
     const observer = new ResizeObserver(() => map.updateSize());
@@ -321,6 +320,7 @@ export function ShelfMap({
 
     return () => {
       observer.disconnect();
+      map.getView().un("change:resolution", onResolution);
       map.setTarget(undefined);
       mapRef.current = null;
     };
@@ -339,11 +339,14 @@ export function ShelfMap({
     if (!map || framed.current || selected) return;
     const extent = bubbleSource.getExtent();
     if (!isFinite(extent[0])) return;
-    framed.current = true;
     // Deferred by a frame: on first mount the pane has not been laid out
     // yet, so fitting immediately measures a zero-sized viewport and the
-    // southern North Sea ends up off the bottom edge
+    // southern North Sea ends up off the bottom edge.
+    // NB: framed is set INSIDE the callback. Setting it before meant that
+    // under StrictMode the cleanup cancelled the frame while the ref stayed
+    // true, so the re-run bailed out and the map never framed itself.
     const frame = requestAnimationFrame(() => {
+      framed.current = true;
       map.updateSize();
       map.getView().fit(extent, {
         // Room for the bubbles themselves, which stick out past their
@@ -439,5 +442,18 @@ export function ShelfMap({
     });
   }, [selected]);
 
-  return <div className="shelf-map" ref={containerRef} />;
+  // The description is a sibling, not a role="img" on the container: the
+  // container holds OpenLayers' own zoom buttons, and role="img" would have
+  // hidden those from assistive technology entirely.
+  return (
+    <>
+      <p className="visually-hidden">
+        Kart over {data.length} felt på norsk sokkel. Hvert felt er tegnet som
+        en boble der størrelsen er produksjonen og fargen er utslipp per fat.
+        Kartet krever mus eller berøring. Feltlisten ved siden av kartet har det
+        samme innholdet og kan brukes med tastatur.
+      </p>
+      <div className="shelf-map" ref={containerRef} />
+    </>
+  );
 }

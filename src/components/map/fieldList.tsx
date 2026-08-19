@@ -93,6 +93,7 @@ export function FieldList({
             <li key={row.field}>
               <button
                 type="button"
+                data-field={row.field}
                 className={[
                   "field-row",
                   row.field === selected ? "selected" : "",
@@ -120,7 +121,7 @@ export function FieldList({
                 <span className="row-name">
                   {row.field}
                   {row.state === "scheduled" && (
-                    <span className="row-chip">stenges {row.endYear}</span>
+                    <span className="row-chip">valgt</span>
                   )}
                   {row.state === "retired" && (
                     <span className="row-chip retired">avviklet</span>

@@ -176,10 +176,10 @@ export function shelfToday(): ShelfToday {
   const averageIntensity =
     barrels > 0 ? Math.round(((emission * 1000) / barrels) * 100) / 100 : 0;
   for (const field of fields) {
+    // Not rounded here: callers that invert this (to say "N times lower")
+    // divided by a rounded-to-zero value and got Infinity
     field.intensityVsAverage =
-      averageIntensity > 0
-        ? Math.round((field.intensity / averageIntensity) * 10) / 10
-        : 0;
+      averageIntensity > 0 ? field.intensity / averageIntensity : 0;
   }
 
   const reporting = fields.filter((f) => !f.noEmissionData);

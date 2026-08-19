@@ -79,6 +79,10 @@ export type Period = {
    * The period's accent colour, as a CSS colour. Each period looks
    * different from the moment it opens — the header, the timeline segment
    * and the brief all take this colour.
+   *
+   * All four are dark enough to carry white text at 4.5:1 (the timeline
+   * segment labels sit on them) and to be readable as text on the light
+   * surface. The first set was picked by eye and failed both at 3.4:1.
    */
   accent: string;
   /** A single character that stands for the period in the timeline */
@@ -115,7 +119,7 @@ export const periods: Period[] = [
       "Utslippsregnskapet per felt legges fram. Forskjellene er større enn noen hadde ventet.",
       "Stortinget gir deg fullmakt til å sette sluttdato på felt – men ikke på mange om gangen.",
     ],
-    accent: "#3d8bd6",
+    accent: "#2c6fae",
     glyph: "I",
   },
   {
@@ -147,7 +151,7 @@ export const periods: Period[] = [
       "Den første store norske havvindparken leverer strøm inn på nettet.",
       "Gassprisen holder seg. Oljeprisen svinger mer enn den har gjort på et tiår.",
     ],
-    accent: "#c77400",
+    accent: "#a35f00",
     glyph: "II",
   },
   {
@@ -211,7 +215,7 @@ export const periods: Period[] = [
       "Feltene som fortsatt går på gassturbiner slipper ut mer per fat for hvert år som går.",
       "I 2040 gjøres regnskapet opp – for klimaet, for kronene og for det du etterlater.",
     ],
-    accent: "#2e9e6b",
+    accent: "#227a52",
     glyph: "IV",
   },
 ];

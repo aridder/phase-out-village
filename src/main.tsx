@@ -5,16 +5,23 @@ import "./application.css";
 import { HashRouter } from "react-router-dom";
 import { Application } from "./components/app/application";
 import { IconDefaults } from "./components/ui/icons";
+import { ErrorBoundary } from "./components/app/errorBoundary";
 
 createRoot(document.getElementById("app")!).render(
-  <HashRouter>
-    <IconDefaults>
-      <Application />
-    </IconDefaults>
-  </HashRouter>,
+  <ErrorBoundary>
+    <HashRouter>
+      <IconDefaults>
+        <Application />
+      </IconDefaults>
+    </HashRouter>
+  </ErrorBoundary>,
 );
 
 if (window.location.search === "?debug") {
-  localStorage.setItem("debug", "true");
+  try {
+    localStorage.setItem("debug", "true");
+  } catch {
+    // Storage blocked by the browser; debug mode simply stays off
+  }
   window.location.search = "";
 }

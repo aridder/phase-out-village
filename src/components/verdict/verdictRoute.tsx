@@ -252,10 +252,16 @@ export function VerdictRoute() {
           får velge antakelsen selv.
         </p>
 
-        <div className="scenario-picker" role="group">
+        <div
+          className="scenario-picker"
+          role="group"
+          aria-label="Antakelse om bruk"
+        >
           {usefulEnergyScenarios.map((option) => (
             <button
               key={option.key}
+              type="button"
+              aria-pressed={scenario.key === option.key}
               className={scenario.key === option.key ? "active" : ""}
               onClick={() => setScenario(option)}
             >

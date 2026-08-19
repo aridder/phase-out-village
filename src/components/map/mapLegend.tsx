@@ -64,7 +64,7 @@ export function MapLegend() {
           </span>
           <span className="legend-state">
             <span className="chip ring-dashed" aria-hidden="true" />
-            <span>Sluttdato satt</span>
+            <span>Valgt i denne perioden</span>
           </span>
           <span className="legend-state">
             <span

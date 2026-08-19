@@ -224,8 +224,10 @@
   box-shadow: inset 0 0 0 2px var(--gran);
 }
 
+/* Avviklet felt dempes, men ikke under lesbarhet: 0,55 ga 2,3:1 på
+   «avviklet»-merket. Statusen bæres av merket og den grå prikken. */
 .field-row.state-retired {
-  opacity: 0.55;
+  opacity: 0.78;
 }
 
 .row-swatch {
@@ -252,9 +254,10 @@
   white-space: nowrap;
 }
 
+/* Merket har allerede sin egen demping via .state-retired; en ekstra
+   opacity oppå den tok kontrasten ned til 3,5:1 på 10px tekst */
 .row-chip.retired {
   border-style: solid;
-  opacity: 0.7;
 }
 
 .row-bar {

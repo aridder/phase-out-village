@@ -149,20 +149,32 @@ export function positionFor(
  * difference between "decided" and "done".
  */
 export type FieldState =
-  /** Producing, no end date set */
+  /** Producing, nothing decided */
   | "active"
-  /** Has an end date, still producing until it arrives */
+  /** Picked for this period, but the decision is not committed yet */
   | "scheduled"
-  /** The end date has passed */
+  /** The end date has been committed and has arrived */
   | "retired";
 
+/**
+ * Note the draft argument. A committed decision takes effect from the first
+ * year of the period it was made in, so by the time the player sees the map
+ * again the clock has reached it and the field really is closed — there is
+ * no window in which a *committed* field is still running.
+ *
+ * The in-between state that does exist, and that the map should show, is
+ * the one the player is in right now: ticked in the selector, not yet
+ * voted through.
+ */
 export function fieldState(
   field: OilfieldName,
   phaseOut: PhaseOutSchedule,
+  draft: PhaseOutSchedule,
   year: Year,
 ): FieldState {
   if (isPhasedOut(field, phaseOut, year)) return "retired";
-  return phaseOut[field] ? "scheduled" : "active";
+  if (draft[field] || phaseOut[field]) return "scheduled";
+  return "active";
 }
 
 /* ------------------------------------------------------------------- data */
@@ -192,11 +204,12 @@ export type FieldMapDatum = {
  */
 export function fieldMapData(
   phaseOut: PhaseOutSchedule,
+  draft: PhaseOutSchedule,
   year: Year,
 ): FieldMapDatum[] {
   return gameData.allFields
     .map((field) => {
-      const state = fieldState(field, phaseOut, year);
+      const state = fieldState(field, phaseOut, draft, year);
       // For a retired field, read the last year it actually produced
       const readYear = state === "retired" ? (phaseOut[field] ?? year) : year;
       const values =
@@ -208,7 +221,7 @@ export function fieldMapData(
         intensity: values?.emissionIntensity?.value ?? 0,
         hasEmissionData: !!values?.emission?.value,
         state,
-        endYear: phaseOut[field],
+        endYear: phaseOut[field] ?? draft[field],
         sea: fieldGeometry[field]?.sea ?? "",
       };
     })

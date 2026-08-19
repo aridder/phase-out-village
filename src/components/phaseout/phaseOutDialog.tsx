@@ -111,7 +111,13 @@ export function PhaseOutDialog({ from }: { from: string }) {
         );
       }
       if (Object.keys(current).length >= period.capacity) return current;
-      return { ...current, [field]: year };
+      // The PERIOD's first year, not the app clock. The clock runs
+      // 2025 → 2028 → 2032 → 2036 while the periods start 2025/2029/2033/
+      // 2037, so storing the clock dated every decision one year before the
+      // period it is named after and scored in — the report then measured
+      // from 2029 a closure the schedule said happened in 2028, and
+      // understated its own result by up to 21 %.
+      return { ...current, [field]: period.fromYear };
     });
   }
 
@@ -347,6 +353,16 @@ function LensValue({
         </span>
       );
     default: {
+      if (!row.hasEmissionData) {
+        return (
+          <span
+            className="lens-value no-data"
+            title="Feltet rapporterer ingen utslipp fra sokkelen dette året"
+          >
+            — <small>ingen tall</small>
+          </span>
+        );
+      }
       const cls = intensityClassFor(row.intensity);
       return (
         <span
