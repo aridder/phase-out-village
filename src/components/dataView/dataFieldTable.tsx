@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { slugify } from "../../data/slugify";
 import React from "react";
 import { dataFieldRows } from "./exportData";
+import { DataLegend } from "./dataLegend";
 import { downloadCsv } from "./downloadCsv";
 import { gameData, yearsInRange } from "../../data/gameData";
 
@@ -21,12 +22,11 @@ export function DataFieldTable({
 
   return (
     <>
-      <div>
-        <Link to={"/data"}>Tilbake</Link>
-      </div>
-      <div>
+      <div className="data-actions">
+        <Link to={"/data"}>← Tilbake</Link>
         <button onClick={handleExportClick}>Last ned som CSV</button>
       </div>
+      <DataLegend />
       <table border={1}>
         <thead>
           <tr>

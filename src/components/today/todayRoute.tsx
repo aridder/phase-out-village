@@ -12,6 +12,7 @@ import { Illustration } from "../ui/illustrations";
 import { IntensityStrip } from "./intensityStrip";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./today.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /**
  * ACT 1 — «Norge i dag».
@@ -26,6 +27,7 @@ import "./today.css";
  * suspects they are being steered will not engage with the choice.
  */
 export function TodayRoute() {
+  useDocumentTitle("Norge i dag");
   const navigate = useNavigate();
   const { restart } = useContext(ApplicationContext);
   const shelf = shelfToday();

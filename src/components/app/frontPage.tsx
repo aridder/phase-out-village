@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { shelfToday } from "../../data/norwayToday";
 import arildHermstad from "./arild-hermstad.png";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /**
  * The title screen.
@@ -17,6 +18,7 @@ import arildHermstad from "./arild-hermstad.png";
  * disagrees with the premise has no reason to keep playing.
  */
 export function FrontPage() {
+  useDocumentTitle("Chill, baby! Chill!");
   const navigate = useNavigate();
   const shelf = shelfToday();
   const declinePercent = Math.round((1 - shelf.remainingIn2040) * 100);

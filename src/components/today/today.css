@@ -156,18 +156,27 @@
   height: 190px;
 }
 
+/* Nå en <div>, ikke en <button> — se kommentaren i intensityStrip.tsx.
+   default-verdiene fra button-basen (padding, ramme, skygge) trengs derfor
+   ikke lenger å nulles ut, men rammen rundt sirkelen er tegningen selv. */
 .strip-dot {
   position: absolute;
-  padding: 0;
   border-radius: 50%;
-  border: 1px solid rgb(19 54 0 / 0.45);
-  box-shadow: none;
+  /* Kanten er sirkelens form, og de lyseste feltene er nesten samme
+     lysstyrke som kortet under. Den mørke kanten var usynlig i mørkt tema
+     (1,0:1) — der må den være lys. Nå 4,1:1 og 5,0:1 (WCAG 1.4.11). */
+  border: 1px solid rgb(19 54 0 / 0.6);
   transform: translateX(-50%);
-  cursor: pointer;
   transition: transform 0.12s ease;
 }
 
-.strip-dot:hover:not(:disabled),
+@media (prefers-color-scheme: dark) {
+  .strip-dot {
+    border-color: rgb(231 243 209 / 0.6);
+  }
+}
+
+.strip-dot:hover,
 .strip-dot.active {
   transform: translateX(-50%) scale(1.25);
   box-shadow: none;
@@ -459,4 +468,47 @@
   .strip-anchor {
     font-size: 0.66rem;
   }
+}
+
+/* Tabellversjonen av intensitetsstripa — den tilgjengelige tvillingen til
+   prikkene. Se kommentaren i intensityStrip.tsx for hvorfor den finnes. */
+.strip-table {
+  margin-top: var(--space-4);
+  font-size: 0.85rem;
+}
+
+.strip-table summary {
+  cursor: pointer;
+  padding: var(--space-2) 0;
+  font-weight: 600;
+}
+
+.strip-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-2);
+}
+
+.strip-table th,
+.strip-table td {
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-top: 1px solid var(--linje);
+  text-align: left;
+}
+
+.strip-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+.strip-table thead th {
+  border-top: 0;
+  border-bottom: 1px solid var(--linje);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.strip-table tbody th {
+  font-weight: 500;
 }

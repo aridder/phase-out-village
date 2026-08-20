@@ -7,6 +7,7 @@ import { EmissionSummaryPage } from "./emissionSummaryPage";
 import { ApplicationContext } from "../../applicationContext";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./emissions.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /**
  * The emissions landing page: a heading and a one-line explanation before
@@ -18,7 +19,7 @@ function EmissionsHome() {
   const fieldsClosed = Object.keys(phaseOut).length;
   return (
     <div className="emissions-home">
-      <h2>Utslipp</h2>
+      <h1>Utslipp</h1>
       <p className="page-lead">
         Så mye CO₂ slipper sokkelen ut hvert år frem mot 2040 –{" "}
         {fieldsClosed > 0
@@ -40,6 +41,7 @@ function EmissionsHome() {
 
 /** Defines the routes for emissions visualization pages. */
 export function EmissionRoute() {
+  useDocumentTitle("Utslipp");
   const { phaseOut } = useContext(ApplicationContext);
   return (
     <div className="emission-chart-container">

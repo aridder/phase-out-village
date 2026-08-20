@@ -65,6 +65,12 @@
   padding: 0 0.5em 0 0.5rem;
 }
 
+/* Utgangspunktet, som står der som referanse mens fyllet er tallet man
+   følger med på. Dempet, men over 4,5:1 mot søylebakgrunnen (6,5:1). */
+.progression-bar .bar-label.right.muted {
+  color: rgb(255 255 255 / 0.7);
+}
+
 .progression-bar .remainder {
   position: absolute;
   right: 0;

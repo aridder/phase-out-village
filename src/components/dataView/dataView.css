@@ -4,12 +4,17 @@
   /* Samme luft som de andre sidene — innholdet lå helt inntil kanten */
   padding: 0.5rem 1rem;
 
+  /* Klistrede flater bruker --flate, ikke --gran. --gran er en aksentgrønn
+     laget for å ha hvit tekst OVER seg; som radbakgrunn under vanlig
+     tekstfarge ga den 5,6:1 for brødtekst og 2,5:1 for de uthevede
+     anslagene, altså under kravet. --flate er flatefargen i temaet og har
+     luft nok for begge. */
   thead th {
     position: sticky;
     top: 0;
     background-color: var(--lime);
     @media (prefers-color-scheme: dark) {
-      background-color: var(--gran);
+      background-color: var(--flate);
     }
   }
   tr th.rowHeader {
@@ -20,20 +25,84 @@
     /* Uten denne er årstall-kolonnen lime-på-lime i mørkt tema —
        helt usynlig (thead th over har samme override) */
     @media (prefers-color-scheme: dark) {
-      background-color: var(--gran);
+      background-color: var(--flate);
     }
   }
   tr:nth-child(even) {
     background-color: rgb(253, 252, 236);
     @media (prefers-color-scheme: dark) {
-      background-color: var(--gran);
+      background-color: var(--flate-2);
     }
   }
+
+  /* Anslåtte tall.
+     Fargene var `red` og `hotpink`: 3,8:1 og 2,5:1 mot radene de sto på.
+     Nå 6,9:1 og 7,0:1. Kursiven blir stående — fargen alene skal ikke bære
+     informasjonen (1.4.1), og forklaringen står i .data-legend over
+     tabellen. */
   td.estimate {
     font-style: italic;
-    color: red;
+    color: #a03000;
     @media (prefers-color-scheme: dark) {
-      color: hotpink;
+      color: #f0a83c;
     }
   }
+
+  /* Lenkelistene over feltene: hver lenke var 17 px høy med 4 px mellom
+     seg, altså langt under 24 px høyt trykkmål (2.5.8). Padding gjør hver
+     rad til et mål man treffer med tommelen. */
+  ul {
+    gap: 0;
+  }
+
+  li > a {
+    display: inline-block;
+    padding: 0.35rem 0.5rem;
+    margin-left: -0.5rem;
+    border-radius: var(--radius-s);
+  }
+
+  li > a:hover {
+    background-color: var(--flate-2);
+  }
+}
+
+/* Tegnforklaring over tabellene: sier hva kursiven betyr, så markeringen
+   ikke bare er en farge man må gjette seg til */
+.data-legend {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0.75rem 0;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.data-legend .sample {
+  font-style: italic;
+  color: #a03000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .data-legend .sample {
+    color: #f0a83c;
+  }
+}
+
+/* Nedlastingsknappen og «Tilbake» stod som naken tekst på 17 px */
+.data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.data-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0 0.5rem;
+  margin-left: -0.5rem;
+  border-radius: var(--radius-s);
 }

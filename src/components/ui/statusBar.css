@@ -45,11 +45,20 @@
   min-width: 0;
 }
 
+/* flex-wrap på raden, nowrap bare inne i hvert enkelt tall.
+   Uten dette var hele raden én ubrytelig linje på 341 px, og den dro med
+   seg hele siden ut i vannrett rulling på 320 px (WCAG 1.4.10). Nå brytes
+   den mellom tallene i stedet, og «11 Mt CO₂ spart» blir stående helt. */
 .status-bar .status-stats {
   display: flex;
-  gap: 1rem;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  min-width: 0;
   font-variant-numeric: tabular-nums;
+}
+
+.status-bar .status-stats > span {
+  white-space: nowrap;
 }
 
 .status-bar .status-stats strong {
@@ -114,9 +123,14 @@
   transform: scaleX(1);
 }
 
+/* Pulsen peker ut hvilken periode som er i gang. Den gikk i det uendelige,
+   og noe som beveger seg for alltid ved siden av teksten man leser er både
+   slitsomt og et brudd på 2.2.2 (Pause, Stop, Hide) — over fem sekunder
+   uten mulighet til å stoppe det. Tre runder rekker å trekke blikket dit,
+   og så er den ferdig. */
 .status-segment.current .fill {
   transform: scaleX(0.5);
-  animation: status-pulse 2.2s ease-in-out infinite;
+  animation: status-pulse 2.2s ease-in-out 3;
 }
 
 @keyframes status-pulse {

@@ -4,6 +4,7 @@ import { Dialog } from "../ui/dialog";
 import { TutorialDialog } from "./tutorialDialog";
 import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
 import "./tutorial.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /**
  * TutorialRoute component renders a TutorialDialog inside a Dialog modal.
@@ -12,6 +13,7 @@ import "./tutorial.css";
  * after the tutorial is closed.
  */
 export function TutorialRoute() {
+  useDocumentTitle("Slik spiller du");
   const navigate = useNavigate();
   const location = useLocation();
   const isSmall = useIsSmallScreen();

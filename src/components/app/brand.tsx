@@ -20,16 +20,23 @@ export function Brand() {
     <div className="brand">
       {!logoFailed && (
         <>
+          {/* aria-label, ikke bare alt-teksten: lenken går ikke til «MDG»,
+              den går til MDGs utfasingsside og åpner en ny fane. Begge
+              deler skal sies før man trykker (2.4.4 og 3.2.5).
+              rel="noopener": uten den får målsiden en referanse tilbake
+              hit gjennom window.opener. */}
           <a
             className="brand-logo"
             href="https://mdg.no/politikk/utfasing"
             target="_blank"
+            rel="noopener noreferrer"
+            aria-label="MDGs side om utfasing av olje (åpnes i ny fane)"
           >
             <img
               src={
                 "https://d1nizz91i54auc.cloudfront.net/_service/505811/display/img_version/8880781/t/1750686348/img_name/68683_505811_ba2eeb201a.png.webp"
               }
-              alt={"MDG - det ER mulig"}
+              alt=""
               onError={() => setLogoFailed(true)}
             />
           </a>

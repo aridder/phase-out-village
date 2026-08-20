@@ -81,7 +81,7 @@ export function PlanSummary() {
 
   return (
     <div className="plan-summary">
-      <h2>{isSharedView ? "Delt plan" : "Din plan"}</h2>
+      <h1>{isSharedView ? "Delt plan" : "Din plan"}</h1>
 
       {/* Empty state: without it the page opened on two zero-meters and
           four baseline charts with no hint about what to do next */}

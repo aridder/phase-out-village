@@ -8,6 +8,8 @@ import { EmissionStackedBarChart } from "../emissions/emissionStackedBarChart";
 import { ProductionReductionChart } from "../production/productionReductionChart";
 import { Icon, IconKey } from "../ui/icons";
 import "./advisor.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
+import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 
 /**
  * Three states, three icons. Each insight used to carry its own emoji,
@@ -23,10 +25,19 @@ function insightIcon(kind: string): IconKey {
 /**
  * Reveals a text with a typewriter effect, character by character.
  * Returns the currently visible portion and whether the animation is done.
+ *
+ * A JavaScript animation is invisible to the CSS `prefers-reduced-motion`
+ * block, so it has to check the preference itself. With reduce set, the
+ * text is simply there.
  */
 function useTypewriter(text: string, speedMs: number = 12) {
+  const reducedMotion = usePrefersReducedMotion();
   const [length, setLength] = useState(0);
   useEffect(() => {
+    if (reducedMotion) {
+      setLength(text.length);
+      return;
+    }
     setLength(0);
     const interval = setInterval(() => {
       setLength((l) => {
@@ -38,7 +49,7 @@ function useTypewriter(text: string, speedMs: number = 12) {
       });
     }, speedMs);
     return () => clearInterval(interval);
-  }, [text, speedMs]);
+  }, [text, speedMs, reducedMotion]);
   return { visible: text.slice(0, length), done: length >= text.length };
 }
 
@@ -71,6 +82,7 @@ function ThinkingIndicator() {
  * no data leaves the page.
  */
 export function AdvisorRoute() {
+  useDocumentTitle("Klimarådgiveren");
   const { year, phaseOut } = useContext(ApplicationContext);
   const [thinking, setThinking] = useState(true);
 

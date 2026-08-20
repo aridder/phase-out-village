@@ -6,6 +6,7 @@ import { ProductionSummaryPage } from "./productionSummaryPage";
 import { ApplicationContext } from "../../applicationContext";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./production.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /** Shared sub-navigation for the production views. */
 function ProductionNav() {
@@ -30,7 +31,7 @@ function ProductionHome() {
   const fieldsClosed = Object.keys(phaseOut).length;
   return (
     <div className="production-home">
-      <h2>Produksjon</h2>
+      <h1>Produksjon</h1>
       <p className="page-lead">
         Så mye olje og gass produserer feltene hvert år frem mot 2040 –{" "}
         {fieldsClosed > 0
@@ -51,6 +52,7 @@ function ProductionHome() {
  * - "/oilPerField" -> Production per field page
  */
 export function ProductionRoute() {
+  useDocumentTitle("Produksjon");
   return (
     <div>
       <Routes>

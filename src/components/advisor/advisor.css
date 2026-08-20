@@ -56,6 +56,10 @@
   line-height: 1.5;
 }
 
+/* «infinite», men markøren finnes bare mens teksten skrives — under to
+   sekunder, og et trykk hopper over resten. Grensa på fem sekunder i 2.2.2
+   nås aldri. Med «reduser bevegelse» er teksten der med en gang, og
+   markøren vises ikke i det hele tatt. */
 .advisor-summary .cursor {
   display: inline-block;
   width: 0.6ch;
@@ -81,6 +85,7 @@
   height: 24px;
 }
 
+/* Samme sak: prikkene lever de 900 millisekundene analysen «tenker». */
 .advisor-thinking .dot {
   animation: advisor-pulse 1.2s ease-in-out infinite;
 }

@@ -33,11 +33,11 @@
   padding: 1rem 1.25rem;
 }
 
-.tutorial-card h3 {
+.tutorial-card h2 {
   margin: 0.75rem 0 0.25rem;
 }
 
-.tutorial-card h3:first-child {
+.tutorial-card h2:first-child {
   margin-top: 0;
 }
 

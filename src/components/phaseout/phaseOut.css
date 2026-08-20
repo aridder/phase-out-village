@@ -103,7 +103,7 @@
   flex: 1;
   min-width: 10rem;
   padding: 0.45rem 0.7rem;
-  border: 1px solid var(--linje);
+  border: 1px solid var(--kontroll-kant);
   border-radius: var(--radius-s);
   background-color: var(--flate);
   color: inherit;
@@ -112,7 +112,7 @@
 
 .phaseout-sort select {
   padding: 0.35rem;
-  border: 1px solid var(--linje);
+  border: 1px solid var(--kontroll-kant);
   border-radius: var(--radius-s);
   background-color: var(--flate);
   color: inherit;
@@ -160,7 +160,13 @@
   cursor: not-allowed;
 }
 
+/* scroll-margin på selve avkryssingsboksen, ikke på kortet rundt: det er
+   det fokuserte elementet nettleseren ruller inn i bildet. Uten dette
+   havnet raden bak den sticky handlingslinja nederst, og man så ikke
+   hvilket felt man sto på (WCAG 2.2, 2.4.11 Focus Not Obscured). */
 .field-card input[type="checkbox"] {
+  scroll-margin-bottom: 10rem;
+  scroll-margin-top: 1rem;
   width: 1.15rem;
   height: 1.15rem;
   margin-top: 0.1rem;
@@ -348,4 +354,18 @@
   .phaseout-actions .button-row button {
     flex: 1;
   }
+}
+
+/* Handlingslinja er sticky og dekker de nederste ~120 pikslene av
+   rulleflata. Når man tabbet nedover feltlista havnet den fokuserte raden
+   bak den, uten at nettleseren rullet — den regnet raden som synlig.
+   scroll-padding forteller rulleflata at den nederste biten ikke teller,
+   så fokus alltid rulles fram over linja (WCAG 2.2, 2.4.11 Focus Not
+   Obscured (Minimum)).
+
+   Den må stå på det som faktisk ruller, altså #app main, ikke på siden.
+   scroll-margin på selve raden hjelper ikke: den gjelder bare når
+   nettleseren først bestemmer seg for å rulle. */
+#app:has(.phaseout-page) main {
+  scroll-padding-bottom: 9rem;
 }

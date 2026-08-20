@@ -14,6 +14,7 @@ import { energyData } from "../../generated/energyData";
 import { Illustration } from "../ui/illustrations";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./transition.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 type ScenarioKey = "mine" | "mdg" | "full";
 
@@ -33,6 +34,7 @@ const SCENARIOS: { key: ScenarioKey; label: string }[] = [
  * the same TWh axis.
  */
 export function TransitionRoute() {
+  useDocumentTitle("Fra svart til grønn energi");
   const { phaseOut } = useContext(ApplicationContext);
   const hasOwnPlan = Object.keys(phaseOut).length > 0;
   const [scenario, setScenario] = useState<ScenarioKey>(

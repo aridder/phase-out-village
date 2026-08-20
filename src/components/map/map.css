@@ -43,7 +43,12 @@
   left: 0.6rem;
 }
 
+/* OpenLayers tegner disse 22×22, to piksler under kravet i 2.5.8, og de
+   står rett over hverandre så avstandsunntaket redder dem heller ikke.
+   2rem = 32 px er komfortabelt også for en tommel. */
 .shelf-map .ol-control button {
+  width: 2rem;
+  height: 2rem;
   background-color: var(--flate);
   color: var(--skog);
   border: 1px solid var(--linje);
@@ -171,7 +176,7 @@
   flex: 1;
   min-width: 0;
   padding: 0.4rem 0.6rem;
-  border: 1px solid var(--linje);
+  border: 1px solid var(--kontroll-kant);
   border-radius: var(--radius-s);
   background-color: var(--flate-2);
   color: inherit;
@@ -180,7 +185,7 @@
 
 .field-list-tools select {
   padding: 0.3rem;
-  border: 1px solid var(--linje);
+  border: 1px solid var(--kontroll-kant);
   border-radius: var(--radius-s);
   background-color: var(--flate-2);
   color: inherit;
@@ -391,7 +396,7 @@
   gap: 0.5rem;
 }
 
-.profile-head h3 {
+.profile-head h2 {
   flex: 1;
   min-width: 0;
 }

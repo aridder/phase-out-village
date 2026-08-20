@@ -12,6 +12,7 @@ import {
 import { cumulativeEmissions } from "../../analysis/fieldStats";
 import { SourcesNote } from "../ui/sourcesNote";
 import "../period/period.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /**
  * The chapter break between periods.
@@ -39,6 +40,8 @@ export function PeriodReportRoute() {
       ? periodForRound(decidedRound + 1)
       : undefined;
   const fields = (lastDecision?.fields ?? []) as OilfieldName[];
+
+  useDocumentTitle(`Slik gikk ${period.label}`);
 
   const outlooks = useMemo(
     () => fields.map((f) => fieldOutlook(f, period.fromYear, period.toYear)),

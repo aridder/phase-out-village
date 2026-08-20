@@ -59,9 +59,9 @@ export function FieldProfile({
           }}
           aria-hidden="true"
         />
-        <h3 ref={headingRef} tabIndex={-1}>
+        <h2 ref={headingRef} tabIndex={-1}>
           {datum.field}
-        </h3>
+        </h2>
         <button type="button" onClick={onClose} aria-label="Lukk feltvisning">
           <Icon name="lukk" size={16} />
         </button>

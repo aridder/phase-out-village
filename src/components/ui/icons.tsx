@@ -107,7 +107,16 @@ export function Icon({
 export function IconDefaults({ children }: { children: React.ReactNode }) {
   return (
     <IconContext.Provider
-      value={{ style: { strokeWidth: 1.75 }, className: "lucide" }}
+      value={{
+        style: { strokeWidth: 1.75 },
+        className: "lucide",
+        // The rule above says every icon is aria-hidden. It was only ever a
+        // rule in a comment: react-icons emits a bare <svg>, so 72 unnamed
+        // graphics reached the accessibility tree, one per icon on the
+        // page. Setting it here makes the rule true everywhere at once.
+        // focusable="false" keeps old Edge from tabbing into them.
+        attr: { "aria-hidden": "true", focusable: "false" },
+      }}
     >
       {children}
     </IconContext.Provider>

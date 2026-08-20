@@ -7,6 +7,7 @@ import { allDataToCsv } from "./exportData";
 import { downloadCsv } from "./downloadCsv";
 import { gameData } from "../../data/gameData";
 import "./dataView.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /** Table showing oil production for all fields */
 function OilProductionTable() {
@@ -103,6 +104,7 @@ function FieldOverview() {
 
 /** Main route for all data-related views */
 export function DataViewRoute() {
+  useDocumentTitle("Dataoversikt");
   return (
     <div className={"data"}>
       <Routes>

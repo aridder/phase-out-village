@@ -21,6 +21,7 @@ import { Illustration } from "../ui/illustrations";
 import { SourcesNote } from "../ui/sourcesNote";
 import "../today/today.css";
 import "./verdict.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /**
  * ACT 3 — the reckoning.
@@ -38,6 +39,7 @@ import "./verdict.css";
  * unscheduled one, whatever end date you prefer.
  */
 export function VerdictRoute() {
+  useDocumentTitle("Oppgjøret");
   const { phaseOut, restart, year } = useContext(ApplicationContext);
   const navigate = useNavigate();
   const [scenario, setScenario] = useState(DEFAULT_USEFUL_ENERGY_SCENARIO);

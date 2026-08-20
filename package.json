@@ -17,6 +17,7 @@
     "data:energy": "tsx build/fetchEnergyData.ts && prettier --write src/generated/energyData.ts",
     "data:geometry": "tsx build/generateFieldGeometry.ts && prettier --write src/generated/fieldGeometry.ts",
     "test": "tsc --noEmit",
+    "test:wcag": "for f in test/wcag/0*.mjs; do node \"$f\" || exit 1; done",
     "prepare": "husky",
     "build": "npm test && vite build"
   },

@@ -335,6 +335,17 @@ export function ShelfMap({
     const observer = new ResizeObserver(() => map.updateSize());
     observer.observe(containerRef.current!);
 
+    // OpenLayers draws into a bare <canvas> with no name, which a screen
+    // reader announces as an unlabelled graphic sitting in the middle of the
+    // page. The description above and the field list beside it already carry
+    // the content, so the canvas itself has nothing to add. It has to be set
+    // after the first render: OpenLayers creates the element itself.
+    map.once("postrender", () => {
+      containerRef.current
+        ?.querySelectorAll("canvas")
+        .forEach((canvas) => canvas.setAttribute("aria-hidden", "true"));
+    });
+
     return () => {
       observer.disconnect();
       map.getView().un("change:resolution", onResolution);

@@ -10,6 +10,7 @@ import { MapLegend } from "./mapLegend";
 import { FieldProfile } from "./fieldProfile";
 import { fieldMapData } from "./fieldScales";
 import "./map.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /**
  * Which field's row should get focus back when the profile closes.
@@ -52,6 +53,8 @@ export function MapRoute() {
   );
   const selectedDatum = data.find((d) => d.field === selected);
   const period = periodForRound(getCurrentRound());
+
+  useDocumentTitle(selected ?? `Kartet ${year}`);
 
   const retired = data.filter((d) => d.state === "retired").length;
   const scheduled = data.filter((d) => d.state === "scheduled").length;

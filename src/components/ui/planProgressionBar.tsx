@@ -102,13 +102,13 @@ export const PlanProgressionBar: React.FC<PlanProgressionBarProps> = ({
         </div>
       )}
 
-      {/* Baseline or prevented amount, pinned right */}
+      {/* Baseline or prevented amount, pinned right.
+          The dimmed variant is a class, not an inline colour: #ffffff88 came
+          to 4,13:1 against the bar, under the 4,5:1 the text needs, and a
+          hardcoded hex in JSX is invisible to anyone auditing the palette. */}
       {showLabel && (
         <div
-          className="bar-label right"
-          style={{
-            color: progress * 100 >= 100 ? "white" : "#ffffff88",
-          }}
+          className={`bar-label right${progress * 100 >= 100 ? "" : " muted"}`}
         >
           {(includeDecimal
             ? rightLabelValueRoundedWithDecimal

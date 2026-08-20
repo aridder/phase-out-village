@@ -15,6 +15,7 @@ import {
 } from "../../data/norwayFacts";
 import { SourcesNote } from "../ui/sourcesNote";
 import "./costPage.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /** Oil price assumption, scaling all kroner figures */
 const PRICE_LEVELS = [
@@ -37,6 +38,7 @@ const PRESETS = [
  * deeper. The gains and the reassurance are written as prose, not tiles.
  */
 export function CostPage() {
+  useDocumentTitle("Hva koster det å fase ut oljen?");
   const navigate = useNavigate();
   const [endYear, setEndYear] = useState(2040);
   const [price, setPrice] = useState<(typeof PRICE_LEVELS)[number]>(

@@ -16,6 +16,16 @@ import { intensityClassFor } from "../map/fieldScales";
  * axis exaggerates differences among the cleanest ones that are not the
  * point. Square root keeps the crowded low end readable while still
  * showing the outliers as outliers.
+ *
+ * The circles are decoration, not controls. They used to be buttons, one
+ * per field, so that focusing one revealed its numbers. That put 32 tab
+ * stops between the top of the page and everything below the chart — half
+ * of every keyboard stop on the page — and the circles are sized by
+ * production, so the smallest is 7 px across. They could never be the
+ * 24 px target WCAG 2.5.8 asks for without lying about the number they
+ * encode. The <details> table below carries the same 32 rows and reads
+ * better besides: no hovering, and comparable at a glance. Hover still
+ * reveals a circle's numbers for anyone using a mouse.
  */
 export function IntensityStrip() {
   const dark = usePrefersDarkMode();
@@ -117,8 +127,7 @@ export function IntensityStrip() {
         {placed.map(({ field, cx, cy, r }) => {
           const cls = intensityClassFor(field.intensity);
           return (
-            <button
-              type="button"
+            <div
               key={field.field}
               className={`strip-dot ${active === field.field ? "active" : ""}`}
               style={{
@@ -130,10 +139,7 @@ export function IntensityStrip() {
               }}
               onMouseEnter={() => setActive(field.field)}
               onMouseLeave={() => setActive(undefined)}
-              onFocus={() => setActive(field.field)}
-              onBlur={() => setActive(undefined)}
-              onClick={() => setActive(field.field)}
-              aria-label={`${field.field}: ${field.intensity} kg CO₂ per fat, ${field.production} mill. Sm³ o.e. i året`}
+              aria-hidden="true"
             />
           );
         })}
@@ -175,6 +181,40 @@ export function IntensityStrip() {
         største sirklene ligger helt til venstre – det er ikke de store feltene
         som slipper ut mest per fat.
       </figcaption>
+
+      {/* Samme tall som prikkene, i tabellform.
+          Sirklene ER dataene: arealet er produksjonen, så de minste feltene
+          tegnes som 7 px prikker. De kan derfor ikke bli 24 px trykkmål uten
+          å lyve om tallet. Unntaket i WCAG 2.5.8 gjelder når funksjonen
+          finnes som en annen kontroll på samme side som oppfyller kravet —
+          det er denne. Den løser samtidig det praktiske problemet: å treffe
+          en 7 px sirkel med tommelen er umulig uansett. */}
+      <details className="strip-table">
+        <summary>Vis alle {fields.length} feltene som tabell</summary>
+        <table>
+          <caption className="visually-hidden">
+            Utslipp per fat og produksjon for hvert felt i drift
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Felt</th>
+              <th scope="col">kg CO₂ per fat</th>
+              <th scope="col">Mill. Sm³ o.e. per år</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...fields]
+              .sort((a, b) => a.intensity - b.intensity)
+              .map((field) => (
+                <tr key={field.field}>
+                  <th scope="row">{field.field}</th>
+                  <td>{field.intensity.toLocaleString("nb-NO")}</td>
+                  <td>{field.production.toLocaleString("nb-NO")}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </details>
     </figure>
   );
 }

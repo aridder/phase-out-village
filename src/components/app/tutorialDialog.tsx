@@ -15,14 +15,17 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
   return (
     <div className="tutorial-steps">
       <div className="top-bar">
-        <h2>Slik spiller du</h2>
-        <button onClick={onClose} className="close-button" title="Lukk">
+        <h1>Slik spiller du</h1>
+        {/* aria-label, ikke title: ikonet inni er aria-hidden, og title er
+            det eneste skjermlesere har igjen — en attributt de behandler
+            ulikt og som aldri vises på berøring eller tastatur. */}
+        <button onClick={onClose} className="close-button" aria-label="Lukk">
           <Icon name="lukk" size={16} />
         </button>
       </div>
 
       <div className="tutorial-card">
-        <h3>Oppdraget</h3>
+        <h2>Oppdraget</h2>
         <ul>
           <li>
             Du er energiminister fra 2025 til 2040. Sokkelen tømmes uansett –
@@ -34,7 +37,7 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
           </li>
         </ul>
 
-        <h3>Tre deler</h3>
+        <h2>Tre deler</h2>
         <ul>
           <li>
             <b>Del 1 – Norge i dag:</b> tallene før du bestemmer noe.
@@ -49,7 +52,7 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
           </li>
         </ul>
 
-        <h3>Periodene er ikke like</h3>
+        <h2>Periodene er ikke like</h2>
         <ul>
           <li>
             Hver periode har sin egen <b>kapasitet</b> (hvor mange felt du
@@ -71,7 +74,7 @@ export function TutorialDialog({ onClose }: { onClose?: () => void }) {
           ))}
         </ul>
 
-        <h3>Trenger du hjelp?</h3>
+        <h2>Trenger du hjelp?</h2>
         <ul>
           <li>
             På <b>kartet</b> er hver boble et felt: størrelsen er produksjonen,

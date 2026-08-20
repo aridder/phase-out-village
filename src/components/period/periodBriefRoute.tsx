@@ -9,6 +9,7 @@ import {
 } from "../../analysis/periodAnalysis";
 import { gameData, totalProduction } from "../../data/gameData";
 import "./period.css";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /**
  * The opening of each period in Act 2.
@@ -29,6 +30,8 @@ export function PeriodBriefRoute() {
   const round = getCurrentRound();
   const period = periodForRound(round);
   const previous = round > 1 ? periodForRound(round - 1) : undefined;
+
+  useDocumentTitle(`${period.name}, ${period.label}`);
 
   const available = useMemo(
     () => availableFields(phaseOut, period),

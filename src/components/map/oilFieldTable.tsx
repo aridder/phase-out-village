@@ -2,6 +2,7 @@ import React from "react";
 import { slugify } from "../../data/slugify";
 import { oilFieldRows } from "../dataView/exportData";
 import { downloadCsv } from "../dataView/downloadCsv";
+import { DataLegend } from "../dataView/dataLegend";
 import { gameData } from "../../data/gameData";
 
 /**
@@ -17,9 +18,10 @@ export function OilFieldTable({ field }: { field: string }) {
 
   return (
     <div>
-      <div>
+      <div className="data-actions">
         <button onClick={handleExportClick}>Last ned som CSV</button>
       </div>
+      <DataLegend />
       <table border={1}>
         <thead>
           <tr>

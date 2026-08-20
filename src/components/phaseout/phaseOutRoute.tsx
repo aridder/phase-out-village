@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { PhaseOutDialog } from "./phaseOutDialog";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 /**
  * The field selector as a full page rather than a modal over the map.
@@ -11,6 +12,7 @@ import { PhaseOutDialog } from "./phaseOutDialog";
  * click away and keeps its own page.
  */
 export function PhaseOutRoute() {
+  useDocumentTitle("Velg felt som skal få sluttdato");
   const location = useLocation();
   const from = location.state?.from?.pathname || "/map";
   return <PhaseOutDialog from={from} />;
