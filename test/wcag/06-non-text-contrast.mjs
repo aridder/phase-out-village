@@ -2,13 +2,28 @@
  * Test 6 — SC 1.4.11 Non-text Contrast (AA, 3:1).
  *
  * axe checks text contrast thoroughly and non-text contrast barely at all.
- * The parts of this app that carry meaning without text are exactly the
- * parts that matter most here: the map bubbles, the bar fills, the period
- * accent colours, the form borders and the focus rings.
- *
  * Colours are read from the running page rather than from the stylesheet,
  * so what is measured is what is painted, including the dark theme's
  * overrides and any colour-mix() the browser resolved.
+ *
+ * 1.4.11 does not say "every shape must reach 3:1". It says the visual
+ * information REQUIRED TO IDENTIFY a component or understand a graphic
+ * must. So the samples below are split in two:
+ *
+ *  - `required`: the named property is the only thing that identifies the
+ *    thing. It is set per PROPERTY, not per element: an empty text field
+ *    is identified by its border, not by the white inside it, and a circle
+ *    in a beeswarm plot by its outline, not by the shade encoding its
+ *    intensity. These must reach 3:1 and decide whether this test passes.
+ *  - everything else: the element carries a text label or a number beside
+ *    it, so the label is what identifies it. Reported with its measurement
+ *    so a reviewer can disagree, but not counted as a failure.
+ *
+ * Known blind spot: only `background-color` is read. The benchmark bar on
+ * the period report is separated from its track by a diagonal
+ * `background-image` hatch, which shows here as 1.00:1 and is not a real
+ * reading. Anything in the second list may be measuring less than the eye
+ * sees.
  */
 import { launch, seededPage, visit, heading } from "./harness.mjs";
 
@@ -60,7 +75,7 @@ for (const dark of [false, true]) {
   ]) {
     await visit(page, route, 2200);
     const samples = await page.evaluate(() => {
-      const pick = (sel, what) =>
+      const pick = (sel, what, required) =>
         [...document.querySelectorAll(sel)].slice(0, 3).map((el) => {
           const cs = getComputedStyle(el);
           // Walk up for an opaque background to compare against.
@@ -79,6 +94,7 @@ for (const dark of [false, true]) {
           return {
             what,
             sel,
+            required,
             fill: cs.backgroundColor,
             border: cs.borderTopColor,
             borderWidth: parseFloat(cs.borderTopWidth) || 0,
@@ -87,18 +103,27 @@ for (const dark of [false, true]) {
         });
 
       return [
-        ...pick(".measure-bar .fill", "søylefyll (perioderapport)"),
-        ...pick(".measure-bar .track", "søylespor"),
-        ...pick(".compare-fill, .compare-track", "sammenligningssøyle"),
-        ...pick("input[type=checkbox]", "avkryssingsboks"),
-        ...pick("select", "nedtrekksliste"),
-        ...pick("input[type=text], input[type=search]", "tekstfelt"),
-        ...pick("button:not(.primary)", "sekundærknapp"),
-        ...pick("button.primary", "primærknapp"),
-        ...pick(".status-segment .fill", "fremdriftssegment"),
-        ...pick(".brief-progress .dot", "fremdriftsprikk"),
-        ...pick(".decided-fields li", "feltchip"),
-        ...pick(".intensity-strip *[style*='background']", "intensitetsstripe"),
+        // An empty field IS its border. The white inside carries nothing.
+        ...pick("select", "nedtrekksliste", "kant"),
+        ...pick("input[type=text], input[type=search]", "tekstfelt", "kant"),
+        // The outline gives the circle its shape; the shade is the value,
+        // which the axis position and the table under the chart also carry.
+        ...pick(
+          ".intensity-strip .strip-dot",
+          "sirkel i intensitetsstripa",
+          "kant",
+        ),
+
+        // These all sit next to their own label or number
+        ...pick(".brief-progress .dot", "fremdriftsprikk", null),
+        ...pick(".measure-bar .fill", "søylefyll (perioderapport)", null),
+        ...pick(".measure-bar .track", "søylespor", null),
+        ...pick(".compare-fill, .compare-track", "sammenligningssøyle", null),
+        ...pick("input[type=checkbox]", "avkryssingsboks", null),
+        ...pick("button:not(.primary)", "sekundærknapp", null),
+        ...pick("button.primary", "primærknapp", null),
+        ...pick(".status-segment .fill", "fremdriftssegment", null),
+        ...pick(".decided-fields li", "feltchip", null),
       ];
     });
 
@@ -118,7 +143,15 @@ for (const dark of [false, true]) {
         checks.push(["kant", ratio(flat, bg.rgb)]);
       }
       for (const [kind, r] of checks) {
-        results.push({ dark, route, what: s.what, kind, ratio: r });
+        results.push({
+          dark,
+          route,
+          what: s.what,
+          kind,
+          ratio: r,
+          // "kant"/"fyll" names WHICH property has to carry the identity
+          required: s.required === kind,
+        });
       }
     }
   }
@@ -133,17 +166,31 @@ for (const r of results) {
   if (!prev || r.ratio < prev.ratio) grouped.set(key, r);
 }
 
-heading("Verste tilfelle per element (krav 3:1)");
-const fails = [];
-for (const [key, r] of [...grouped].sort((a, b) => a[1].ratio - b[1].ratio)) {
+const sorted = [...grouped].sort((a, b) => a[1].ratio - b[1].ratio);
+const line = (key, r, mark) => {
   const [theme, what, kind] = key.split("|");
+  console.log(
+    `  ${mark} ${r.ratio.toFixed(2).padStart(5)}:1  ${theme.padEnd(5)} ${what} (${kind})  ${r.route}`,
+  );
+};
+
+heading("Der formen er det eneste kjennetegnet — må klare 3:1");
+const fails = [];
+for (const [key, r] of sorted) {
+  if (!r.required) continue;
   const ok = r.ratio >= 3;
   if (!ok) fails.push(r);
-  console.log(
-    `  ${ok ? "ok  " : "FEIL"} ${r.ratio.toFixed(2).padStart(5)}:1  ${theme.padEnd(5)} ${what} (${kind})  ${r.route}`,
-  );
+  line(key, r, ok ? "ok  " : "FEIL");
+}
+
+heading("Til orientering — disse har en etikett eller et tall ved siden av");
+console.log("  Ikke talt som brudd. Se filhodet for hvorfor.\n");
+for (const [key, r] of sorted) {
+  if (r.required) continue;
+  line(key, r, r.ratio >= 3 ? "    " : "  · ");
 }
 
 heading("Oppsummering 1.4.11");
 console.log(fails.length === 0 ? "Ingen brudd." : `${fails.length} under 3:1`);
+if (fails.length) process.exitCode = 1;
 await browser.close();

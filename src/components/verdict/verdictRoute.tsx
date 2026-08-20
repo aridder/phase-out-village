@@ -12,6 +12,7 @@ import {
   DEFAULT_USEFUL_ENERGY_SCENARIO,
 } from "../../data/energyTransition";
 import { planForEndYear } from "../../data/simplePlan";
+import { periods } from "../../data/periods";
 import { alternatives, plannedVsUnplanned } from "../../data/alternatives";
 import { shelfToday } from "../../data/norwayToday";
 import { OIL_FUND_BN_NOK } from "../../data/norwayFacts";
@@ -84,6 +85,7 @@ export function VerdictRoute() {
     [avoidedTonnes],
   );
   const share = useMemo(() => scheduledShare(phaseOut), [phaseOut]);
+  const lastPeriod = periods[periods.length - 1];
 
   // Reaching the finale mid-game (deep link, curiosity) is not a finale
   if (year !== "2040") return <Navigate to="/map" replace />;
@@ -145,6 +147,18 @@ export function VerdictRoute() {
             </p>
           </div>
         </div>
+
+        {/* Briefen for siste periode lover «Det du måles på: Sokkelen med
+            sluttdato», og spillet svarte aldri på det: fjerde periode går
+            rett hit, uten perioderapport. Tallet sto her hele tiden – det
+            manglet bare en setning som sa hva det var. Navn og årstall
+            hentes fra periods.ts, så løftet og svaret ikke kan skli fra
+            hverandre. */}
+        <p className="verdict-note">
+          «{lastPeriod.measure.name}» var måltallet for {lastPeriod.label}, den
+          siste perioden du styrte: {Math.round(share * 100)} % av produksjonen
+          har en dato. Resten er overlatt til den neste.
+        </p>
 
         {equivalents.length > 0 && (
           <p className="verdict-note">

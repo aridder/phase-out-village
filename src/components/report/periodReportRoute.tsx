@@ -67,6 +67,9 @@ export function PeriodReportRoute() {
     return bestAvailable(before, period, fields.length);
   }, [phaseOut, fields, period]);
 
+  // The ternary stays even though the guard below rules out the undefined
+  // case: hooks run before the guard, so this must survive the render that
+  // is about to redirect.
   const waiting = useMemo(
     () => (nextPeriod ? costOfWaiting(phaseOut, nextPeriod) : 0),
     [phaseOut, nextPeriod],
@@ -77,7 +80,12 @@ export function PeriodReportRoute() {
     [phaseOut],
   );
 
-  if (!lastDecision || year === "2040") return <Navigate to="/map" replace />;
+  // `!nextPeriod` is part of the guard, not just a type nicety: a report is
+  // only ever rendered when there IS a next period to go to. The fourth
+  // period's decision ends the game and navigates straight to the
+  // reckoning, so this page never speaks for it.
+  if (!lastDecision || year === "2040" || !nextPeriod)
+    return <Navigate to="/map" replace />;
 
   /**
    * The fields the benchmark picked and the player did not. Naming the
@@ -212,32 +220,34 @@ export function PeriodReportRoute() {
           </p>
           <p className="label">CO₂ unngått 2025–2040 så langt</p>
         </div>
-        {nextPeriod && (
-          <div>
-            <p className="num">
-              {Math.round(waiting / 1_000_000).toLocaleString("nb-NO")}{" "}
-              <small className="unit">mill. tonn</small>
-            </p>
-            <p className="label">
-              CO₂ slipper feltene som står igjen ut i {nextPeriod.label}
-            </p>
-          </div>
-        )}
+        <div>
+          <p className="num">
+            {Math.round(waiting / 1_000_000).toLocaleString("nb-NO")}{" "}
+            <small className="unit">mill. tonn</small>
+          </p>
+          <p className="label">
+            CO₂ slipper feltene som står igjen ut i {nextPeriod.label}
+          </p>
+        </div>
       </section>
 
-      {nextPeriod && (
-        <section className="report-next">
-          <strong>
-            Neste: {nextPeriod.name}, {nextPeriod.label}.
-          </strong>{" "}
-          {nextPeriod.brief[0]} Denne gangen måles du på{" "}
-          <strong>{nextPeriod.measure.name.toLowerCase()}</strong>.
-        </section>
-      )}
+      <section className="report-next">
+        <strong>
+          Neste: {nextPeriod.name}, {nextPeriod.label}.
+        </strong>{" "}
+        {nextPeriod.brief[0]} Denne gangen måles du på{" "}
+        <strong>{nextPeriod.measure.name.toLowerCase()}</strong>.
+      </section>
 
+      {/* Alltid neste periode. Knappen sto med teksten «Videre til
+          oppgjøret» når nextPeriod manglet, men navigerte til /periode
+          uansett — en gren som forutsatte at rapporten også ble vist etter
+          fjerde periode. Det gjør den ikke: den avgjørelsen avslutter
+          spillet og går rett til oppgjøret, så nextPeriod finnes alltid
+          her. */}
       <div className="report-actions">
         <button className="primary" onClick={() => navigate("/periode")}>
-          Videre til {nextPeriod?.label ?? "oppgjøret"} →
+          Videre til {nextPeriod.label} →
         </button>
         <button onClick={() => navigate("/map")}>Se planen på kartet</button>
       </div>
