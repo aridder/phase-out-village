@@ -182,16 +182,19 @@ export function scoreDecision(
         higherIsBetter: true,
       };
     }
-    case "legacy": {
-      const value = emission / 1_000_000;
-      return {
-        lens: period.lens,
-        value,
-        display: value.toLocaleString("nb-NO", { maximumFractionDigits: 1 }),
-        unit: "mill. tonn CO₂ unngått",
-        higherIsBetter: true,
-      };
-    }
+    // NB: no "legacy" case, on purpose.
+    //
+    // The fourth period's measure — "Sokkelen med sluttdato", the share of
+    // production that has an end date when you leave office — is a property
+    // of the WHOLE PLAN, not of one decision, so it cannot be derived from
+    // `outlooks`. It is computed by scheduledShare() and reported on the
+    // reckoning, which is where the fourth period lands: that decision ends
+    // the game and goes straight to /summary, so no period report is ever
+    // rendered for it.
+    //
+    // What stood here computed avoided emissions and labelled them with the
+    // share measure's name. Both numbers were right on their own and wrong
+    // together, and nothing rendered them, so nothing caught it.
     default: {
       // Kilos of CO₂ avoided per barrel of production given up
       const barrels = production * oilEquivalentToBarrel * 1_000_000;
@@ -233,8 +236,9 @@ export function bestAvailable(
         );
       case "additionality":
         return b.yearsRemaining - a.yearsRemaining;
-      case "legacy":
-        return b.avoidedEmission - a.avoidedEmission;
+      // "legacy" is absent here for the same reason as in scoreDecision:
+      // the benchmark only exists on the period report, and the fourth
+      // period has none.
       default:
         return (
           b.avoidedEmission / Math.max(b.forgoneProduction, 0.001) -

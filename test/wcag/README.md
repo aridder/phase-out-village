@@ -55,10 +55,16 @@ code where the decision was made:
 
 ## Judgement calls left open
 
-`06-non-text-contrast.mjs` reports the fill of buttons, chips and bar
-tracks against the page. Those are below 3:1 and are **not** treated as
-failures: each carries a visible text label, so the label rather than the
-boundary is "the visual information required to identify the component".
-That reading follows the Understanding document for 1.4.11. A reviewer who
-disagrees would want darker fills throughout; the numbers are in the output
-either way.
+`06-non-text-contrast.mjs` prints two lists. The first is the one that
+decides whether the test passes: properties where nothing but the shape
+identifies the thing — the border of an empty text field, the outline of a
+circle in the beeswarm plot. The second is everything else, measured and
+printed but not counted, because each of those elements carries a text
+label or a number beside it, and the label is then what identifies it.
+That reading follows the Understanding document for 1.4.11.
+
+A reviewer who disagrees would want darker fills on the buttons, chips and
+bar tracks; the numbers are in the output either way. Note also that the
+script only reads `background-color`, so the hatched benchmark bar on the
+period report shows as 1.00:1 — that one is a limitation of the probe, not
+a measurement.

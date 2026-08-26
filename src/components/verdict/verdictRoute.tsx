@@ -1,7 +1,11 @@
 import React, { useContext, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ApplicationContext } from "../../applicationContext";
-import { gameData, PhaseOutSchedule } from "../../data/gameData";
+import {
+  gameData,
+  PhaseOutSchedule,
+  totalProduction,
+} from "../../data/gameData";
 import { mdgPlan } from "../../generated/dataMdg";
 import { cumulativeEmissions } from "../../analysis/fieldStats";
 import { scheduledShare } from "../../analysis/periodAnalysis";
@@ -12,6 +16,7 @@ import {
   DEFAULT_USEFUL_ENERGY_SCENARIO,
 } from "../../data/energyTransition";
 import { planForEndYear } from "../../data/simplePlan";
+import { periods } from "../../data/periods";
 import { alternatives, plannedVsUnplanned } from "../../data/alternatives";
 import { shelfToday } from "../../data/norwayToday";
 import { OIL_FUND_BN_NOK } from "../../data/norwayFacts";
@@ -84,6 +89,24 @@ export function VerdictRoute() {
     [avoidedTonnes],
   );
   const share = useMemo(() => scheduledShare(phaseOut), [phaseOut]);
+  const lastPeriod = periods[periods.length - 1];
+
+  /**
+   * What is still pumping in 2040 with no decided end date — the actual
+   * inheritance, and what the fourth period's brief promises to answer.
+   *
+   * NOT "100 % minus the share with an end date". A field that emptied
+   * itself before 2037 is in scheduledShare's 2025 denominator but cannot
+   * be selected in the fourth period, so that complement counts depleted
+   * fields as something handed over. Close everything the last period
+   * offers and the share stops at 98,1 %, while what actually carries into
+   * the next decade is 0.
+   */
+  const runningIn2040 = useMemo(
+    () =>
+      totalProduction(phaseOut, ["2040"])["2040"]?.totalProduction?.value ?? 0,
+    [phaseOut],
+  );
 
   // Reaching the finale mid-game (deep link, curiosity) is not a finale
   if (year !== "2040") return <Navigate to="/map" replace />;
@@ -145,6 +168,31 @@ export function VerdictRoute() {
             </p>
           </div>
         </div>
+
+        {/* Briefen for siste periode lover «Det du måles på: Sokkelen med
+            sluttdato», og spillet svarte aldri på det: fjerde periode går
+            rett hit, uten perioderapport. Tallet sto her hele tiden – det
+            manglet bare en setning som sa hva det var. Navn og årstall
+            hentes fra periods.ts, så løftet og svaret ikke kan skli fra
+            hverandre. */}
+        <p className="verdict-note">
+          «{lastPeriod.measure.name}» var måltallet for {lastPeriod.label}, den
+          siste perioden du styrte: {Math.round(share * 100)} % av produksjonen
+          har en dato.{" "}
+          {runningIn2040 > 0.005 ? (
+            <>
+              {runningIn2040.toLocaleString("nb-NO", {
+                maximumFractionDigits: 1,
+              })}{" "}
+              mill. Sm³ o.e. går fortsatt i 2040, uten at du har bestemt når det
+              skal ta slutt.
+            </>
+          ) : (
+            <>
+              Ingenting går videre inn i tiåret etter uten en vedtatt sluttdato.
+            </>
+          )}
+        </p>
 
         {equivalents.length > 0 && (
           <p className="verdict-note">
