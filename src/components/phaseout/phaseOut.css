@@ -164,13 +164,24 @@
    det fokuserte elementet nettleseren ruller inn i bildet. Uten dette
    havnet raden bak den sticky handlingslinja nederst, og man så ikke
    hvilket felt man sto på (WCAG 2.2, 2.4.11 Focus Not Obscured). */
+/* Haken er det ENESTE som sier om feltet er valgt — etiketten ved siden av
+   sier hva feltet er, ikke om det er huket av. Da er den en tilstands-
+   markør, og må klare 3:1 (WCAG 1.4.11). */
 .field-card input[type="checkbox"] {
-  scroll-margin-bottom: 10rem;
-  scroll-margin-top: 1rem;
   width: 1.15rem;
   height: 1.15rem;
   margin-top: 0.1rem;
   accent-color: var(--period-accent);
+}
+
+/* Aksentfargene ble mørknet for å bære hvit tekst. Det gjør dem for mørke
+   mot den mørke sideflaten: 3,14 / 3,29 / 2,86 / 3,12 — den lilla i tredje
+   periode faller under kravet, og de tre andre ligger på vippen. Blandet
+   mot tekstfargen beholder de fargen sin og lander på 4,1–4,6. */
+@media (prefers-color-scheme: dark) {
+  .field-card input[type="checkbox"] {
+    accent-color: color-mix(in srgb, var(--period-accent) 78%, var(--lime));
+  }
 }
 
 .card-body {

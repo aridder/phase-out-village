@@ -41,7 +41,28 @@ function ratio(a, b) {
   return (l1 + 0.05) / (l2 + 0.05);
 }
 
+/**
+ * Parses a computed colour to 0–255 channels plus alpha.
+ *
+ * Handles `color(srgb …)` as well as `rgb()`. color-mix() computes to the
+ * former with 0–1 channels, so a colour written with color-mix silently
+ * failed to parse and was dropped from the audit — the checkbox accent in
+ * the dark theme went unmeasured for exactly that reason.
+ */
 function parse(css) {
+  const srgb = css.match(/color\(srgb\s+([^)]+)\)/);
+  if (srgb) {
+    const parts = srgb[1]
+      .split(/[\s/]+/)
+      .filter(Boolean)
+      .map(Number);
+    if (parts.length < 3 || parts.slice(0, 3).some(Number.isNaN)) return null;
+    return {
+      rgb: parts.slice(0, 3).map((c) => Math.round(c * 255)),
+      alpha: parts[3] ?? 1,
+    };
+  }
+
   const m = css.match(/rgba?\(([^)]+)\)/);
   if (!m) return null;
   const parts = m[1]
@@ -59,6 +80,7 @@ function over(fg, alpha, bg) {
 
 const browser = await launch();
 const results = [];
+const unreadable = [];
 
 for (const dark of [false, true]) {
   heading(`SC 1.4.11 Non-text Contrast · ${dark ? "mørkt" : "lyst"} tema`);
@@ -98,6 +120,12 @@ for (const dark of [false, true]) {
             fill: cs.backgroundColor,
             border: cs.borderTopColor,
             borderWidth: parseFloat(cs.borderTopWidth) || 0,
+            // A checkbox's LABEL says what it is; only the tick says
+            // whether it is on. That state indicator is painted in
+            // accent-color, which this app authors, so it is a 1.4.11
+            // surface like any other. "auto" means the browser draws it
+            // and guarantees its own contrast — nothing for us to measure.
+            accent: cs.accentColor === "auto" ? null : cs.accentColor,
             bg,
           };
         });
@@ -119,7 +147,7 @@ for (const dark of [false, true]) {
         ...pick(".measure-bar .fill", "søylefyll (perioderapport)", null),
         ...pick(".measure-bar .track", "søylespor", null),
         ...pick(".compare-fill, .compare-track", "sammenligningssøyle", null),
-        ...pick("input[type=checkbox]", "avkryssingsboks", null),
+        ...pick("input[type=checkbox]", "avkryssingsboks", "avkrysset"),
         ...pick("button:not(.primary)", "sekundærknapp", null),
         ...pick("button.primary", "primærknapp", null),
         ...pick(".status-segment .fill", "fremdriftssegment", null),
@@ -141,6 +169,15 @@ for (const dark of [false, true]) {
       if (border && border.alpha > 0.05 && s.borderWidth > 0) {
         const flat = over(border.rgb, border.alpha, bg.rgb);
         checks.push(["kant", ratio(flat, bg.rgb)]);
+      }
+      const accent = s.accent ? parse(s.accent) : null;
+      if (accent && accent.alpha > 0.05) {
+        const flat = over(accent.rgb, accent.alpha, bg.rgb);
+        checks.push(["avkrysset", ratio(flat, bg.rgb)]);
+      } else if (s.accent && !accent) {
+        // An audit that silently skips what it cannot read is worse than no
+        // audit: it reports "clean" for a colour nobody measured.
+        unreadable.push(`${s.what}: accent-color «${s.accent}»`);
       }
       for (const [kind, r] of checks) {
         results.push({
@@ -190,7 +227,12 @@ for (const [key, r] of sorted) {
   line(key, r, r.ratio >= 3 ? "    " : "  · ");
 }
 
+if (unreadable.length) {
+  heading("Farger skriptet ikke klarte å lese — MÅ fikses i skriptet");
+  for (const u of new Set(unreadable)) console.log(`  ${u}`);
+}
+
 heading("Oppsummering 1.4.11");
 console.log(fails.length === 0 ? "Ingen brudd." : `${fails.length} under 3:1`);
-if (fails.length) process.exitCode = 1;
+if (fails.length || unreadable.length) process.exitCode = 1;
 await browser.close();
